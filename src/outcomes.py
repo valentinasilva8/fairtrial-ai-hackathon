@@ -14,7 +14,7 @@ GOOD = {
     "acquitted": r"\bacquitt(?:ed|al)\b",
     "charges dropped": r"charges? (?:\w+ ){0,3}(?:dropped|withdrawn|dismissed)|(?:dropped|withdrew|dismiss(?:ed|al of)) (?:the |all )?(?:case|charges)",
     "conviction overturned": r"overturn(?:ed|s)?|quash(?:ed)?|vacat(?:ed|e) (?:the |his |her |their )?(?:conviction|sentence)",
-    "released": r"\b(?:was|were|been|is) (?:later |subsequently |finally |now )?(?:released|freed)\b",
+    "released": r"\b(?:was|were|been|is) (?:later |subsequently |finally |now )?(?:released|freed)\b(?! (?:on|from \w+ on) (?:bail|bond))",
     "pardoned": r"\bpardon(?:ed)?\b|amnest(?:y|ied)",
     "UN found detention arbitrary": r"Working Group on Arbitrary Detention.{0,200}arbitrary",
 }
@@ -96,10 +96,16 @@ def signals(sentence: str) -> tuple[list[str], list[str]]:
     return good, bad
 
 
+# Footnote and citation text, which mentions outcomes of other proceedings.
+CITATION = re.compile(r"\b(?:p|pp|para|paras)\. ?\d|\bNo\. ?\d|U\.N\. Doc|\bId\.|Available at", re.I)
+
+
 def outcome_evidence(text: str, keys: list[str], require_name: bool = True) -> list[dict]:
     """Sentences that state an outcome; with require_name, only those naming a defendant."""
     out = []
     for s in sentences(text):
+        if CITATION.search(s):
+            continue
         good, bad = signals(s)
         if not (good or bad):
             continue

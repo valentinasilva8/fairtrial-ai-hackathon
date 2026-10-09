@@ -54,3 +54,13 @@ def test_suggest_label_uses_latest_evidence():
     assert suggest_label([released, convicted]) == "not good"
     assert suggest_label([{"good": ["acquitted"], "not_good": ["convicted"]}]) == "mixed"
     assert suggest_label([]) == "unknown"
+
+
+def test_bail_is_not_a_good_outcome():
+    assert signals("On June 15, Mbah was released on bail after 8 months.")[0] == []
+    assert signals("He was later released from prison.")[0] == ["released"]
+
+
+def test_citations_are_skipped():
+    text = "Rehman, Accountability Court, Reply to Acquittal Application, p. 12 (Rehman was acquitted)."
+    assert outcome_evidence(text, ["rehman"]) == []
