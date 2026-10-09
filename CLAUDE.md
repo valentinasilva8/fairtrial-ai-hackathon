@@ -49,7 +49,15 @@ references/             # source PDFs (CFJ EIT report) — not required to run
 ## Judging criteria (optimize for these)
 Innovation 25 · Feasibility within TrialWatch's infrastructure 25 · Human Rights Impact 30 · Ethical Rigor & Responsible AI 20.
 
+## Working rules for Claude Code
+- **Never invent case facts, dates, names, quotes or sources.** If data is missing, leave it blank or "unknown" and set `verified=false`.
+- Keep `src/stress_test.py` free of LLM calls; it must be deterministic and unit tested.
+- Never read or print `.env`; never commit secrets. Use `st.secrets` / `.env` only.
+- Small changes per commit; run `pytest` before saying a task is done.
+- Each teammate works on their own branch; avoid editing files another role owns (see `docs/TEAM_PLAN.md`).
+
 ## Team
+See `docs/TEAM_PLAN.md` for each person's tasks and the timeline.
 4 data science students, no law students. Legal claims come from cited sources (CFJ/TrialWatch report, HRW, court decisions), not our own judgment.
 - Data: build `data/cases_seed.csv` / `events.csv` from the CFJ report + news
 - Stress Test: Shreya
