@@ -1,7 +1,7 @@
 # Paper vs. Practice — Proposal
 *TrialWatch Fair Trial & AI Hackathon · Track 3: Advocacy & Impact*
 
-## 30-second pitch
+## Pitch
 Indonesia's ITE Law has been used to criminally prosecute journalists, activists and ordinary critics — often on complaints filed by ministers, companies and officials. After years of advocacy, the law was revised in 2024, the Constitutional Court narrowed it in 2025, and the police pledged to comply. But nobody can see whether the reform actually protects people.
 
 **Paper vs. Practice stress-tests the reform.** We run real prosecutions through the new legal rules and ask: *would this case still be allowed today?* Then we track whether officials kept their promises, and turn every finding into a cited advocacy brief TrialWatch can send the same day.
