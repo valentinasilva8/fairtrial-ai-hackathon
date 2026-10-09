@@ -19,3 +19,12 @@ def test_stress_test_verdict_filter():
     at = AppTest.from_file("../pages/2_Stress_Test.py").run(timeout=30)
     at.multiselect[0].set_value(["AT RISK"]).run(timeout=30)
     assert not at.exception
+
+
+def test_add_case_by_hand_runs_stress_test():
+    at = AppTest.from_file("../pages/2_Stress_Test.py").run(timeout=30)
+    at.selectbox[0].set_value("public_official")
+    at.multiselect[2].set_value(["27(3)"])
+    next(b for b in at.button if b.label == "Run stress test").click().run(timeout=30)
+    assert not at.exception
+    assert any("LIKELY BARRED" in m.value for m in at.markdown)
