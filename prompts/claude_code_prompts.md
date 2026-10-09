@@ -41,3 +41,13 @@ Create pages/3_Briefs.py: pick a case and an audience (UN Special Rapporteur let
 ```
 Review the whole app for the demo: consistent styling, clear headings, no errors with missing data, README updated with screenshots placeholders, setup steps, data sources, limitations, and the Responsible AI section from docs/PROPOSAL.md. Run tests.
 ```
+
+## 9. Deploy (Person C)
+```
+Prepare the app for Streamlit Community Cloud: read the API key from st.secrets with a fallback to .env, add a .streamlit/config.toml with a clean theme, make sure requirements.txt is complete, and add a "Deploy" section to the README with the exact steps.
+```
+
+## Useful one-liners anytime
+- "Check all CSVs in data/ for rows with no source or verified=false and list them."
+- "Run pytest and fix failures without changing the rules in docs/stress_test_rules.md."
+- "Review my branch diff for bugs before I open a PR."

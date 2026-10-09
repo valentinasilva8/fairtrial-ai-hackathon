@@ -1,0 +1,5 @@
+case_id,date,lane,description,source,verified
+fatia_haris,2021-09,legal,Reported to police by Coordinating Minister Luhut Pandjaitan,CFJ EIT report Case Study E,true
+fatia_haris,2023-03-27,legal,Indicted for defamation and false news,CFJ EIT report Case Study E,true
+fatia_haris,2024-01,outcome,Acquitted of all charges,CFJ EIT report Case Study E,true
+fatia_haris,2024-09-24,outcome,Supreme Court rejects prosecution appeal,CFJ EIT report Case Study E,true
