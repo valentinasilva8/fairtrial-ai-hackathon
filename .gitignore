@@ -29,3 +29,6 @@ yarn-error.log*
 # Logs
 *.log
 
+
+# Downloaded TrialWatch report PDFs and extracted text (CFJ copyright; not republished)
+data/raw/
