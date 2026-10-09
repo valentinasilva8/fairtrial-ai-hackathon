@@ -14,7 +14,7 @@ GOOD = {
     "acquitted": r"\bacquitt(?:ed|al)\b",
     "charges dropped": r"charges? (?:\w+ ){0,3}(?:dropped|withdrawn|dismissed)|(?:dropped|withdrew|dismiss(?:ed|al of)) (?:the |all )?(?:case|charges)",
     "conviction overturned": r"overturn(?:ed|s)?|quash(?:ed)?|vacat(?:ed|e) (?:the |his |her |their )?(?:conviction|sentence)",
-    "released": r"\b(?:was|were|been|is) (?:later |subsequently |finally |now )?(?:released|freed)\b(?! (?:on|from \w+ on) (?:bail|bond))",
+    "released": r"\b(?:was|were|been|is) (?:later |subsequently |finally |now )?(?:released|freed)\b(?![^.]{0,40}\b(?:bail|bond)\b)",
     "pardoned": r"\bpardon(?:ed)?\b|amnest(?:y|ied)",
     "UN found detention arbitrary": r"Working Group on Arbitrary Detention.{0,200}arbitrary",
 }

@@ -58,6 +58,7 @@ def test_suggest_label_uses_latest_evidence():
 
 def test_bail_is_not_a_good_outcome():
     assert signals("On June 15, Mbah was released on bail after 8 months.")[0] == []
+    assert signals("Mbah was released from Kirikiri Prison on bail.")[0] == []
     assert signals("He was later released from prison.")[0] == ["released"]
 
 
