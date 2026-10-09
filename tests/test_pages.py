@@ -28,3 +28,10 @@ def test_add_case_by_hand_runs_stress_test():
     next(b for b in at.button if b.label == "Run stress test").click().run(timeout=30)
     assert not at.exception
     assert any("LIKELY BARRED" in m.value for m in at.markdown)
+
+
+def test_home_page_shows_promise_clock():
+    at = AppTest.from_file("../app.py").run(timeout=30)
+    assert not at.exception
+    assert any(h.value == "Promise Clock" for h in at.header)
+    assert any("date to verify" in m.value for m in at.markdown)
