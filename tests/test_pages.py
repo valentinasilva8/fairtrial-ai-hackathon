@@ -41,3 +41,12 @@ def test_argument_bank_page_runs():
     at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
     assert not at.exception
     assert any("similar TrialWatch cases" in h.value for h in at.header)
+
+
+def test_un_letter_page_builds_plain_draft():
+    at = AppTest.from_file("../pages/4_UN_Letter.py").run(timeout=30)
+    assert not at.exception
+    next(b for b in at.button if b.label == "Build plain draft (no AI)").click().run(timeout=30)
+    assert not at.exception
+    assert any("Citation check passed" in s.value for s in at.success)
+    assert any("Special Rapporteur" in m.value for m in at.markdown)
