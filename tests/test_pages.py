@@ -35,3 +35,9 @@ def test_home_page_shows_promise_clock():
     assert not at.exception
     assert any(h.value == "Promise Clock" for h in at.header)
     assert any("date to verify" in m.value for m in at.markdown)
+
+
+def test_argument_bank_page_runs():
+    at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
+    assert not at.exception
+    assert any("similar TrialWatch cases" in h.value for h in at.header)
