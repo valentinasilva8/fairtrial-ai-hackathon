@@ -7,6 +7,7 @@ import pandas as pd
 import streamlit as st
 
 from src.data import DataValidationError, load_all, public_cases
+from src.llm import ARTICLES, COMPLAINANT_TYPES, TRI_STATE, ExtractionError, extract_case_fields
 from src.stress_test import (
     AT_RISK,
     LIKELY_BARRED,
@@ -15,6 +16,7 @@ from src.stress_test import (
     STILL_PROSECUTABLE,
     VERDICTS,
     evaluate_all,
+    evaluate_case,
 )
 
 # Constitutional Court Decision 105/PUU-XXII/2024 was issued in 2025; cases
@@ -180,3 +182,85 @@ if rows:
     st.markdown("**Case source**")
     for part in str(case["source"]).split("|"):
         st.markdown(f"- {part.strip()}")
+
+# --- add a case from text (LLM-assisted, human-checked) --------------------
+st.divider()
+with st.expander("Add a case from text"):
+    st.caption(
+        "Paste a news article or report passage. Claude suggests the rule inputs, each with a "
+        "verbatim quote; any field whose quote isn't in the text is reset to unknown. "
+        "Check and edit every field before running the test. Nothing is saved unless you click Download."
+    )
+    source_text = st.text_area("Text", height=200, key="extract_text")
+    source_ref = st.text_input("Source (URL or citation)", key="extract_source")
+
+    if st.button("Extract fields", disabled=not source_text.strip()):
+        try:
+            with st.spinner("Reading the text…"):
+                st.session_state["extracted"] = extract_case_fields(source_text)
+        except ExtractionError as e:
+            st.error(f"{e} You can still fill the fields by hand below.")
+
+    fields = st.session_state.get("extracted")
+    if fields:
+        st.markdown("**What Claude found**")
+        for name, f in fields.items():
+            value = "; ".join(f["value"]) if isinstance(f["value"], list) else f["value"]
+            tag = ":green-background[quoted]" if f["verified"] else ":gray-background[unverified]"
+            st.markdown(f"- **{name}**: `{value}` {tag}")
+            if f["quote"]:
+                st.caption(f"> {f['quote']}")
+            if f["reasoning"]:
+                st.caption(f"Reasoning: {f['reasoning']}")
+            if f["note"]:
+                st.caption(f"⚠️ {f['note']}")
+
+    def _get(name, default):
+        return fields[name]["value"] if fields else default
+
+    st.markdown("**Your inputs** (edit before running)")
+    c1, c2 = st.columns(2)
+    name_in = c1.text_input("Case name", key="manual_name")
+    complainant_in = c2.text_input("Complainant", value=_get("complainant", "unknown"))
+    complainant_type_in = c1.selectbox(
+        "Complainant type", COMPLAINANT_TYPES,
+        index=COMPLAINANT_TYPES.index(_get("complainant_type", "unknown")),
+    )
+    article_in = c2.multiselect("Article", ARTICLES, default=_get("article", ["unknown"]))
+    public_interest_in = c1.radio(
+        "Public interest", TRI_STATE, index=TRI_STATE.index(_get("public_interest", "unknown")), horizontal=True
+    )
+    harm_shown_in = c2.radio(
+        "Real, imminent harm shown", TRI_STATE, index=TRI_STATE.index(_get("harm_shown", "unknown")), horizontal=True
+    )
+
+    if st.button("Run stress test"):
+        manual_case = {
+            "case_id": "new_case",
+            "name": name_in,
+            "complainant": complainant_in,
+            "complainant_type": complainant_type_in,
+            "article": "; ".join(article_in) or "unknown",
+            "public_interest": public_interest_in == "true",
+            "harm_shown": harm_shown_in == "true",
+            "source": source_ref,
+        }
+        result = evaluate_case(manual_case)
+        st.markdown(f"**Verdict:** {result['verdict']} — for lawyer review")
+        for reason in result["reasons"]:
+            st.markdown(f"- {reason}")
+        if "unknown" in (public_interest_in, harm_shown_in):
+            st.caption("Fields left as unknown are treated as false by the rules.")
+
+        row = pd.DataFrame([{
+            **{k: manual_case[k] for k in ["name", "complainant", "complainant_type", "article"]},
+            "public_interest": str(manual_case["public_interest"]).lower(),
+            "harm_shown": str(manual_case["harm_shown"]).lower(),
+            "source": source_ref,
+            "verified": "false",
+            "sensitive": "false",
+        }])
+        st.download_button(
+            "Download as CSV row (unverified)", row.to_csv(index=False),
+            file_name="new_case.csv", mime="text/csv",
+        )
