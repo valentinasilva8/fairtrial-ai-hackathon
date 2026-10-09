@@ -23,7 +23,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")  # GEMINI_API_KEY, 
 # cases marked sensitive.
 MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 # Tried in order when the model above is overloaded (503) on the free tier.
-FALLBACK_MODELS = ["gemini-2.5-flash", "gemini-flash-lite-latest"]
+FALLBACK_MODELS = ["gemini-3.5-flash", "gemini-flash-lite-latest"]
 
 COMPLAINANT_TYPES = [
     "individual_victim", "public_official", "government_body", "company",
@@ -173,6 +173,8 @@ def generate_json(system: str, user: str, schema: dict, client=None, temperature
             response = client.models.generate_content(model=model, contents=user, config=config)
             break
         except errors.ClientError as e:
+            if e.code == 404 and model != MODEL:
+                continue  # this fallback isn't offered to this key: try the next one
             if e.code == 429:
                 raise LLMError("Gemini free-tier rate limit reached. Wait a minute and try again.") from e
             if e.code in (400, 401, 403):
