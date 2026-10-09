@@ -153,11 +153,17 @@ def get_client():
     key = os.getenv("GEMINI_API_KEY")
     if not key:
         raise LLMError("No API key found. Add GEMINI_API_KEY to .env.")
-    return genai.Client(api_key=key)
+    from google.genai import types
+
+    # Fail over to the next model quickly instead of the SDK's long retry loop on an overloaded model.
+    return genai.Client(api_key=key, http_options=types.HttpOptions(
+        timeout=60_000, retry_options=types.HttpRetryOptions(attempts=1),
+    ))
 
 
 def generate_json(system: str, user: str, schema: dict, client=None, temperature: float = 0.0) -> dict:
     """One Gemini call that must return JSON matching `schema`."""
+    import httpx
     from google.genai import errors, types
 
     client = client or get_client()
@@ -166,6 +172,8 @@ def generate_json(system: str, user: str, schema: dict, client=None, temperature
         response_mime_type="application/json",
         response_json_schema=schema,
         temperature=temperature,
+        # Low thinking keeps answers fast on the free tier; the code checks the output anyway.
+        thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel.LOW),
     )
     response = None
     for model in [MODEL, *[m for m in FALLBACK_MODELS if m != MODEL]]:
@@ -182,6 +190,8 @@ def generate_json(system: str, user: str, schema: dict, client=None, temperature
             raise LLMError(f"Gemini API error {e.code}.") from e
         except errors.ServerError:
             continue  # overloaded: try the next model
+        except httpx.TimeoutException:
+            continue  # too slow: try the next model
         except OSError as e:
             raise LLMError("Could not reach the Gemini API. Check your connection.") from e
     if response is None:
