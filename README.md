@@ -44,8 +44,8 @@ src/data.py             # load + validate CSVs
 src/stress_test.py      # rule engine (planned)
 src/llm.py              # LLM helpers (planned)
 tests/                  # pytest
-data/                   # cases_seed.csv, promises_seed.csv (events.csv planned)
-docs/                   # proposal, stress-test rules
+data/                   # cases_seed.csv, events.csv, promises_seed.csv
+docs/                   # proposal, stress-test rules, team plan
 references/             # source PDFs — not required to run
 ```
 
