@@ -84,3 +84,9 @@ def test_event_with_unknown_case_is_warned(tmp_path):
     warnings = []
     load_events(path, {"fatia_haris"}, warnings)
     assert any("nobody" in w for w in warnings)
+
+
+def test_verification_log_covers_every_case():
+    log = pd.read_csv("data/verification_log.csv", dtype=str)
+    assert log["case_id"].is_unique
+    assert set(log["case_id"]) == set(load_all().cases["case_id"])

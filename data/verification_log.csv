@@ -1,0 +1,17 @@
+case_id,assigned_to,complainant,article,outcome,labels,sources,events,sensitive,verified_by,date_done,notes
+fatia_haris,Shreya,,,,,,,,,,
+daniel_frits,Shreya,,,,,,,,,,
+karimunjawa_3,Shreya,,,,,,,,,,
+septia,Shreya,,,,,,,,,,
+tinus,Valentina,,,,,,,,,,"Branch cursor/verify-valentina-cases-0d2f, not yet merged"
+madilis,Valentina,,,,,,,,,,"Branch cursor/verify-valentina-cases-0d2f, not yet merged"
+marzuki,Valentina,,,,,,,,,,"Branch cursor/verify-valentina-cases-0d2f, not yet merged"
+roy_suryo,Valentina,,,,,,,,,,"Branch cursor/verify-valentina-cases-0d2f, not yet merged"
+dandhy,Ungu,,,,,,,,Ungu,2026-10-09,"PR #1 (5be6bee); Ungu to tick the checklist"
+richard_lee,Ungu,,,,,,,,Ungu,2026-10-09,"PR #1 (5be6bee); left verified=false, only CFJ found; Ungu to tick the checklist"
+nugroho,Ungu,,,,,,,,Ungu,2026-10-09,"PR #1 (5be6bee); left verified=false, complainant not found; Ungu to tick the checklist"
+edy_mulyadi,Ungu,,,,,,,,Ungu,2026-10-09,"PR #1 (5be6bee); Ungu to tick the checklist"
+meila,Layla,,,,,,,,,,
+asrul,Layla,,,,,,,,,,
+khariq_anhar,Ungu,,,,,,,,Ungu,2026-10-09,"Added in PR #1, updated PR #4; public_interest and harm_shown provisional pending independent labels"
+laras_faizati,Ungu,,,,,,,,Ungu,2026-10-09,"Added in PR #1; public_interest and harm_shown provisional pending independent labels"
