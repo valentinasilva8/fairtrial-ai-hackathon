@@ -187,7 +187,7 @@ if rows:
 st.divider()
 with st.expander("Add a case from text"):
     st.caption(
-        "Paste a news article or report passage. Claude suggests the rule inputs, each with a "
+        "Paste a news article or report passage. Gemini suggests the rule inputs, each with a "
         "verbatim quote; any field whose quote isn't in the text is reset to unknown. "
         "Check and edit every field before running the test. Nothing is saved unless you click Download."
     )
@@ -203,7 +203,7 @@ with st.expander("Add a case from text"):
 
     fields = st.session_state.get("extracted")
     if fields:
-        st.markdown("**What Claude found**")
+        st.markdown("**What Gemini found**")
         for name, f in fields.items():
             value = "; ".join(f["value"]) if isinstance(f["value"], list) else f["value"]
             tag = ":green-background[quoted]" if f["verified"] else ":gray-background[unverified]"

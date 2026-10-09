@@ -1,6 +1,6 @@
-"""LLM helpers.
+"""LLM helpers (Google Gemini, free tier).
 
-extract_case_fields() asks Claude to fill the stress-test inputs from a news
+extract_case_fields() asks Gemini to fill the stress-test inputs from a news
 article or report passage, with a verbatim quote for each field. The quotes are
 then checked against the text in code: a field whose quote isn't actually in
 the passage is reset to "unknown" and marked unverified. The rule engine
@@ -10,13 +10,20 @@ the passage is reset to "unknown" and marked unverified. The rule engine
 from __future__ import annotations
 
 import json
+import os
 import re
+from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()  # ANTHROPIC_API_KEY from .env, if present
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")  # GEMINI_API_KEY, if present
 
-MODEL = "claude-opus-5-5"
+# gemini-flash-latest tracks Google's current Flash model, which is on the free tier.
+# Note: on the free tier Google may use prompts to improve its products, so never send
+# cases marked sensitive.
+MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
+# Tried in order when the model above is overloaded (503) on the free tier.
+FALLBACK_MODELS = ["gemini-2.5-flash", "gemini-flash-lite-latest"]
 
 COMPLAINANT_TYPES = [
     "individual_victim", "public_official", "government_body", "company",
@@ -80,8 +87,11 @@ OUTPUT_SCHEMA = {
 }
 
 
-class ExtractionError(RuntimeError):
-    """The model declined or returned something unusable."""
+class LLMError(RuntimeError):
+    """The model call failed, declined, or returned something unusable."""
+
+
+ExtractionError = LLMError  # name used by the Stress Test page
 
 
 def _normalize(s: str) -> str:
@@ -138,51 +148,57 @@ def to_case_inputs(fields: dict) -> dict:
 
 
 def get_client():
-    import anthropic
+    from google import genai
 
-    return anthropic.Anthropic()
+    key = os.getenv("GEMINI_API_KEY")
+    if not key:
+        raise LLMError("No API key found. Add GEMINI_API_KEY to .env.")
+    return genai.Client(api_key=key)
 
 
-def _create(client, text: str):
-    return client.beta.messages.create(
-        model=MODEL,
-        max_tokens=16000,
-        betas=["server-side-fallback-2026-07-01"],
-        fallbacks="default",
-        output_config={
-            "effort": "medium",
-            "format": {"type": "json_schema", "schema": OUTPUT_SCHEMA},
-        },
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": f"<text>\n{text}\n</text>"}],
+def generate_json(system: str, user: str, schema: dict, client=None, temperature: float = 0.0) -> dict:
+    """One Gemini call that must return JSON matching `schema`."""
+    from google.genai import errors, types
+
+    client = client or get_client()
+    config = types.GenerateContentConfig(
+        system_instruction=system,
+        response_mime_type="application/json",
+        response_json_schema=schema,
+        temperature=temperature,
     )
+    response = None
+    for model in [MODEL, *[m for m in FALLBACK_MODELS if m != MODEL]]:
+        try:
+            response = client.models.generate_content(model=model, contents=user, config=config)
+            break
+        except errors.ClientError as e:
+            if e.code == 429:
+                raise LLMError("Gemini free-tier rate limit reached. Wait a minute and try again.") from e
+            if e.code in (400, 401, 403):
+                raise LLMError("Gemini rejected the request. Check GEMINI_API_KEY in .env.") from e
+            raise LLMError(f"Gemini API error {e.code}.") from e
+        except errors.ServerError:
+            continue  # overloaded: try the next model
+        except OSError as e:
+            raise LLMError("Could not reach the Gemini API. Check your connection.") from e
+    if response is None:
+        raise LLMError("Gemini is overloaded right now. Try again in a minute.")
+
+    finish = str(response.candidates[0].finish_reason) if response.candidates else "NO_CANDIDATES"
+    if "MAX_TOKENS" in finish:
+        raise LLMError("The response was cut off; try a shorter passage.")
+    if not response.text:
+        raise LLMError(f"The model returned no answer ({finish}).")
+    try:
+        return json.loads(response.text)
+    except json.JSONDecodeError as e:
+        raise LLMError(f"Could not parse the model's answer: {e}") from e
 
 
 def extract_case_fields(text: str, client=None) -> dict:
-    """Extract stress-test inputs from text with Claude, then verify every quote."""
-    import anthropic
-
+    """Extract stress-test inputs from text with Gemini, then verify every quote."""
     if not text.strip():
         raise ValueError("No text provided.")
-    client = client or get_client()
-    try:
-        response = _create(client, text)
-    except TypeError as e:  # raised by the SDK when no credentials are configured
-        raise ExtractionError("No API key found. Add ANTHROPIC_API_KEY to .env.") from e
-    except anthropic.AuthenticationError as e:
-        raise ExtractionError("The API key was rejected. Check ANTHROPIC_API_KEY in .env.") from e
-    except anthropic.APIConnectionError as e:
-        raise ExtractionError("Could not reach the Anthropic API. Check your connection.") from e
-    except anthropic.APIStatusError as e:
-        raise ExtractionError(f"Anthropic API error {e.status_code}. Try again.") from e
-
-    if response.stop_reason == "refusal":
-        raise ExtractionError("The model declined to process this text.")
-    if response.stop_reason == "max_tokens":
-        raise ExtractionError("The response was cut off; try a shorter passage.")
-    body = next((b.text for b in response.content if b.type == "text"), "")
-    try:
-        raw = json.loads(body)
-    except json.JSONDecodeError as e:
-        raise ExtractionError(f"Could not parse the model's answer: {e}") from e
+    raw = generate_json(SYSTEM_PROMPT, f"<text>\n{text}\n</text>", OUTPUT_SCHEMA, client=client)
     return verify_extraction(raw, text)
