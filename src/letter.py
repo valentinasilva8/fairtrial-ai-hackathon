@@ -53,7 +53,7 @@ def build_sources(case: dict, events: list[dict], stress: dict, promises: list[d
     cid = case["case_id"]
     src = [Source(
         f"case:{cid}", f"Case record: {case['name']}",
-        f"{case['name']} ({case['role']}). Complainant: {case['complainant']} ({case['complainant_type']}). "
+        f"{case['name']} ({case['role']}), prosecuted in Indonesia under the ITE (EIT) Law. Complainant: {case['complainant']} ({case['complainant_type']}). "
         f"Charged under: {case['article']}. Reported: {case['year_reported']}. "
         f"Outcome: {case['outcome']} — {case['outcome_detail']}",
         case.get("source", ""), _yes(case.get("verified")),
@@ -201,6 +201,59 @@ def generate_draft(sources: list[Source], client=None, attempts: int = 3) -> tup
     return draft, feedback
 
 
+SUPPORT_SCHEMA = {
+    "type": "object",
+    "properties": {"checks": {"type": "array", "items": {
+        "type": "object",
+        "properties": {
+            "n": {"type": "integer"},
+            "verdict": {"type": "string", "enum": ["supported", "partly supported", "not supported"]},
+            "evidence": {"type": "string"},
+            "reason": {"type": "string"},
+        },
+        "required": ["n", "verdict", "evidence", "reason"],
+    }}},
+    "required": ["checks"],
+}
+
+SUPPORT_SYSTEM = """You check a draft legal letter sentence by sentence. For each numbered sentence, decide
+whether its cited sources state what the sentence says: "supported" (every claim is in the sources),
+"partly supported" (some claims, or an inference beyond the sources), or "not supported".
+Each source starts with a label (for TrialWatch reports: the case, page, argument category and the case outcome);
+the label counts as part of the source. Sentences in the "Requested action" section are requests: check only that
+the facts they rest on are in the sources.
+Give "evidence": the exact words from the cited source that support it (empty if none), and a one-line reason.
+Judge only against the cited sources, not your own knowledge."""
+
+
+def sentences_of(draft: dict) -> list[dict]:
+    """Flat list of the draft's sentences with their section."""
+    return [{**sent, "heading": sec["heading"]} for sec in draft["sections"] for sent in sec["sentences"]]
+
+
+def check_support(draft: dict, sources: list[Source], client=None) -> list[dict]:
+    """Second pass: does each sentence's cited source actually say it? Evidence is checked verbatim."""
+    by_id = {s.id: s for s in sources}
+    sents = sentences_of(draft)
+    blocks = []
+    for n, sent in enumerate(sents, 1):
+        cited = "\n".join(f"[{i}] {by_id[i].label}: {by_id[i].text}" for i in sent["sources"] if i in by_id)
+        blocks.append(f"Sentence {n}: {sent['text']}\nCited sources:\n{cited}")
+    result = generate_json(SUPPORT_SYSTEM, "\n\n".join(blocks), SUPPORT_SCHEMA, client=client)
+    checks = {c["n"]: c for c in result.get("checks", [])}
+    out = []
+    for n, sent in enumerate(sents, 1):
+        c = checks.get(n, {"verdict": "not checked", "evidence": "", "reason": "No answer for this sentence."})
+        evidence = c.get("evidence", "")
+        # The checker's evidence must itself be real text from a cited source.
+        if c["verdict"] == "supported" and evidence and not any(
+            _norm(evidence) in _norm(f"{by_id[i].label}: {by_id[i].text}") for i in sent["sources"] if i in by_id
+        ):
+            c = {**c, "verdict": "partly supported", "reason": "Quoted evidence not found in the source. " + c["reason"]}
+        out.append({"n": n, "text": sent["text"], "heading": sent["heading"], **c})
+    return out
+
+
 def render(draft: dict, sources: list[Source], case_name: str) -> str:
     """Markdown letter with numbered citations and a source list."""
     order: list[str] = []
@@ -228,4 +281,5 @@ def render(draft: dict, sources: list[Source], case_name: str) -> str:
     return "\n".join(out)
 
 
-__all__ = ["LLMError", "SensitiveCaseError", "build_sources", "generate_draft", "render", "template_draft", "validate"]
+__all__ = ["LLMError", "SensitiveCaseError", "build_sources", "check_support", "generate_draft", "render",
+           "sentences_of", "template_draft", "validate"]

@@ -82,3 +82,16 @@ def test_render_numbers_citations_and_lists_sources():
     assert "Draft for lawyer review" in md
     assert "[1]" in md and "### Sources" in md
     assert "(unverified)" in md  # the event source is unverified
+
+
+def test_check_support_downgrades_fake_evidence():
+    from src.letter import check_support, sentences_of
+
+    draft = template_draft(sources())
+    n = len(sentences_of(draft))
+    checks = [{"n": i, "verdict": "supported", "evidence": "", "reason": "ok"} for i in range(1, n + 1)]
+    checks[0] = {"n": 1, "verdict": "supported", "evidence": "words that are nowhere in the source", "reason": "ok"}
+    result = check_support(draft, sources(), client=FakeGemini([{"checks": checks}]))
+    assert len(result) == n
+    assert result[0]["verdict"] == "partly supported"
+    assert result[1]["verdict"] == "supported"
