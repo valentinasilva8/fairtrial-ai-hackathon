@@ -1,5 +1,7 @@
 # Paper vs. Practice
 
+[![Tests](https://github.com/valentinasilva8/fairtrial-ai-hackathon/actions/workflows/tests.yml/badge.svg)](https://github.com/valentinasilva8/fairtrial-ai-hackathon/actions/workflows/tests.yml)
+
 > *Indonesia reformed its speech law. We stress-tested the reform: how many past prosecutions would it have stopped — and is it stopping new ones?*
 
 Built for the TrialWatch Fair Trial & AI Hackathon (Columbia Law School Human Rights Institute), Track 3: Advocacy & Impact.
