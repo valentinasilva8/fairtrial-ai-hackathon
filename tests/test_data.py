@@ -6,6 +6,7 @@ from src.data import (
     DataValidationError,
     load_all,
     load_cases,
+    load_events,
     public_cases,
     split_articles,
 )
@@ -65,3 +66,21 @@ def test_sensitive_cases_hidden(tmp_path):
         [{"case_id": "a", "sensitive": "true"}, {"case_id": "b", "sensitive": "false"}],
     )
     assert list(public_cases(load_cases(path))["case_id"]) == ["b"]
+
+
+def test_events_load_and_match_cases():
+    data = load_all()
+    assert data.events is not None
+    assert set(data.events["case_id"]) <= set(data.cases["case_id"])
+    assert data.events["date_parsed"].notna().all()
+
+
+def test_event_with_unknown_case_is_warned(tmp_path):
+    path = tmp_path / "events.csv"
+    path.write_text(
+        "case_id,date,lane,description,source,verified\n"
+        "nobody,2024-01,legal,Test event,Test source,true\n"
+    )
+    warnings = []
+    load_events(path, {"fatia_haris"}, warnings)
+    assert any("nobody" in w for w in warnings)
