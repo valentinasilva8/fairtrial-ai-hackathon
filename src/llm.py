@@ -176,6 +176,7 @@ def generate_json(system: str, user: str, schema: dict, client=None, temperature
         thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel.LOW),
     )
     response = None
+    rate_limited = False
     for model in [MODEL, *[m for m in FALLBACK_MODELS if m != MODEL]]:
         try:
             response = client.models.generate_content(model=model, contents=user, config=config)
@@ -184,7 +185,8 @@ def generate_json(system: str, user: str, schema: dict, client=None, temperature
             if e.code == 404 and model != MODEL:
                 continue  # this fallback isn't offered to this key: try the next one
             if e.code == 429:
-                raise LLMError("Gemini free-tier rate limit reached. Wait a minute and try again.") from e
+                rate_limited = True
+                continue  # each model has its own free-tier quota: try the next one
             if e.code in (400, 401, 403):
                 raise LLMError("Gemini rejected the request. Check GEMINI_API_KEY in .env.") from e
             raise LLMError(f"Gemini API error {e.code}.") from e
@@ -195,6 +197,8 @@ def generate_json(system: str, user: str, schema: dict, client=None, temperature
         except OSError as e:
             raise LLMError("Could not reach the Gemini API. Check your connection.") from e
     if response is None:
+        if rate_limited:
+            raise LLMError("Gemini free-tier rate limit reached on every model. Wait a minute and try again.")
         raise LLMError("Gemini is overloaded right now. Try again in a minute.")
 
     finish = str(response.candidates[0].finish_reason) if response.candidates else "NO_CANDIDATES"

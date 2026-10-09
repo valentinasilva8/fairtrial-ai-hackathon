@@ -141,3 +141,16 @@ def test_overloaded_model_falls_back_to_next():
     out = extract_case_fields(TEXT, client=client)
     assert out["complainant_type"]["verified"]
     assert calls[0] == MODEL and calls[1] != MODEL
+
+
+def test_rate_limit_on_every_model_raises_clear_error():
+    from google.genai import errors
+
+    client = FakeClient(GOOD)
+
+    def limited(**kwargs):
+        raise errors.ClientError(429, {"error": {"message": "quota", "status": "RESOURCE_EXHAUSTED"}})
+
+    client.models.generate_content = limited
+    with pytest.raises(ExtractionError, match="rate limit"):
+        extract_case_fields(TEXT, client=client)
