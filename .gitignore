@@ -32,3 +32,6 @@ yarn-error.log*
 
 # Downloaded TrialWatch report PDFs and extracted text (CFJ copyright; not republished)
 data/raw/
+
+# Approved letter drafts (saved locally by the UN Letter page)
+outputs/
