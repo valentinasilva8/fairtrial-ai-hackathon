@@ -16,7 +16,7 @@ TrialWatch monitors criminal prosecutions of journalists and other public-intere
 5. **UN Special Rapporteur letter** — LLM drafts a submission from the case, stress test, pledges and Argument Bank. Every sentence cites numbered sources; code rejects uncited sentences, unknown sources and invented quotations; a second check flags unsupported sentences; a named reviewer approves before saving. (English press release and Bahasa post: not built yet.)
 
 ## Stack
-- Python 3.11+, Streamlit (`app.py` + `pages/`), pandas
+- Python 3.11+, Streamlit (`app.py` + `views/`, listed in `st.navigation`; not `pages/`, which Streamlit would auto-load), pandas
 - LLM via Google Gemini API, free tier (key in `.env` as `GEMINI_API_KEY`, never committed; model `gemini-flash-latest` with fallbacks). Free tier: Google may use prompts, so never send sensitive cases.
 - PDF text via poppler's `pdftotext`; CFJ report PDFs/text live in git-ignored `data/raw/`
 - Data as CSV in `data/`. No database.
@@ -24,12 +24,14 @@ TrialWatch monitors criminal prosecutions of journalists and other public-intere
 
 ## Structure
 ```
-app.py                    # entry point: st.navigation grouped Monitoring / Evaluation / Advocacy (page config set here only)
-pages/0_Home.py           # overview metrics, cases by outcome, Promise Clock
-pages/1_Cases.py          # case list + timeline view (Valentina, PR #5)
-pages/2_Stress_Test.py    # stress test results + "add a case from text"
-pages/3_Argument_Bank.py  # similar TrialWatch cases, outcomes, arguments
-pages/4_UN_Letter.py      # sourced UN Special Rapporteur letter with approve / mark-sensitive
+app.py                    # entry point: st.navigation grouped Overview / Evaluation / Advocacy / Accountability (page config set here only)
+views/0_Home.py           # "Start here": door intro, metrics, a card per page, Indonesian cases, Promise Clock
+views/5_Outcome_Updates.py # verified later outcome changes + form
+src/theme.py              # burgundy styling, gavel cursor, door intro, credits footer (CSS only)
+views/1_Cases.py          # case list + timeline view (Valentina, PR #5)
+views/2_Stress_Test.py    # stress test results + "add a case from text"
+views/3_Argument_Bank.py  # similar TrialWatch cases, outcomes, arguments
+views/4_UN_Letter.py      # sourced UN Special Rapporteur letter with approve / mark-sensitive
 src/stress_test.py        # rule engine (pure functions, unit tested, no LLM)
 src/reports.py            # parse TrialWatch PDFs: grades, argument tags, UN decisions
 src/outcomes.py           # outcome evidence from reports + CFJ news posts
@@ -60,7 +62,7 @@ references/               # source PDFs (CFJ EIT report) — not required to run
 - Don't commit full CFJ report text or PDFs. Only the paragraphs the app displays are published
   (`data/trialwatch_argument_excerpts.jsonl`, regenerate with `scripts/export_argument_excerpts.py`)
   under CFJ's copyright notice in `data/NOTICE.md`.
-- New pages: add them to the navigation in `app.py`; don't call `st.set_page_config` in pages.
+- New pages go in `views/` and must be added to the navigation in `app.py`; don't call `st.set_page_config` in pages.
 - The Gemini key comes from Streamlit secrets when deployed, else `.env` (`src/llm.py: api_key()`).
 
 ## Judging criteria (optimize for these)

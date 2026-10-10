@@ -2,11 +2,11 @@
 
 Live app: https://fairtrial-ai-hackathongit-cyvqxeqekcqd4hjsqr7b5w.streamlit.app/
 
-Start the app from its main link, which opens **Start here** (not a page link). Free Streamlit apps sleep when unused: open the link a few minutes before presenting. Total: about 10 minutes.
+Start the app from its main link: the courtroom doors open onto **Start here** (they replay each time you return to Start here). Direct page links also work. Free Streamlit apps sleep when unused: open the link a few minutes before presenting. Total: about 10 minutes.
 
 ## 1. Start here (1 min)
 - **Say:** "TrialWatch has graded dozens of trials of journalists and critics. Precedent & Practice turns those reports into arguments, precedents and sourced UN submissions for the next person prosecuted for speech."
-- **Show:** the four numbers (47 fairness reports searchable by argument · 23 countries · 21 of 47 good outcomes that followed · 5 of 13 Indonesian cases likely barred) then "What you can do": one card per page (Argument Bank, Stress Test, UN Letter, Outcome Updates), each with a link and what it does, following Evaluation → Advocacy → Accountability. Below, the Indonesian cases: 14 of 14 checked by a teammate, 12 fully confirmed, 2 with one detail still open (we show which).
+- **Show:** the four numbers (47 fairness reports searchable by argument · 23 countries · 21 of 47 good outcomes that followed · 5 of 13 Indonesian cases likely barred) then "What you can do": one card per page (Argument Bank, Stress Test, UN Letter, Outcome Updates), each with a link and what it does, following Evaluation → Advocacy → Accountability. Below, the Indonesian cases: 14 of 14 checked by a teammate and fully confirmed with sources. The team's names are in the footer of every page.
 - **Scroll to the Promise Clock:** days since each official pledge; the police pledge's date is marked "to verify". We don't overstate.
 
 ## 2. Argument Bank (3 min): the core

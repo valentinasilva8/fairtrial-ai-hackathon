@@ -118,11 +118,11 @@ Tests run on every pull request and push to `main` (GitHub Actions). They use ma
 ## Project structure
 ```
 app.py                       # entry point: page navigation (Overview / Evaluation / Advocacy / Accountability)
-pages/0_Home.py              # "Start here": links to every page, Indonesian cases, Promise Clock
-pages/5_Outcome_Updates.py   # verified later outcome changes + form
-pages/2_Stress_Test.py       # reform stress test + "add a case from text"
-pages/3_Argument_Bank.py     # similar TrialWatch cases, outcomes, arguments
-pages/4_UN_Letter.py         # sourced UN Special Rapporteur letter
+views/0_Home.py              # "Start here": links to every page, Indonesian cases, Promise Clock
+views/5_Outcome_Updates.py   # verified later outcome changes + form
+views/2_Stress_Test.py       # reform stress test + "add a case from text"
+views/3_Argument_Bank.py     # similar TrialWatch cases, outcomes, arguments
+views/4_UN_Letter.py         # sourced UN Special Rapporteur letter
 src/stress_test.py           # rule engine R1–R4 (deterministic, no AI)
 src/reports.py               # parse TrialWatch PDFs: grades, argument tags, UN decisions
 src/outcomes.py              # outcome evidence from reports and CFJ news posts
@@ -131,7 +131,7 @@ src/argument_bank.py         # similar cases + strongest arguments per category
 src/letter.py                # letter sources, citation validation, support check
 src/llm.py                   # Gemini calls (structured JSON, model fallback)
 src/promise_clock.py         # days since each pledge
-src/theme.py                 # look and feel: styling, gavel cursor, courtroom-door intro (CSS only)
+src/theme.py                 # look and feel: burgundy styling, gavel cursor, door intro, credits footer (CSS only)
 src/data.py                  # load + validate the case CSVs
 scripts/                     # download and build the TrialWatch datasets
 data/                        # case, event, promise, verification and TrialWatch tables

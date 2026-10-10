@@ -35,8 +35,8 @@ Rule of thumb: Claude Code writes the code. **People find and verify facts, make
 
 | Person | Owns | Claude Code prompts | Manual work |
 |---|---|---|---|
-| **Shreya** | Reform Stress Test: `src/stress_test.py`, `tests/`, `pages/2_Stress_Test.py`, rules doc | 2, 3, 4 | Confirm rules with mentor at 1 pm; rule-sensitivity analysis; methodology slide |
-| **Valentina** | App: `app.py`, `pages/1_Cases.py`, Promise Clock, styling, deploy | 1 (done), 5, 6, 8, 9 | Deploy to Streamlit Cloud by Sat 11 am; API key as secret; screenshots |
+| **Shreya** | Reform Stress Test: `src/stress_test.py`, `tests/`, `views/2_Stress_Test.py`, rules doc | 2, 3, 4 | Confirm rules with mentor at 1 pm; rule-sensitivity analysis; methodology slide |
+| **Valentina** | App: `app.py`, `views/1_Cases.py`, Promise Clock, styling, deploy | 1 (done), 5, 6, 8, 9 | Deploy to Streamlit Cloud by Sat 11 am; API key as secret; screenshots |
 | **Ungu** | Briefs + LLM: `pages/3_Briefs.py`, `src/llm.py` | 7 | Model letter on real UN communications; find a Bahasa speaker to check the post; brief evaluation (section 3) |
 | **Layla** | Data lead + pitch: post-2025 cases, data QA, slides, submission text | one-liner "check CSVs for missing sources" | Slides + demo script; written description for submission; README final check |
 
