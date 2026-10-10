@@ -11,6 +11,7 @@ from src.impacts import impacts_for, load_impacts
 from src.data import DataValidationError, load_all, public_cases
 from src.letter import (
     LLMError,
+    SensitiveCaseError,
     build_sources,
     check_support,
     generate_draft,
@@ -18,7 +19,7 @@ from src.letter import (
     template_draft,
     validate,
 )
-from src.similarity import features_from_case
+from src.similarity import CHARGES, COUNTRIES, REGION, ROLES, SPEECH, features_from_case
 from src.stress_test import evaluate_case
 
 OUT_DIR = Path(__file__).resolve().parent.parent / "outputs" / "briefs"
@@ -50,28 +51,63 @@ except DataValidationError as e:
     st.stop()
 
 cases = public_cases(data.cases)
-names = dict(zip(cases["case_id"], cases["name"]))
-case_id = st.selectbox("Case", list(names), format_func=names.get, key="letter_case")
-case = {**cases.set_index("case_id").loc[case_id].to_dict(), "case_id": case_id}
+NEW = "new_case"
+names = {NEW: "➕ A new case, any country (describe it below)", **dict(zip(cases["case_id"], cases["name"]))}
+case_id = st.selectbox("Case", list(names), index=1, format_func=names.get, key="letter_case")
+
+if case_id == NEW:
+    st.markdown("**Describe the case.** Only what you enter here is used about the case, and it is marked "
+                "unverified until a person checks it against a source.")
+    n1, n2 = st.columns(2)
+    name = n1.text_input("Defendant's name", key="lt_name")
+    role = n2.text_input("Who they are (e.g. journalist, activist)", key="lt_role")
+    country = n1.text_input("Country", key="lt_country")
+    law = n2.text_input("Law or charge", key="lt_law", placeholder="e.g. Article 495 of the Criminal Code")
+    facts = st.text_area("What happened (facts only)", key="lt_facts", height=100)
+    source = st.text_input("Source for these facts (URL or citation)", key="lt_source")
+    f1, f2 = st.columns(2)
+    charges = f1.multiselect("Charge type (for finding similar TrialWatch trials)", list(CHARGES), key="lt_charges")
+    speech = f2.multiselect("Kind of speech", list(SPEECH), key="lt_speech")
+    roles = f1.multiselect("Defendant", list(ROLES), key="lt_roles")
+    region = f2.selectbox("Region", list(REGION), key="lt_region")
+    at_risk = st.checkbox("This person is at risk and the case should stay out of AI tools (sensitive)", key="lt_sensitive")
+    if not (name and country and facts and charges):
+        st.info("Enter at least the name, country, facts and one charge type.")
+        st.stop()
+    case = {"case_id": NEW, "name": name, "role": role or "not given", "country": country,
+            "law": law or "a speech-related charge", "complainant": "not given", "complainant_type": "unknown",
+            "article": law or "not given", "year_reported": "not given", "outcome": "as described",
+            "outcome_detail": facts, "source": source, "verified": False, "sensitive": at_risk}
+    features = {"country": country if country in COUNTRIES else "", "region": region,
+                "charges": charges, "speech": speech, "roles": roles}
+    stress, promises, events = None, [], []
+else:
+    case = {**cases.set_index("case_id").loc[case_id].to_dict(), "case_id": case_id}
+    features = features_from_case(case)
+    stress, promises = evaluate_case(case), data.promises.to_dict("records")
+    events = data.events[data.events["case_id"] == case_id].to_dict("records") if data.events is not None else []
 
 n_past = st.slider("Similar TrialWatch cases to draw arguments from", 1, 5, 3)
 if not arguments_available():
     st.info("Argument text isn't loaded on this machine; the letter will cite the case, reform and pledges only. "
             "Run the scripts in docs/ARGUMENT_BANK.md to add TrialWatch arguments.")
 
-events = data.events[data.events["case_id"] == case_id].to_dict("records") if data.events is not None else []
-matches = similar_cases(features_from_case(case), top_n=n_past)
+matches = similar_cases(features, top_n=n_past)
 impact_sheet = load_impacts()
 past = [{**m, "arguments": best_arguments(m["report_url"]), "impacts": impacts_for(m["report_url"], impact_sheet)}
         for m in matches.to_dict("records")]
-sources = build_sources(case, events, evaluate_case(case), data.promises.to_dict("records"), past)
+try:
+    sources = build_sources(case, events, stress, promises, past)
+except SensitiveCaseError as e:
+    st.warning(f"{e} Nothing has been sent to any AI tool.")
+    st.stop()
 
 with st.expander(f"Sources the letter may use ({len(sources)})"):
     for s in sources:
         tag = "" if s.verified else " · :gray-background[unverified]"
         st.markdown(f"`{s.id}` **{s.label}**{tag}" + (f" — {s.url}" if s.url else ""))
 
-key = f"letter_{case_id}_{n_past}"
+key = f"letter_{case_id}_{n_past}_{hash(str(case))}"
 b1, b2 = st.columns(2)
 if b1.button("Draft with Gemini", type="primary"):
     try:
