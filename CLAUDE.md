@@ -20,11 +20,12 @@ TrialWatch monitors criminal prosecutions of journalists and other public-intere
 - LLM via Google Gemini API, free tier (key in `.env` as `GEMINI_API_KEY`, never committed; model `gemini-flash-latest` with fallbacks). Free tier: Google may use prompts, so never send sensitive cases.
 - PDF text via poppler's `pdftotext`; CFJ report PDFs/text live in git-ignored `data/raw/`
 - Data as CSV in `data/`. No database.
-- Run: `streamlit run app.py`
+- Run: `streamlit run app.py`; deploy on Streamlit Community Cloud (steps in README)
 
 ## Structure
 ```
-app.py                    # Streamlit home: cases by outcome + Promise Clock
+app.py                    # entry point: st.navigation grouped Monitoring / Evaluation / Advocacy (page config set here only)
+pages/0_Home.py           # overview metrics, cases by outcome, Promise Clock
 pages/1_Cases.py          # case list + timeline view (Valentina, PR #5)
 pages/2_Stress_Test.py    # stress test results + "add a case from text"
 pages/3_Argument_Bank.py  # similar TrialWatch cases, outcomes, arguments
@@ -55,7 +56,11 @@ references/               # source PDFs (CFJ EIT report) — not required to run
 - Keep the rule engine, report parsing and case matching deterministic; use the LLM only to fill rule inputs from text and to draft letters, and show its reasoning.
 - Never predict the outcome of a live trial; show what followed in similar past cases.
 - TrialWatch outcomes count only once a person fills `verified_by` in `data/trialwatch_outcomes.csv`.
-- Don't commit CFJ report text or PDFs (copyright); commit metadata, grades and links only.
+- Don't commit full CFJ report text or PDFs. Only the paragraphs the app displays are published
+  (`data/trialwatch_argument_excerpts.jsonl`, regenerate with `scripts/export_argument_excerpts.py`)
+  under CFJ's copyright notice in `data/NOTICE.md`.
+- New pages: add them to the navigation in `app.py`; don't call `st.set_page_config` in pages.
+- The Gemini key comes from Streamlit secrets when deployed, else `.env` (`src/llm.py: api_key()`).
 
 ## Judging criteria (optimize for these)
 Innovation 25 · Feasibility within TrialWatch's infrastructure 25 · Human Rights Impact 30 · Ethical Rigor & Responsible AI 20.

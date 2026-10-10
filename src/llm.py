@@ -147,10 +147,22 @@ def to_case_inputs(fields: dict) -> dict:
     }
 
 
+def api_key() -> str | None:
+    """GEMINI_API_KEY from Streamlit secrets (deployed app) or the environment / .env (local)."""
+    try:
+        import streamlit as st
+
+        if "GEMINI_API_KEY" in st.secrets:
+            return st.secrets["GEMINI_API_KEY"]
+    except Exception:  # no secrets file, or not running under Streamlit
+        pass
+    return os.getenv("GEMINI_API_KEY")
+
+
 def get_client():
     from google import genai
 
-    key = os.getenv("GEMINI_API_KEY")
+    key = api_key()
     if not key:
         raise LLMError("No API key found. Add GEMINI_API_KEY to .env.")
     from google.genai import types

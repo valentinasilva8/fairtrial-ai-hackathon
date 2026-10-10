@@ -30,7 +30,6 @@ VERDICT_COLORS = {
 }
 URL_RE = re.compile(r"https?://\S+")
 
-st.set_page_config(page_title="Stress Test · Paper vs. Practice", page_icon="⚖️", layout="wide")
 
 st.title("Reform Stress Test")
 st.warning(

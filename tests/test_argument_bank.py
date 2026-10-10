@@ -37,3 +37,17 @@ def test_page_link():
 def test_footnotes_are_recognised():
     assert FOOTNOTE.search("87 Conversation with staff, November 22, 2022. Available at https://www.reuters.com/x")
     assert not FOOTNOTE.search("Article 495 is insufficiently precise and fails the legality requirement.")
+
+
+def test_published_excerpts_are_attributed_and_located():
+    import json
+    from pathlib import Path
+
+    from src.argument_bank import EXCERPTS
+
+    assert "All rights reserved by CFJ" in Path("data/NOTICE.md").read_text()
+    recs = [json.loads(line) for line in open(EXCERPTS)]
+    paras = [r for r in recs if "text" in r]
+    assert paras and all(r["url"].startswith("https://cfj.org/reports/") and r["page"] >= 1 for r in paras)
+    # only the displayed paragraphs: a small fraction of the ~2,300 extracted
+    assert len(paras) < 300

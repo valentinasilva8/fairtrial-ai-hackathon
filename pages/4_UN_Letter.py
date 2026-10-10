@@ -23,7 +23,6 @@ from src.stress_test import evaluate_case
 OUT_DIR = Path(__file__).resolve().parent.parent / "outputs" / "briefs"
 VERDICT_COLORS = {"supported": "green", "partly supported": "orange", "not supported": "red", "not checked": "gray"}
 
-st.set_page_config(page_title="UN Letter · Paper vs. Practice", page_icon="⚖️", layout="wide")
 st.title("UN Special Rapporteur letter")
 st.caption(
     "A draft submission to the UN Special Rapporteur on freedom of opinion and expression, built from the case "

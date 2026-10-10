@@ -13,7 +13,6 @@ from src.argument_bank import (
 from src.data import DataValidationError, load_all, public_cases
 from src.similarity import CHARGES, REGION, ROLES, SPEECH, features_from_case
 
-st.set_page_config(page_title="Argument Bank · Paper vs. Practice", page_icon="⚖️", layout="wide")
 
 st.title("Argument Bank")
 st.caption(
