@@ -26,7 +26,7 @@ HOOK = (
 
 st.title(f"⚖️ {PROJECT_NAME}")
 st.markdown(f"#### {SUBTITLE}")
-with st.container(border=True):
+with st.container(border=True, key="pp-card-hook"):
     st.markdown(f"*{HOOK}*")
     st.page_link("pages/3_Argument_Bank.py", label="**Start with a case in the Argument Bank →**", icon="📚")
 st.caption(
@@ -82,7 +82,7 @@ PAGES = [
      "appeal, and a form to record a new one."),
 ]
 for col, (stage, path, title, icon, text) in zip(st.columns(4), PAGES):
-    with col.container(border=True, height="stretch", vertical_alignment="distribute"):
+    with col.container(border=True, height="stretch", vertical_alignment="distribute", key=f"pp-card-{title.replace(' ', '_')}"):
         with st.container(gap="small"):
             st.caption(stage)
             st.markdown(f"#### {icon} {title}")
@@ -91,7 +91,7 @@ for col, (stage, path, title, icon, text) in zip(st.columns(4), PAGES):
 
 improved = bank[bank["outcome_improved"]]
 if not improved.empty:
-    with st.container(border=True):
+    with st.container(border=True, key="pp-card-impact"):
         st.markdown(f"##### 📈 Outcomes that changed for the better after TrialWatch's work: {len(improved)}")
         for r in improved.itertuples():
             st.markdown(f"- **{r.case}**: " + " → then ".join(r.outcome_history))

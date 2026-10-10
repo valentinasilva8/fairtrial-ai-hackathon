@@ -131,6 +131,7 @@ src/argument_bank.py         # similar cases + strongest arguments per category
 src/letter.py                # letter sources, citation validation, support check
 src/llm.py                   # Gemini calls (structured JSON, model fallback)
 src/promise_clock.py         # days since each pledge
+src/theme.py                 # look and feel: styling, gavel cursor, courtroom-door intro (CSS only)
 src/data.py                  # load + validate the case CSVs
 scripts/                     # download and build the TrialWatch datasets
 data/                        # case, event, promise, verification and TrialWatch tables
