@@ -95,3 +95,15 @@ def test_check_support_downgrades_fake_evidence():
     assert len(result) == n
     assert result[0]["verdict"] == "partly supported"
     assert result[1]["verdict"] == "supported"
+
+
+def test_quote_check_ignores_punctuation_but_not_words():
+    from src.letter import Source
+
+    src = [Source("tw:a:p1", "TrialWatch report", "[T[he subjective character of many defamation laws, their overly broad scope")]
+    ok = {"sections": [{"heading": "Summary", "sentences": [
+        {"text": "It noted “the subjective character of many defamation laws their overly broad scope”.", "sources": ["tw:a:p1"]}]}]}
+    changed = {"sections": [{"heading": "Summary", "sentences": [
+        {"text": "It noted “the subjective nature of many defamation laws”.", "sources": ["tw:a:p1"]}]}]}
+    assert validate(ok, src) == []
+    assert validate(changed, src)

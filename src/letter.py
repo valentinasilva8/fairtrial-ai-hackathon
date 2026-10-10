@@ -93,7 +93,9 @@ QUOTE = re.compile(r"[“\"]([^”\"]{12,})[”\"]")
 
 
 def _norm(s: str) -> str:
-    return re.sub(r"\s+", " ", s.replace("’", "'").replace("‘", "'")).strip().lower()
+    """Words only, in order: ignores case, punctuation, brackets and spacing (e.g. "[T[he" -> "the")."""
+    s = re.sub(r"[\[\]]", "", s.lower())
+    return " ".join(re.findall(r"[a-z0-9]+", s))
 
 
 def validate(draft: dict, sources: list[Source]) -> list[str]:
