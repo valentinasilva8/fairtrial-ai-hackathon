@@ -1,6 +1,8 @@
 # Demo guide — Precedent & Practice, for the mentor meeting and the judges
 
-Start the app from its **Home** link (not a page link). Total: about 10 minutes.
+Live app: https://fairtrial-ai-hackathongit-cyvqxeqekcqd4hjsqr7b5w.streamlit.app/
+
+Start the app from its **Home** link (not a page link). Free Streamlit apps sleep when unused: open the link a few minutes before presenting. Total: about 10 minutes.
 
 ## 1. Home (1 min)
 - **Say:** "TrialWatch has graded dozens of trials of journalists and critics. Precedent & Practice turns those reports into arguments, precedents and sourced UN submissions for the next person prosecuted for speech."

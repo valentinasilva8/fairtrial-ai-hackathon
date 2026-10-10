@@ -1,6 +1,8 @@
 # Precedent & Practice
 *A human rights advocacy tracker built on TrialWatch's fairness reports*
 
+**Live app: [https://fairtrial-ai-hackathongit-cyvqxeqekcqd4hjsqr7b5w.streamlit.app/](https://fairtrial-ai-hackathongit-cyvqxeqekcqd4hjsqr7b5w.streamlit.app/)**
+
 [![Tests](https://github.com/valentinasilva8/fairtrial-ai-hackathon/actions/workflows/tests.yml/badge.svg)](https://github.com/valentinasilva8/fairtrial-ai-hackathon/actions/workflows/tests.yml)
 
 > *TrialWatch has analysed dozens of trials of journalists and critics. We turn those reports into arguments, precedents and sourced UN submissions for the next person prosecuted for speech.*

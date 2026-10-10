@@ -3,6 +3,7 @@
 
 *TrialWatch Fair Trial & AI Hackathon · Track 3: Advocacy & Impact*
 *Team: Shreya, Valentina, Ungu, Layla, Yuki*
+*Live app: https://fairtrial-ai-hackathongit-cyvqxeqekcqd4hjsqr7b5w.streamlit.app/*
 *Repository: https://github.com/valentinasilva8/fairtrial-ai-hackathon (code MIT; report excerpts © Clooney Foundation for Justice)*
 *An independent hackathon project, not endorsed by the Clooney Foundation for Justice, TrialWatch® or Columbia Law School.*
 
