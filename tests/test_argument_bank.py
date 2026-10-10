@@ -51,3 +51,24 @@ def test_published_excerpts_are_attributed_and_located():
     assert paras and all(r["url"].startswith("https://cfj.org/reports/") and r["page"] >= 1 for r in paras)
     # only the displayed paragraphs: a small fraction of the ~2,300 extracted
     assert len(paras) < 300
+
+
+def test_same_drafting_and_grouping(monkeypatch):
+    import pandas as pd
+
+    import src.argument_bank as ab
+
+    shared = "In order to comply with the principle of legality, legislation must be formulated with sufficient precision."
+    other = "The sentence of two years' imprisonment was disproportionate to any legitimate aim pursued."
+    assert ab.same_drafting(shared, shared.replace("legislation", "a law")) and not ab.same_drafting(shared, other)
+    paras = {"u1": {"legality": [{"page": 3, "text": shared}]},
+             "u2": {"legality": [{"page": 9, "text": shared + " 12"}]},
+             "u3": {"legality": [{"page": 5, "text": other}]}}
+    monkeypatch.setattr(ab, "best_arguments", lambda url: paras[url])
+    matches = pd.DataFrame([
+        {"report_url": u, "case": c, "author": a, "pdf_url": "", "outcome": o, "outcome_confirmed": True, "good_outcome": g}
+        for u, c, a, o, g in [("u1", "A v. X", "Ann", "convicted", False), ("u2", "B v. Y", "Ben", "acquitted", True),
+                              ("u3", "C v. Z", "", "convicted", False)]])
+    groups = ab.grouped_arguments(matches, ["legality"])["legality"]
+    assert [len(g["cases"]) for g in groups] == [2, 1]          # shared drafting counted once, good outcome first
+    assert {c["author"] for c in groups[0]["cases"]} == {"Ann", "Ben"}

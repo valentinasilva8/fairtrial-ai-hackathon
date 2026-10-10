@@ -9,17 +9,20 @@ from src.data import DataValidationError, load_all, public_cases
 from src.promise_clock import days_since, evidence_text, status_label
 from src.stress_test import LIKELY_BARRED, evaluate_all
 
-PROJECT_NAME = "Paper vs. Practice"
+PROJECT_NAME = "Precedent & Practice"
+SUBTITLE = "A human rights advocacy tracker built on TrialWatch's fairness reports"
 HOOK = (
-    "Indonesia reformed its speech law. We stress-tested the reform: how many "
-    "past prosecutions would it have stopped — and is it stopping new ones?"
+    "TrialWatch has analysed dozens of trials of journalists and critics. We turn those reports into "
+    "arguments, precedents and sourced UN submissions for the next person prosecuted for speech."
 )
 
 st.title(PROJECT_NAME)
+st.subheader(SUBTITLE)
 st.markdown(f"> *{HOOK}*")
 st.caption(
-    "TrialWatch Fair Trial & AI Hackathon · Track 3: Advocacy & Impact. "
-    "All outputs are drafts for lawyer review, not legal conclusions."
+    "TrialWatch Fair Trial & AI Hackathon · Track 3: Advocacy & Impact · Team: Shreya, Valentina, Ungu, Layla, Yuki. "
+    "An independent hackathon project, not endorsed by the Clooney Foundation for Justice, TrialWatch or Columbia "
+    "Law School. All outputs are drafts for lawyer review, not legal conclusions."
 )
 
 
@@ -42,20 +45,24 @@ results = evaluate_all(cases.reset_index(drop=True)).merge(cases[["case_id", "ye
 past = results[results["year_reported"].isna() | (results["year_reported"] < 2025)]
 bank = past_cases()
 
-m1, m2, m3 = st.columns(3)
-m1.metric("Past cases likely barred",
-          f"{int((past['verdict'] == LIKELY_BARRED).sum())} of {len(past)}")
-m2.metric("Argument Bank trials", len(bank),
+m1, m2, m3, m4 = st.columns(4)
+m1.metric("TrialWatch trials searchable by argument", len(bank),
           help="Graded TrialWatch fairness reports that analyse freedom of expression")
-m3.metric("Countries covered", bank["country"].nunique())
+m2.metric("Countries covered", bank["country"].nunique())
+m3.metric("Good outcomes that followed", f"{int(bank['good_outcome'].sum())} of {len(bank)}",
+          help="Acquittal, charges dropped, conviction overturned, release, or a UN finding of arbitrary detention; "
+               "each confirmed by a teammate with a source")
+m4.metric("Indonesian cases likely barred by the reform", f"{int((past['verdict'] == LIKELY_BARRED).sum())} of {len(past)}")
 
 st.markdown(
     "**How it works** — following TrialWatch's own process:\n"
-    "1. **Monitoring** — *Cases*: each Indonesian case on a source-linked timeline.\n"
-    "2. **Evaluation** — *Stress Test*: would the 2025 ruling bar this case today? "
-    "*Argument Bank*: how TrialWatch argued similar cases elsewhere, and what followed.\n"
-    "3. **Advocacy** — *UN Letter*: a draft to the UN Special Rapporteur where every sentence cites its source, "
-    "approved by a person before use."
+    "1. **Evaluation** — *Argument Bank*: for a new or current case, the most similar TrialWatch trials, what "
+    "followed, and the arguments their reports made on legality, vagueness, broadness, necessity and "
+    "proportionality, with page links, authors and the UN decisions cited. *Stress Test*: where a country has "
+    "just reformed its law (Indonesia, 2024–25), whether the reform should already bar the case.\n"
+    "2. **Advocacy** — *UN Letter*: a draft to the UN Special Rapporteur where every sentence cites its source, "
+    "approved by a person before use.\n"
+    "3. **Accountability** — *Promise Clock* (below): whether officials kept the promises they made."
 )
 
 st.header("Cases by outcome")

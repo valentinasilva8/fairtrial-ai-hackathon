@@ -17,7 +17,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from src.argument_bank import CATEGORY_LABELS, page_link
+from src.argument_bank import CATEGORY_LABELS, page_link, same_drafting
 from src.llm import LLMError, generate_json
 
 RECIPIENT = "Special Rapporteur on the promotion and protection of the right to freedom of opinion and expression"
@@ -64,7 +64,7 @@ def build_sources(case: dict, events: list[dict], stress: dict, promises: list[d
         src.append(Source(f"event:{cid}:{i}", f"Timeline, {e['date']}", f"{e['date']}: {e['description']}",
                           e.get("source", ""), _yes(e.get("verified"))))
     src.append(Source(
-        f"stress:{cid}", "Paper vs. Practice reform stress test (for lawyer review)",
+        f"stress:{cid}", "Precedent & Practice reform stress test (for lawyer review)",
         f"Verdict: {stress['verdict']}. " + " ".join(stress["reasons"]),
         "docs/stress_test_rules.md",
     ))
@@ -72,16 +72,27 @@ def build_sources(case: dict, events: list[dict], stress: dict, promises: list[d
         src.append(Source(f"promise:{p['promise_id']}", f"Official pledge: {p['made_by']}",
                           f"{p['promise_text']} ({p['made_by']}, {p['date']}). Status: {p['status']}.",
                           p.get("source", ""), _yes(p.get("verified"))))
+    tw_sources: list[Source] = []
     for m in past:
         slug = m["report_url"].rstrip("/").rsplit("/", 1)[-1]
         outcome = f"{m['outcome']} ({'confirmed' if m['outcome_confirmed'] else 'unconfirmed'})"
+        by = f" by {m['author']}" if m.get("author") else ""
         for cat, paras in m["arguments"].items():
             for para in paras:
-                src.append(Source(
+                # The same paragraph reused in several reports is one source, naming every report.
+                twin = next((t for t in tw_sources if same_drafting(t.text, para["text"])), None)
+                if twin:
+                    if m["case"] not in twin.label:
+                        twin.label += f"; same paragraph in the report on {m['case']}{by}, p. {para['page']}"
+                    continue
+                twin = Source(
                     f"tw:{slug}:p{para['page']}",
-                    f"TrialWatch report, {m['case']}, p. {para['page']} ({CATEGORY_LABELS[cat]}; outcome: {outcome})",
+                    f"TrialWatch fairness report on {m['case']}{by}, p. {para['page']} "
+                    f"({CATEGORY_LABELS[cat]}; outcome: {outcome})",
                     para["text"], page_link(m.get("pdf_url", ""), para["page"]) or m["report_url"],
-                ))
+                )
+                tw_sources.append(twin)
+                src.append(twin)
         for imp in m.get("impacts", []):
             status = "confirmed" if imp["confirmed"] else "unconfirmed"
             src.append(Source(
@@ -189,9 +200,11 @@ Rules:
 - Every sentence must list the ids of the sources it relies on in "sources".
 - If you quote, copy the words exactly from the cited source and put them in quotation marks.
 - Sections, in order: {", ".join(SECTIONS)}.
-- In the international-standards section, explain how the arguments TrialWatch's experts made in similar past
-  cases (legality and vagueness, legitimate aim, necessity and proportionality, overbreadth) apply to this case,
-  naming the past case for each point. Say an outcome "followed", never that an argument "caused" it.
+- In the international-standards section, explain how the arguments made in TrialWatch fairness reports on similar past
+  cases (legality, vagueness, broadness, necessity, proportionality) apply to this case,
+  naming the past case and the report's author (given in the source label) for each point, e.g. "the TrialWatch
+  fairness report by Lisa Davis on Poland v. Podlesna argued…". Do not write "TrialWatch argued": the analysis is
+  the named author's. If a source label says the same paragraph appears in several reports, treat it as one point. Say an outcome "followed", never that an argument "caused" it.
   When you mention a past case's outcome, say whether it is confirmed, e.g. "(outcome not yet confirmed)";
   the case itself is not "unconfirmed".
 - Sources whose id starts with "impact:" are sentences from a past TrialWatch report about what the prosecution did

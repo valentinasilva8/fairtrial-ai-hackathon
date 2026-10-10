@@ -1,69 +1,78 @@
-# Paper vs. Practice — an advocacy tracker for TrialWatch
+# Precedent & Practice
+*A human rights advocacy tracker built on TrialWatch's fairness reports*
+
 *TrialWatch Fair Trial & AI Hackathon · Track 3: Advocacy & Impact*
 *Team: Shreya, Valentina, Ungu, Layla, Yuki*
-*Repository: https://github.com/valentinasilva8/fairtrial-ai-hackathon (MIT; report excerpts © Clooney Foundation for Justice)*
+*Repository: https://github.com/valentinasilva8/fairtrial-ai-hackathon (code MIT; report excerpts © Clooney Foundation for Justice)*
+*An independent hackathon project, not endorsed by the Clooney Foundation for Justice, TrialWatch® or Columbia Law School.*
 
 ## In one sentence
-Paper vs. Practice checks whether a speech-law reform would have stopped real prosecutions, finds how TrialWatch argued similar trials in 23 countries and what followed, and turns that into a UN Special Rapporteur submission where every sentence is sourced and a lawyer approves before use.
+When a journalist or activist is prosecuted for speech, Precedent & Practice finds the trials TrialWatch has already graded that most resemble the case, shows the arguments those reports made on legality, vagueness, broadness, necessity and proportionality and what followed for each defendant, and drafts a UN Special Rapporteur submission in which every sentence is sourced and a lawyer approves before use.
 
 ## The problem
-Indonesia's ITE (EIT) Law has been used against journalists, human rights defenders and critics, often on complaints by ministers, officials and companies. It was revised in 2024 (Law No. 1/2024) and narrowed by the Constitutional Court in 2025 (Decision 105/PUU-XXII/2024), and the police pledged to comply. Nobody can see whether this protects people in practice.
+TrialWatch has monitored and graded dozens of trials of journalists, human rights defenders and critics. Each fairness report applies international human rights law to the case: whether the law was clear enough (legality, vagueness), whether it swept in protected speech (broadness), and whether prosecution was necessary and proportionate. These reports are some of the best-sourced human-rights legal analysis available, but they sit as separate PDFs. When a new case arrives, a lawyer cannot quickly find how a similar trial was argued, which UN decisions the report relied on, or what happened to the defendant afterwards. Advocacy letters start from a blank page.
 
-At the same time, TrialWatch has published 90 reports, including 63 graded trials. When a new case arrives, a lawyer cannot quickly find how TrialWatch's experts argued a similar trial, which UN decisions they relied on, or what happened to the defendant afterwards. Advocacy letters are written from scratch each time.
+Reforms make this harder to judge. Indonesia revised its speech law in 2024, its Constitutional Court narrowed it in 2025 and the police pledged to comply, but nobody can see whether this protects people in practice.
 
 ## What the tool does
 The app follows TrialWatch's own process: **Monitoring → Evaluation → Advocacy**.
 
-1. **Reform Stress Test (Evaluation).** Four rules from the reformed law and the 2025 ruling, written as transparent code: only individuals can be defamation victims (R1); the victim must complain personally (R2); hate speech needs real, imminent harm (R3); public-interest speech has a defense (R4). Each Indonesian case gets *likely barred / at risk / still prosecutable*, with the rule and reason. **Result: 5 of 13 past cases would likely be barred.** A sensitivity analysis reruns this under ten readings of the law: it ranges from 3 to 8 of 13 and rests mainly on R1, which tells a lawyer exactly what to confirm.
-2. **Argument Bank (Evaluation).** Built from every report on cfj.org: 47 graded freedom-of-expression trials in 23 countries and territories. For a current case it finds the most similar past trials (by charge, kind of speech, defendant and region, with the reasons shown), puts those with a **good outcome first**, and shows the strongest argument TrialWatch's experts made on legality and vagueness, legitimate aim, necessity and proportionality, overbreadth, pretrial detention and fair trial, each with a link to the exact report page and the UN Human Rights Committee decisions cited. It also shows the **impact on each defendant** (conviction and sentence, detention, mistreatment, reputational harm, other restrictions, prolonged proceedings), each backed by the report sentence that states it.
-3. **UN Special Rapporteur letter (Advocacy).** A draft submission built only from numbered sources: the case record, the stress test, official pledges, and the Argument Bank. Code rejects any sentence without a source and any quotation not found word for word in its source; a second check flags sentences the sources don't fully support; a named reviewer approves before the letter is saved. A plain version can be built without AI.
+1. **Argument Bank (the core).** Built from all 96 report pages on cfj.org: 47 graded freedom-of-expression trials in 23 countries and territories. For a current case, or a new one a lawyer describes, it:
+   - finds the most similar trials by charge, kind of speech, defendant and region, and says why each matched;
+   - lists trials with a good outcome first (21 of 47: acquittal, charges dropped, conviction overturned, early release or pardon, or a UN finding of arbitrary detention), each confirmed by a teammate with a source;
+   - **By argument:** groups the arguments from those trials under the five labels the mentor asked for (legality, vagueness, broadness, necessity, proportionality), then legitimate aim, pretrial detention and fair trial. Each argument names the report's author, links the exact PDF page and lists the UN Human Rights Committee decisions cited. A paragraph reused word for word across reports, such as in three Cambodia cases, is shown once;
+   - **By case:** shows each similar trial's outcome, the impact on the defendant (conviction and sentence, detention, mistreatment, reputational harm, other restrictions, prolonged proceedings), and its arguments.
+2. **UN Special Rapporteur letter (advocacy).** A draft built only from numbered sources: the case record, the Argument Bank, the stress test and official pledges. Code rejects any sentence without a source and any quotation not found word for word; a second check flags sentences the sources don't fully support; a named reviewer approves before it is saved. A plain version can be built without AI.
+3. **Reform stress test (where a law has just changed).** For Indonesia, four rules from the reformed law and the 2025 ruling, written as transparent code, show that **5 of 13 past cases would likely be barred today**. A sensitivity analysis shows the range across ten legal readings (3 to 8 of 13), which tells a lawyer exactly what to confirm.
 4. **Promise Clock (accountability).** Days since each official pledge, with the evidence that it was kept.
-5. **Add a case from text.** Paste a news story about a new prosecution; Gemini suggests the rule inputs, each with a quote that code checks against the text, and a person edits every field before the stress test runs.
 
 ## Why lawyers can use it
-- **Easy:** a web app; pick a case and click. No installation, no AI knowledge, no database.
-- **Fast:** from a new case to similar TrialWatch trials, the arguments used, what followed, and a sourced draft letter in minutes instead of a day of reading.
-- **Checkable:** every argument links to the exact report page; every letter sentence lists its sources; nothing is hidden behind an AI answer.
-- **Honest about uncertainty:** verdicts are marked "for lawyer review"; the sensitivity analysis shows which legal reading the result depends on; unconfirmed data is labelled.
+- **Easy:** a web app. Pick a case or describe a new one; no installation, no AI knowledge.
+- **Fast:** from a new case to the closest TrialWatch trials, their arguments by label, what followed, and a sourced draft letter in minutes instead of a day of reading PDFs.
+- **Checkable:** every argument links to the exact report page and names its author; every letter sentence lists its sources.
+- **Honest about uncertainty:** outputs are marked "for lawyer review"; labels come from keyword matching and say so; unconfirmed data is labelled.
 
 ## Why it is specific to TrialWatch
-- It is built from **TrialWatch's own work**: all 96 report pages on cfj.org, the A–F fairness grades, the three-part test its experts apply, and its grading annex's definition of harm (which we use for the impact categories).
-- It follows **TrialWatch's process** (monitoring, evaluation, advocacy) and produces what TrialWatch already sends: submissions to UN mechanisms.
-- It makes TrialWatch's **47 fairness reports searchable by argument for the first time**, and links them to the 154 UN Human Rights Committee decisions they cite.
-- It measures **what followed TrialWatch's work**: 21 of the 47 trials had a good outcome (acquittal, charges dropped, conviction overturned, early release or pardon, or a UN finding of arbitrary detention), each confirmed by a teammate with a source.
-- It runs on **TrialWatch's existing infrastructure**: CSV files, a small Streamlit app and a free AI tier. The reform rules live in one file, so the next country's reform reuses everything.
+- It is built from **TrialWatch's own work**: its fairness reports, its A–F grades, the three-part test its experts apply, the authors on its Experts Panel, and its grading annex's definition of harm (used for the impact categories).
+- It follows **TrialWatch's process** and produces what TrialWatch already sends: submissions to UN mechanisms.
+- It makes TrialWatch's **47 fairness reports searchable by argument for the first time**, linked to the 154 UN Human Rights Committee decisions they cite.
+- It shows **what followed TrialWatch's work**: 21 of 47 trials ended in a good outcome. We say these outcomes *followed*; we never claim an argument *caused* them.
+- It runs on **TrialWatch's existing infrastructure**: CSV files, a small Streamlit app and a free AI tier. Adding a country's reform means writing its rules into one file.
 
 ## Human rights impact
-Behind each row is a person. Septia Dwi Pertiwi, a whistleblower, was detained for more than five months before a court found her posts true. Fatia Maulidiyanti and Haris Azhar spent about three years under prosecution for discussing a human rights report. Our stress test shows both complaints would likely be barred under the 2025 ruling. The tool lets TrialWatch spot such a case the day a complaint is filed and put the strongest, best-sourced argument in front of police, prosecutors and the UN before months of detention or years of suspicion add up. It also shows publicly whether officials kept the promises they made.
+The tool's value lies in what it does for human rights work, beyond any single case. It turns TrialWatch's analysis of international human rights law (ICCPR Article 19 and the UN Human Rights Committee's test for restricting speech) into reusable advocacy for the next person prosecuted for what they said. A lawyer defending a journalist in one country can rely on the strongest, best-sourced arguments TrialWatch made for a defendant in another, see that similar cases ended in acquittal or release, and send a sourced submission to a UN mechanism the same day. That speed matters because the harm in these cases is pretrial detention and years under prosecution: in our Indonesian data, Septia Dwi Pertiwi was detained more than five months before a court found her posts true, and Fatia Maulidiyanti and Haris Azhar spent about three years under prosecution for discussing a human rights report.
 
 ## Responsible AI
-- **No AI where rules will do:** the stress test, report parsing, grades, outcome and impact evidence, and case matching are deterministic code. AI only suggests rule inputs (each with a verified quote) and drafts letters (checked twice, then approved by a person).
-- **Every claim sourced**, unverified data labelled, and every number on our slides recomputed from the data.
-- **No predictions:** we show what *followed* in similar cases, never that an argument *caused* an outcome, and never a forecast for a live trial.
-- **People confirm the data:** cases, outcomes and impacts each carry a named checker.
-- **Sensitive cases** (people still at risk) are hidden from public views and never sent to the AI; on Gemini's free tier, Google may use prompts.
-- **Copyright:** only the 168 report paragraphs the app displays are published, each linked to its page, under CFJ's copyright notice.
+- **No AI where rules will do:** report parsing, grades, authors, argument labels, outcome and impact evidence, case matching and the stress test are deterministic, tested code. AI only suggests case facts from a news story (each with a verified quote) and drafts letters (checked twice, then approved by a person).
+- **Every claim sourced:** arguments link to their page; letter quotations are checked word for word; unverified data is labelled.
+- **Correct attribution:** each argument names the report's author; the analysis is theirs and not necessarily the Clooney Foundation for Justice's. Shared drafting is counted once, not as independent support.
+- **No predictions:** we show what followed in similar cases, never a forecast for a live trial.
+- **People confirm the data:** Indonesian cases, the 47 outcomes and the impacts each carry a named checker.
+- **Sensitive cases** (people still at risk) are hidden from public views and never sent to the AI.
+- **Copyright:** only the 201 report paragraphs the app displays are published, each linked to its page, under CFJ's copyright notice; the full reports stay on cfj.org.
 
 ## Validation
 | Check | Result |
 |---|---|
-| Argument paragraphs found on the PDF page they cite | 2,304 / 2,304 |
+| Argument paragraphs found on the PDF page they cite | 2,381 / 2,381 |
 | Impact sentences found on the PDF page they cite | 288 / 288 |
-| Argument category tags (hand-read sample of 40) | about 75–80% right |
-| Impact categories (hand-read sample of 10) | 8 / 10, both misses since fixed |
+| Report authors extracted, each with the sentence it came from | 47 / 47 |
 | TrialWatch outcomes confirmed by a teammate with a source | 47 / 47 |
+| Argument labels (hand-read sample of 40, earlier label set) | about 75–80% right |
+| Impact categories (hand-read sample of 10) | 8 / 10, both misses since fixed |
 | Stress-test headline across ten legal readings | 3 to 8 of 13 (baseline 5) |
-| Automated tests, run on every change | 149 passing |
+| Automated tests, run on every change | all passing |
 
 ## Limits
-- Argument categories come from keyword matching and need human review; the page says so and always links the exact text.
-- The arguments are TrialWatch experts' analysis, not necessarily what was argued in court.
-- Only two post-ruling Indonesian cases so far; the new Criminal Code may let prosecutions move off the ITE Law (Laras Faizati was convicted under the Penal Code).
+- Argument labels come from keyword matching and need human review; the app says so and always links the exact text.
+- The arguments are the report authors' analysis, not necessarily what was argued in court.
+- Similar-case matching uses a few named features (charge, speech, defendant, region); a lawyer can edit them.
+- Only two post-ruling Indonesian cases so far; prosecutions may move to the new Criminal Code.
 - We are data science students, not lawyers: legal readings come from cited sources and need a lawyer's review.
 
-## How TrialWatch would use it, step by step
-1. A monitor reads about a new ITE prosecution and pastes the story into the app.
-2. The stress test shows whether the 2025 ruling should have barred it, and why.
-3. The Argument Bank shows the closest past TrialWatch trials, what followed, and the arguments and UN decisions to rely on.
-4. The UN Letter page drafts a submission; a TrialWatch lawyer reviews the flagged sentences, edits, approves and sends.
-5. Over time, the Promise Clock and outcome data show whether the reform, and TrialWatch's advocacy, changed what happens to people.
+## How TrialWatch would use it
+1. A monitor or lawyer hears of a new speech prosecution and opens the Argument Bank, picking a similar case or describing the new one.
+2. **By argument** shows how TrialWatch's reports argued legality, vagueness, broadness, necessity and proportionality in the closest trials, by whom, on which page, and what followed.
+3. Where the country has just reformed its law, the stress test shows whether the reform should already bar the case.
+4. The UN Letter page drafts a submission from those sources; a TrialWatch lawyer reviews the flagged sentences, edits, approves and sends.
+5. Over time, the outcome data and the Promise Clock show what followed TrialWatch's work and whether reforms are being kept.

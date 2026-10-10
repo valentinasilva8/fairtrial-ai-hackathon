@@ -2,7 +2,7 @@
 
 Re-run after any data or feature change and the slides update:
     pip install python-pptx
-    python scripts/build_slides.py            # -> pitch/Paper_vs_Practice.pptx
+    python scripts/build_slides.py            # -> pitch/Precedent_and_Practice.pptx
 
 Template: final_ppt_example.pptx (slides 1-11 are the pitch template; 12-20 an example deck,
 three of whose layouts are reused). Stock portraits are removed so nobody mistakes them for
@@ -34,15 +34,15 @@ from src.data import load_all, public_cases  # noqa: E402
 from src.sensitivity import SCENARIOS, run  # noqa: E402
 
 TEMPLATE = ROOT / "final_ppt_example.pptx"
-OUT = ROOT / "pitch" / "Paper_vs_Practice.pptx"
+OUT = ROOT / "pitch" / "Precedent_and_Practice.pptx"
 
 MAROON, CORAL, LAVENDER, MINT, WHITE = "4D1808", "D77B62", "D1D5FA", "DEFED9", "FFFFFF"
 
 # Fixed facts from the pipeline runs (see docs/ARGUMENT_BANK.md); everything else is computed.
 REPORT_PAGES = 96          # entries on cfj.org/reports (sitemap and "96 results")
 DISTINCT_REPORTS = 90      # 96 pages minus 6 translations/summaries (docs/TRIALWATCH_REPORTS.md)
-ARGUMENT_PARAGRAPHS = 2304  # tagged paragraphs, all found on their cited page
-CATEGORY_ACCURACY = "about 75–80%"  # hand-read sample of 40 arguments
+ARGUMENT_PARAGRAPHS = 2381  # tagged paragraphs (five labels), all found on their cited page
+CATEGORY_ACCURACY = "about 75–80%"  # hand-read sample of 40 arguments (earlier label set)
 
 
 # ---------------------------------------------------------------- numbers --
@@ -75,6 +75,7 @@ def numbers() -> dict:
         "impacts": len(impacts), "signed": int((log["verified_by"] != "").sum()), "cases": len(log),
         "sensitive": int(data.cases["sensitive"].sum()), "tests": n_tests,
         "scenarios": len(SCENARIOS),
+        "authors": int((reports.loc[reports["url"].isin(bank["report_url"]), "author"] != "").sum()),
     }
 
 
@@ -169,40 +170,41 @@ def build(n: dict):
     S = {i + 1: s for i, s in enumerate(prs.slides)}
 
     # 1 · Title
-    set_text(shape(S[1], 570), ["PAPER VS.", "PRACTICE", ("An advocacy tracker for TrialWatch", {"size": 20})])
+    set_text(shape(S[1], 570), ["PRECEDENT &", "PRACTICE",
+                                ("A human rights advocacy tracker built on TrialWatch's fairness reports", {"size": 16})])
     set_text(shape(S[1], 573), ["TRACK 3 · ADVOCACY & IMPACT", "Shreya · Valentina · Ungu · Layla · Yuki"])
-    notes(S[1], "Indonesia reformed its speech law. We stress-tested the reform, and turned TrialWatch's own "
-                "past reports into an Argument Bank and sourced UN letters for the next case.")
+    notes(S[1], "TrialWatch has graded dozens of trials of journalists and critics. We turn those reports into "
+                "arguments, precedents and sourced UN submissions for the next person prosecuted for speech.")
 
     # 2 · Agenda (template wording already fits)
     notes(S[2], "Problem, solution, how the service works, team, then the live demo.")
 
     # 3 · Challenges
-    set_text(shape(S[3], 617), ["Speech laws get reformed on paper. Nobody measures the practice, "
-                                 "and past wins are buried in PDFs."])
-    set_text(shape(S[3], 622), size=13, bold=True, lines=["Reforms nobody measures"])
-    set_text(shape(S[3], 625), size=12, lines=["Indonesia revised its ITE Law (2024), the Constitutional Court narrowed it (2025) "
-                                 "and the police pledged to comply. No one tracks whether prosecutions stop."])
-    set_text(shape(S[3], 623), size=13, bold=True, lines=[f"{DISTINCT_REPORTS} reports, not searchable"])
-    set_text(shape(S[3], 620), size=12, lines=[f"TrialWatch has graded {n['graded']} trials, but a lawyer can't find how a similar "
-                                 "case was argued, which UN decisions applied, or what followed."])
-    set_text(shape(S[3], 624), size=13, bold=True, lines=["Letters written from scratch"])
-    set_text(shape(S[3], 621), size=12, lines=["Facts sit in court records, NGO reports and news, in English and Bahasa; "
+    set_text(shape(S[3], 617), ["TrialWatch's human rights analysis is buried in PDFs, advocacy starts from a "
+                                 "blank page, and reforms go unmeasured."])
+    set_text(shape(S[3], 622), size=13, bold=True, lines=[f"{DISTINCT_REPORTS} reports, not searchable"])
+    set_text(shape(S[3], 625), size=12, lines=[f"TrialWatch has graded {n['graded']} trials, but a lawyer can't find how a "
+                                 "similar case was argued, which UN decisions applied, or what followed."])
+    set_text(shape(S[3], 623), size=13, bold=True, lines=["Letters written from scratch"])
+    set_text(shape(S[3], 620), size=12, lines=["Facts sit in court records, NGO reports and news in several languages; "
                                  "each UN submission is written by hand."])
+    set_text(shape(S[3], 624), size=13, bold=True, lines=["Reforms nobody measures"])
+    set_text(shape(S[3], 621), size=12, lines=["Indonesia revised its speech law (2024–25) and police pledged to comply; "
+                                 "no one tracks whether prosecutions stop."])
     notes(S[3], "Three gaps: reforms nobody measures, TrialWatch's own reports aren't searchable by argument, "
                 "and advocacy letters start from a blank page.")
 
     # 4 · Solution
-    set_text(shape(S[4], 642), ["REFORM STRESS TEST"])
-    set_text(shape(S[4], 641), [f"Four rules from the 2024 law and 2025 ruling, in plain code. {n['barred']} of "
-                                 f"{n['past']} past cases would likely be barred today ({n['low']}–{n['high']} "
-                                 "across legal readings)."])
-    set_text(shape(S[4], 644), ["ARGUMENT BANK"])
-    set_text(shape(S[4], 643), [f"{n['core']} TrialWatch trials in {n['countries']} countries. Finds the closest past "
-                                 "cases, good outcomes first, with the arguments used, page links and UN decisions."])
-    set_text(shape(S[4], 646), ["SOURCED UN LETTER"])
-    set_text(shape(S[4], 645), ["A Special Rapporteur submission where every sentence cites its source, quotes "
+    set_text(shape(S[4], 642), ["ARGUMENT BANK"])
+    set_text(shape(S[4], 641), [f"{n['core']} TrialWatch trials in {n['countries']} countries. For any case: the closest "
+                                 "trials, good outcomes first, and their arguments on legality, vagueness, broadness, "
+                                 "necessity and proportionality, with author and page."])
+    set_text(shape(S[4], 644), ["SOURCED UN LETTER"])
+    set_text(shape(S[4], 643), ["A Special Rapporteur submission where every sentence cites its source, quotes "
                                  "are checked word for word, and a lawyer approves."])
+    set_text(shape(S[4], 646), ["REFORM STRESS TEST"])
+    set_text(shape(S[4], 645), [f"Where a law just changed: {n['barred']} of {n['past']} past Indonesian cases would "
+                                 f"likely be barred today ({n['low']}–{n['high']} across legal readings)."])
     notes(S[4], "One answer to each challenge: measure the reform, search what worked, draft the advocacy.")
 
     # 5 · Service
@@ -230,14 +232,14 @@ def build(n: dict):
                  "filed, before months of detention add up.")
 
     # 6 · How it works
-    set_text(shape(S[6], 685), ["1 · Check the reform"])
-    set_text(shape(S[6], 684), ["Rules R1–R4 run as transparent code, no AI",
+    set_text(shape(S[6], 685), ["1 · Find what worked before"])
+    set_text(shape(S[6], 684), ["Pick a case or describe a new one; matches say why",
+                                "Arguments grouped by the five labels, with author and page",
+                                "Good outcomes first, each confirmed with a source"])
+    set_text(shape(S[6], 687), ["2 · Check the reform (where a law changed)"])
+    set_text(shape(S[6], 686), ["Rules R1–R4 run as transparent code, no AI",
                                 f"Sensitivity analysis: {n['scenarios']} legal readings, {n['low']}–{n['high']} of {n['past']}",
-                                "Paste a news story: Gemini suggests inputs, each with a checked quote"])
-    set_text(shape(S[6], 687), ["2 · Find what worked before"])
-    set_text(shape(S[6], 686), ["Matches on charge, speech, defendant and region, and says why",
-                                "Good outcomes first, each confirmed with a source",
-                                "Arguments, page links, UN decisions, impact on the defendant"])
+                                "Paste a news story: Gemini suggests inputs with checked quotes"])
     set_text(shape(S[6], 689), ["3 · Draft the advocacy"])
     set_text(shape(S[6], 688), ["Letter built only from numbered sources",
                                 "Code rejects uncited sentences and invented quotes",
@@ -248,7 +250,8 @@ def build(n: dict):
     set_text(shape(S[7], 701), ["SERVICE PIPELINE"])
     steps = [
         ("TrialWatch reports", f"{REPORT_PAGES} cfj.org pages, {n['pdfs']} PDFs"),
-        ("Parse, no AI", f"{n['graded']} grades · {ARGUMENT_PARAGRAPHS:,} arguments · {n['decisions']} UN decisions"),
+        ("Parse, no AI", f"{n['graded']} grades · {n['authors']} authors · {ARGUMENT_PARAGRAPHS:,} arguments · "
+                         f"{n['decisions']} UN decisions"),
         ("People confirm", f"{n['confirmed']}/{n['core']} outcomes · {n['impacts']} impact sentences"),
         ("Match current case", "stress test + closest past trials, with reasons"),
         ("Sourced UN letter", "citation check · support check · lawyer approves"),
@@ -294,7 +297,8 @@ def build(n: dict):
     set_text(shape(S[14], 855), size=12, lines=["Stress test, parsing, grades and matching are plain, tested code. "
                                   "AI only suggests inputs and drafts letters."])
     set_text(shape(S[14], 853), size=13, bold=True, lines=["Every claim has a source"])
-    set_text(shape(S[14], 850), size=12, lines=["Quotes checked word for word; uncited sentences rejected; a person approves."])
+    set_text(shape(S[14], 850), size=12, lines=["Quotes checked word for word; uncited sentences rejected; each argument "
+                                             "credited to its report's author; a person approves."])
     set_text(shape(S[14], 854), size=13, bold=True, lines=["Honest and safe"])
     set_text(shape(S[14], 851), size=12, lines=[f"No predictions: “followed”, never “caused”. {n['sensitive']} at-risk people hidden "
                                   "and never sent to AI. Only cited excerpts published, © CFJ."])
@@ -305,7 +309,7 @@ def build(n: dict):
     set_text(shape(S[17], 915), ["Sources check out"])
     set_text(shape(S[17], 914), [f"{ARGUMENT_PARAGRAPHS:,} / {ARGUMENT_PARAGRAPHS:,} arguments on the page they cite",
                                  f"{n['impacts']} / {n['impacts']} impact sentences on the page they cite",
-                                 "Every grade stored with the sentence it came from"])
+                                 f"Authors for {n['authors']} / {n['core']} reports, each with its source sentence"])
     set_text(shape(S[17], 917), ["People confirmed the data"])
     set_text(shape(S[17], 916), [f"{n['confirmed']} / {n['core']} TrialWatch outcomes confirmed with a source",
                                  f"{n['signed']} of {n['cases']} Indonesian cases signed off by a teammate"])
@@ -357,7 +361,8 @@ def build(n: dict):
     set_text(shape(S[11], 812), ["Questions and feedback welcome, especially from TrialWatch's lawyers: "
                                   "are our rules and argument categories right?"])
     set_text(shape(S[11], 813), ["OPEN SOURCE", "github.com/valentinasilva8/fairtrial-ai-hackathon",
-                                  "Code MIT · report excerpts © Clooney Foundation for Justice"])
+                                  "Code MIT · report excerpts © Clooney Foundation for Justice",
+                                  "Independent project, not endorsed by CFJ, TrialWatch or Columbia Law School"])
     notes(S[11], "Demo: Home → Stress Test (Fatia & Haris) → Argument Bank → UN Letter. Start from the Home link.")
 
     # order and drop the rest of the example deck

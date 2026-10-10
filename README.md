@@ -1,31 +1,41 @@
-# Paper vs. Practice
+# Precedent & Practice
+*A human rights advocacy tracker built on TrialWatch's fairness reports*
 
 [![Tests](https://github.com/valentinasilva8/fairtrial-ai-hackathon/actions/workflows/tests.yml/badge.svg)](https://github.com/valentinasilva8/fairtrial-ai-hackathon/actions/workflows/tests.yml)
 
-> *Indonesia reformed its speech law. We stress-tested the reform: how many past prosecutions would it have stopped — and is it stopping new ones?*
+> *TrialWatch has analysed dozens of trials of journalists and critics. We turn those reports into arguments, precedents and sourced UN submissions for the next person prosecuted for speech.*
 
-Built for the TrialWatch Fair Trial & AI Hackathon (Columbia Law School Human Rights Institute), Track 3: Advocacy & Impact.
+Built for the TrialWatch Fair Trial & AI Hackathon (Columbia Law School Human Rights Institute), Track 3: Advocacy & Impact, by **Shreya, Valentina, Ungu, Layla and Yuki**.
 
-Indonesia's ITE (EIT) Law has been used to prosecute journalists, activists and critics. It was revised in 2024 (Law No. 1/2024) and narrowed by Constitutional Court Decision No. 105/PUU-XXII/2024. Paper vs. Practice:
+An independent hackathon project. It is not endorsed by, or an official product of, the Clooney Foundation for Justice, TrialWatch® or Columbia Law School. **All outputs are drafts for lawyer review, not legal conclusions.**
 
-1. **stress-tests the reform** against real Indonesian cases,
-2. **finds similar past TrialWatch cases** and the arguments TrialWatch's experts made in them (the **Argument Bank**, built from every report on cfj.org), and
-3. **drafts a UN Special Rapporteur letter** in which every sentence cites its source.
+## What it does
+For a lawyer facing a new speech prosecution anywhere, Precedent & Practice:
 
-See [docs/PROPOSAL.md](docs/PROPOSAL.md) for the full pitch.
+1. **finds the most similar trials TrialWatch has graded** (47 freedom-of-expression trials in 23 countries) and **what followed** in each, with good outcomes first;
+2. **shows the arguments their reports made**, grouped under the five labels the TrialWatch mentor asked for (**legality, vagueness, broadness, necessity, proportionality**), each with its author, the exact report page and the UN Human Rights Committee decisions cited, counting a paragraph reused across reports once;
+3. **drafts a submission to the UN Special Rapporteur** in which every sentence cites its source and a lawyer approves before use.
 
-**All outputs are drafts for lawyer review, not legal conclusions.**
+Where a country has just reformed its speech law, a **reform stress test** adds whether the reform should already bar the case. Our worked example is Indonesia's ITE Law (revised 2024, narrowed by Constitutional Court Decision 105/PUU-XXII/2024): 5 of 13 past cases would likely be barred, 3 to 8 across contested legal readings.
+
+See [docs/SUBMISSION.md](docs/SUBMISSION.md) for the full description.
 
 ## What's in the app
-The pages follow TrialWatch's own process: **Monitoring → Evaluation → Advocacy**.
-
 | Page | What it does |
 |---|---|
-| **Home** | Cases by outcome, and the **Promise Clock**: days since each official pledge and the evidence that it was kept |
-| **Stress Test** | Runs each case through rules R1–R4 from the reformed law and the 2025 ruling: *likely barred / at risk / still prosecutable*, with the rule and reason. Headline: "5 of 13 past cases would likely be barred", with a sensitivity analysis showing it ranges from 3 to 8 of 13 across contested legal readings. Paste a news story to have Gemini suggest the rule inputs, each with a verbatim quote |
-| **Argument Bank** | For a current case, the most similar past TrialWatch cases (good outcomes first), why they match, what happened, and the strongest argument TrialWatch made on legality, legitimate aim, necessity and proportionality, overbreadth, pretrial detention and fair trial, with page links and the UN Human Rights Committee decisions cited |
-| **Cases** (Monitoring) | Each Indonesian case on a source-linked timeline (appears once `pages/1_Cases.py` is merged) |
-| **UN Letter** | A draft submission to the UN Special Rapporteur on freedom of expression, built from the case, the stress test, the pledges and the Argument Bank. Drafts with an uncited sentence, an unknown source or an invented quotation are rejected; a second check flags sentences the sources don't fully support; a named reviewer approves before saving |
+| **Home** | Headline numbers, how it works, cases by outcome, and the **Promise Clock**: days since each official pledge and the evidence that it was kept |
+| **Argument Bank** | Pick a current case or describe a new one. **By argument:** the arguments from the most similar TrialWatch trials, grouped by legality, vagueness, broadness, necessity and proportionality (then legitimate aim, pretrial detention, fair trial), each with case, report author, page link and outcome; identical paragraphs reused across reports shown once. **By case:** each similar trial with why it matched, its confirmed outcome, the impact on the defendant and the UN decisions cited |
+| **Stress Test** | Runs each Indonesian case through rules R1–R4 from the reformed law and the 2025 ruling: *likely barred / at risk / still prosecutable*, with the rule and reason, and a ten-scenario sensitivity analysis. Paste a news story to have Gemini suggest the rule inputs, each with a verbatim quote |
+| **UN Letter** | A draft submission to the UN Special Rapporteur on freedom of expression, built from the case, the Argument Bank, the stress test and the pledges. Drafts with an uncited sentence, an unknown source or an invented quotation are rejected; a second check flags sentences the sources don't fully support; a named reviewer approves before saving |
+
+## Team
+| | Role |
+|---|---|
+| **Shreya** | Reform stress test, sensitivity analysis, Argument Bank, UN letter |
+| **Valentina** | Repository, case tracker, case verification, Advocacy Trace review rules |
+| **Ungu** | Indonesian case research and verification, impact categories |
+| **Layla** | Data lead: Meila and Asrul cases, sensitive-case review, pitch |
+| **Yuki** | Confirmed all 47 TrialWatch outcomes with sources |
 
 ## Setup
 Requires Python 3.11+ and, for the Argument Bank pipeline, poppler (`brew install poppler` on macOS).
@@ -69,7 +79,7 @@ Opens at http://localhost:8501.
 | *screenshot to add* | *screenshot to add* | *screenshot to add* | *screenshot to add* |
 
 ## Pitch deck
-`pitch/Paper_vs_Practice.pptx` is generated from the hackathon template with numbers read live from the data.
+`pitch/Precedent_and_Practice.pptx` is generated from the hackathon template with numbers read live from the data.
 After any data or feature change, rebuild it so the slides stay true:
 ```bash
 pip install python-pptx
@@ -128,7 +138,7 @@ tests/                       # pytest
 - **Transparent matching.** Similar cases are matched on named features, and each match lists the features it shares.
 - **No outcome prediction.** We show what *followed* in similar past cases, never that an argument *caused* an outcome, and never a prediction for a live trial.
 - **Sensitive cases** are hidden from public views and can't be sent to Gemini. On Gemini's free tier, Google may use prompts to improve its products.
-- **Copyright.** The repository publishes only the 168 report paragraphs the app displays, each linked to its source page, under CFJ's copyright notice ([data/NOTICE.md](data/NOTICE.md)); full reports stay on cfj.org.
+- **Copyright.** The repository publishes only the 201 report paragraphs the app displays, each linked to its source page, under CFJ's copyright notice ([data/NOTICE.md](data/NOTICE.md)); full reports stay on cfj.org.
 
 ## Limitations
 - Argument tags come from keyword matching and over-tag; outcomes are unconfirmed until checked by a person.

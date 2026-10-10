@@ -50,8 +50,9 @@ def test_hrc_decisions_deduplicated():
 
 
 def test_tags():
-    assert "legality_vagueness" in tag(PARA_LEGALITY)
-    assert {"legitimate_aim", "necessity_proportionality"} <= set(tag(PARA_PROPORTION))
+    assert {"legality", "vagueness"} <= set(tag(PARA_LEGALITY))
+    assert {"legitimate_aim", "necessity", "proportionality"} <= set(tag(PARA_PROPORTION))
+    assert tag("The law's overly broad scope sweeps in protected speech.") == ["broadness"]
     assert tag("The hearing was adjourned to a later date by the court clerk.") == []
 
 
@@ -65,7 +66,7 @@ def test_footnotes_dropped_from_paragraphs():
 
 def test_extract_arguments_keeps_page_and_text():
     args = extract_arguments(["Intro page with nothing relevant.", PARA_LEGALITY])
-    assert args == [{"page": 2, "categories": ["legality_vagueness"], "text": PARA_LEGALITY}]
+    assert args == [{"page": 2, "categories": ["legality", "vagueness"], "text": PARA_LEGALITY}]
 
 
 def test_trial_url():
@@ -77,7 +78,7 @@ def test_summarize_report_row():
     row = summarize_report("https://cfj.org/reports/x-v-y/", "X v. Y",
                            ["Article 19 of the ICCPR.", PARA_LEGALITY, "GRADE: D"])
     assert row["grade"] == "D" and row["kind"] == "trial" and row["freedom_of_expression"]
-    assert row["legality_vagueness"] >= 1
+    assert row["legality"] >= 1 and row["vagueness"] >= 1
 
 
 def test_committed_index_is_consistent():
@@ -88,3 +89,16 @@ def test_committed_index_is_consistent():
     # every grade carries the text it was read from
     assert graded["grade_source"].notna().all()
     assert graded.apply(lambda r: r["grade"] in r["grade_source"], axis=1).all()
+
+
+def test_find_author_from_grade_sentence():
+    from src.reports import find_author
+
+    assert find_author("EXECUTIVE SUMMARY Lisa Davis, who is a member of the Trial Watch Experts Panel, "
+                       "assigned this trial a grade of D: ...")[0] == "Lisa Davis"
+    assert find_author("EXECUTIVE SUMMARY Professor Hannah R. Garry, member of the TrialWatch Experts Panel, "
+                       "assigned this trial a grade of D")[0] == "Professor Hannah R. Garry"
+    assert find_author("Covington & Burling LLP assigned this trial a grade of D")[0] == "Covington & Burling LLP"
+    assert find_author("ABOUT THE AUTHOR: Staff at the American Bar Association Center for Human Rights "
+                       "drafted this report.")[0] == "ABA Center for Human Rights staff"
+    assert find_author("No author information here.") == ("", "")

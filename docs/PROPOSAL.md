@@ -1,10 +1,11 @@
-# Paper vs. Practice — Proposal
+# Precedent & Practice — Proposal
+*A human rights advocacy tracker built on TrialWatch's fairness reports (formerly "Paper vs. Practice")*
 *TrialWatch Fair Trial & AI Hackathon · Track 3: Advocacy & Impact*
 
 ## Pitch
 Indonesia's ITE Law has been used to criminally prosecute journalists, activists and ordinary critics — often on complaints filed by ministers, companies and officials. After years of advocacy, the law was revised in 2024, the Constitutional Court narrowed it in 2025, and the police pledged to comply. But nobody can see whether the reform actually protects people.
 
-**Paper vs. Practice stress-tests the reform.** We run real prosecutions through the new legal rules and ask: *would this case still be allowed today?* Then we track whether officials kept their promises, find how TrialWatch argued similar cases elsewhere, and turn every finding into a cited UN submission TrialWatch can send the same day.
+**Precedent & Practice stress-tests the reform.** We run real prosecutions through the new legal rules and ask: *would this case still be allowed today?* Then we track whether officials kept their promises, find how TrialWatch argued similar cases elsewhere, and turn every finding into a cited UN submission TrialWatch can send the same day.
 
 > *"Indonesia reformed its speech law. We stress-tested the reform: how many past prosecutions would it have stopped — and is it stopping new ones?"*
 
@@ -24,13 +25,10 @@ TrialWatch's own process is Monitoring → Evaluation → Advocacy. The tool fol
    - R3 hate speech requires real, imminent harm
    - R4 public-interest speech has a defense
    Each case gets **Likely barred / At risk / Still prosecutable**, with the rule and source shown, labeled "for lawyer review". Current result: **5 of 13 past cases would likely be barred.** A sensitivity analysis reruns this under ten scenarios: it ranges from **3 of 13** (if public officials can still be defamation victims) to **8 of 13** (if the "only individuals" rule also covers hate-speech complaints by groups), and falls to 1 of 13 without R1. The headline rests mainly on R1, and the key open legal question is whether public officials are excluded.
-3. **Evaluation — Argument Bank** (added after judge feedback on day 1). For a current case, find the most similar past TrialWatch cases, show what happened in them, and show the arguments TrialWatch's experts made, by category:
-   - legality and vagueness
-   - legitimate aim
-   - necessity and proportionality
-   - overbreadth
-   - pretrial detention and fair trial
-   Each argument comes with the page in the report and the UN Human Rights Committee decisions it cites. Cases with a good outcome (acquittal, charges dropped, release) are listed first.
+3. **Evaluation — Argument Bank** (the core, added after judge and mentor feedback on day 1). For a new or current case, find the most similar past TrialWatch trials, show what followed, and show the arguments their reports made, grouped by the five labels the mentor asked for:
+   - legality · vagueness · broadness · necessity · proportionality
+   - then other recurring points: legitimate aim, pretrial detention, fair trial
+   Each argument names the report's author (the analysis is the named expert's, not necessarily CFJ's), links the exact page, and lists the UN Human Rights Committee decisions cited. A paragraph reused across reports counts once. Trials with a good outcome (acquittal, charges dropped, overturned conviction, release, UN finding of arbitrary detention) are listed first; all 47 outcomes are confirmed with a source.
 4. **Promise Clock.** Days since each official pledge, and the evidence (or absence of it) that it was carried out.
 5. **Advocacy — UN Special Rapporteur letter.** A draft submission to the Special Rapporteur on freedom of expression, built from the case, the stress test, the pledges and the Argument Bank. Every sentence cites numbered sources; code rejects any uncited sentence or invented quotation, a second check flags sentences the sources don't fully support, and a named reviewer approves before it is saved.
 
