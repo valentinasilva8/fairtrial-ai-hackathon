@@ -34,6 +34,7 @@ from src.data import load_all, public_cases  # noqa: E402
 from src.sensitivity import SCENARIOS, run  # noqa: E402
 
 TEMPLATE = ROOT / "final_ppt_example.pptx"
+APP_URL = "https://fairtrial-ai-hackathongit-cyvqxeqekcqd4hjsqr7b5w.streamlit.app/"
 OUT = ROOT / "pitch" / "Precedent_and_Practice.pptx"
 
 MAROON, CORAL, LAVENDER, MINT, WHITE = "4D1808", "D77B62", "D1D5FA", "DEFED9", "FFFFFF"
@@ -360,7 +361,8 @@ def build(n: dict):
     set_text(shape(S[11], 811), ["Live Demo"])
     set_text(shape(S[11], 812), ["Questions and feedback welcome, especially from TrialWatch's lawyers: "
                                   "are our rules and argument categories right?"])
-    set_text(shape(S[11], 813), ["OPEN SOURCE", "github.com/valentinasilva8/fairtrial-ai-hackathon",
+    set_text(shape(S[11], 813), ["LIVE APP", APP_URL.removeprefix("https://").rstrip("/"),
+                                  "OPEN SOURCE", "github.com/valentinasilva8/fairtrial-ai-hackathon",
                                   "Code MIT · report excerpts © Clooney Foundation for Justice",
                                   "Independent project, not endorsed by CFJ, TrialWatch or Columbia Law School"])
     notes(S[11], "Demo: Home → Stress Test (Fatia & Haris) → Argument Bank → UN Letter. Start from the Home link.")
