@@ -24,9 +24,9 @@ log = ou.load()
 # --- the impact so far -----------------------------------------------------------
 improved = bank[bank["outcome_improved"]]
 c1, c2, c3 = st.columns(3)
-c1.metric("Verified updates in the log", len(log[log["verified_by"].str.strip() != ""]))
-c2.metric("Cases changed for the better", len(improved))
-c3.metric("Good outcomes now", f"{int(bank['good_outcome'].sum())} of {len(bank)}")
+c1.metric("Verified updates in the log", len(log[log["verified_by"].str.strip() != ""]), border=True)
+c2.metric("Cases changed for the better", len(improved), border=True)
+c3.metric("Good outcomes now", f"{int(bank['good_outcome'].sum())} of {len(bank)}", border=True)
 
 st.subheader("Log")
 if log.empty:
