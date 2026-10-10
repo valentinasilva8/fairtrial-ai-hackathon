@@ -149,7 +149,8 @@ for p in data.promises.itertuples():
         with left:
             st.markdown(f"**{p.promise_text}**")
             st.caption(f"{p.made_by} · provision {p.provision}")
-            st.markdown(f"Evidence: {evidence_text(p.evidence_since)}")
+            with st.popover("Evidence"):
+                st.markdown(evidence_text(p.evidence_since))
             source = p.source if p.source.startswith("http") else f"`{p.source}`"
             st.caption(f"Source: {source}" + ("" if p.verified else " · :gray-background[unverified]"))
         with right:
