@@ -74,34 +74,44 @@ def is_displacement_watch(article) -> bool:
     return any(a.startswith(DISPLACEMENT_ARTICLES) for a in _articles(article))
 
 
-def evaluate_case(case: Mapping) -> dict:
-    """Run one case (a row of data/cases_seed.csv) through rules R1–R4."""
+def evaluate_case(
+    case: Mapping,
+    disabled: frozenset[str] = frozenset(),
+    r1_complainants: frozenset[str] | set[str] = R1_COMPLAINANTS,
+    r1_covers_hate_speech: bool = False,
+) -> dict:
+    """Run one case (a row of data/cases_seed.csv) through rules R1–R4.
+
+    The keyword options exist only for the sensitivity analysis (src/sensitivity.py);
+    the defaults are the rules in docs/stress_test_rules.md.
+    """
     article = case.get("article", "")
     complainant_type = str(case.get("complainant_type", "unknown")).strip() or "unknown"
     public_interest = _as_bool(case.get("public_interest", False))
     harm_shown = _as_bool(case.get("harm_shown", False))
     defamation = is_defamation(article)
+    r1_applies = defamation or (r1_covers_hate_speech and is_hate_speech(article))
 
     rules_fired: list[str] = []
     reasons: list[str] = []
 
-    if defamation and complainant_type not in KNOWN_COMPLAINANTS:
+    if r1_applies and complainant_type not in KNOWN_COMPLAINANTS:
         reasons.append("Complainant unknown — needs data (R1/R2 not evaluated).")
-    elif defamation and complainant_type in R1_COMPLAINANTS:
+    elif r1_applies and complainant_type in r1_complainants and "R1" not in disabled:
         rules_fired.append("R1")
         reasons.append(
-            f"R1: defamation complaint by a {complainant_type.replace('_', ' ')}, "
-            "which can no longer be a defamation victim."
+            f"R1: {'defamation' if defamation else 'hate-speech'} complaint by a "
+            f"{complainant_type.replace('_', ' ')}, which can no longer be a defamation victim."
         )
-    elif defamation and complainant_type == "representative":
+    elif defamation and complainant_type == "representative" and "R2" not in disabled:
         rules_fired.append("R2")
         reasons.append("R2: defamation complaint filed by a representative, not the victim personally.")
 
-    if is_hate_speech(article) and not harm_shown:
+    if is_hate_speech(article) and not harm_shown and "R3" not in disabled:
         rules_fired.append("R3")
         reasons.append("R3: hate-speech charge with no real, imminent harm shown in the record.")
 
-    if public_interest:
+    if public_interest and "R4" not in disabled:
         rules_fired.append("R4")
         reasons.append("R4: speech on a matter of public interest — defense available.")
 
@@ -128,9 +138,9 @@ def evaluate_case(case: Mapping) -> dict:
     }
 
 
-def evaluate_all(cases: pd.DataFrame) -> pd.DataFrame:
-    """Evaluate every case; returns one row per case."""
-    return pd.DataFrame([evaluate_case(row) for row in cases.to_dict("records")])
+def evaluate_all(cases: pd.DataFrame, **options) -> pd.DataFrame:
+    """Evaluate every case; returns one row per case. Options go to evaluate_case."""
+    return pd.DataFrame([evaluate_case(row, **options) for row in cases.to_dict("records")])
 
 
 def summarize(results: pd.DataFrame) -> dict:
