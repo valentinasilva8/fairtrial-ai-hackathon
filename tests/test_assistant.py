@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from src.assistant import ask, guides, knowledge, questions, validate_answer
+from src.assistant import FALLBACK, answer_for, ask, guides, knowledge, questions, validate_answer
 from src.llm import LLMError
 
 HAN = re.compile(r"[㐀-䶿一-鿿＀-￯　-〿]")
@@ -77,3 +77,23 @@ def test_empty_or_long_question_is_rejected():
         ask("   ", [], "Start here", client=FakeClient({}))
     with pytest.raises(LLMError):
         ask("x" * 2001, [], "Start here", client=FakeClient({}))
+
+
+def test_every_prepared_answer_passes_the_source_check():
+    for q in questions():
+        answer = answer_for(q)
+        assert answer["generated"] and answer["evidence"], q
+        assert not HAN.search(answer["content"])
+
+
+def test_typed_question_finds_the_closest_prepared_answer():
+    assert "Kazakhstan" in answer_for("Is jail ever OK as a punishment for a post?")["content"]
+    assert "Belarus" in answer_for("Can an arrest at a protest be arbitrary?")["content"]
+    assert "Suzethe" in answer_for("What about Indonesia?")["content"]
+    assert "Belarus" in answer_for("Can police detain protesters just because the law allows it?")["content"]
+    assert "Poland" in answer_for("Is an unclear law a problem?")["content"]
+
+
+def test_unrelated_question_gets_suggestions_not_an_error():
+    answer = answer_for("What's the weather like?")
+    assert answer["content"].startswith(FALLBACK) and not answer["evidence"]

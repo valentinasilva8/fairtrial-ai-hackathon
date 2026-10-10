@@ -28,28 +28,226 @@
     {
       "id": "help-trust",
       "title": "Can I trust the answers?",
-      "text": "This is an independent hackathon project. Assistant answers are guidance for review, not legal advice. Answers based on the legal library include source IDs and verbatim excerpts, which are checked before display. A matching quote does not prove an inference is correct, so open the original report. The assistant has a small curated library and does not search the web or read case forms."
+      "text": "This is an independent hackathon project. Answers are guidance for review, not legal advice. Answers about legal standards come from a curated library of TrialWatch report excerpts and show the exact passages they rely on, with a link to the report page. Open the original report to check. The guide does not search the web or read case forms."
     },
     {
       "id": "help-privacy",
-      "title": "What is sent to Gemini?",
-      "text": "Only the messages you send in this chat, a short recent chat history, the current page title and the curated guide and library text are sent to Gemini. Case data and forms are not read. Do not paste confidential or sensitive case details: on the free tier, Google may use prompts to improve its products. Clear chat removes the conversation from this session only."
+      "title": "What happens to my questions?",
+      "text": "Your questions are answered inside the app from the curated guide and library text; they are not sent to an outside service, and case data and forms are not read. Even so, don't paste confidential or sensitive case details. Clear chat removes the conversation from this session."
     }
   ],
-  "questions": [
-    "What is the three-part test for restricting speech?",
-    "Why do vague laws violate the principle of legality?",
-    "Can prison be a proportionate penalty for speech?",
-    "When is detention arbitrary?"
-  ],
   "readings": [
-    {"id": "reading-legality", "url": "https://cfj.org/reports/15-post-election-trials-a-window-into-courts-in-belarus/", "page": 91},
-    {"id": "reading-indonesia", "url": "https://cfj.org/reports/indonesia-vs-suzethe-margaret/", "page": 28, "category": "legality"},
-    {"id": "reading-vagueness", "url": "https://cfj.org/reports/poland-vs-elzbieta-podlesna-anna-prus-and-joanna-gzyra-iskandar/", "page": 24},
-    {"id": "reading-broadness", "url": "https://cfj.org/reports/malaysia-v-malaysiakini-and-steven-gan/", "page": 30},
-    {"id": "reading-necessity", "url": "https://cfj.org/reports/fairness-report-kazakhstan-v-nazym-tabyldieva/", "page": 50},
-    {"id": "reading-proportionality", "url": "https://cfj.org/reports/turkey-v-veysel-ok/", "page": 16},
-    {"id": "reading-detention", "url": "https://cfj.org/reports/15-post-election-trials-a-window-into-courts-in-belarus/", "page": 49},
-    {"id": "reading-fair-trial", "url": "https://cfj.org/reports/belarus-v-katsiaryna-andreyeva-and-daria-chultsova/", "page": 54}
+    {
+      "id": "reading-legality",
+      "url": "https://cfj.org/reports/15-post-election-trials-a-window-into-courts-in-belarus/",
+      "page": 91
+    },
+    {
+      "id": "reading-indonesia",
+      "url": "https://cfj.org/reports/indonesia-vs-suzethe-margaret/",
+      "page": 28,
+      "category": "legality"
+    },
+    {
+      "id": "reading-vagueness",
+      "url": "https://cfj.org/reports/poland-vs-elzbieta-podlesna-anna-prus-and-joanna-gzyra-iskandar/",
+      "page": 24
+    },
+    {
+      "id": "reading-broadness",
+      "url": "https://cfj.org/reports/malaysia-v-malaysiakini-and-steven-gan/",
+      "page": 30
+    },
+    {
+      "id": "reading-necessity",
+      "url": "https://cfj.org/reports/fairness-report-kazakhstan-v-nazym-tabyldieva/",
+      "page": 50
+    },
+    {
+      "id": "reading-proportionality",
+      "url": "https://cfj.org/reports/turkey-v-veysel-ok/",
+      "page": 16
+    },
+    {
+      "id": "reading-detention",
+      "url": "https://cfj.org/reports/15-post-election-trials-a-window-into-courts-in-belarus/",
+      "page": 49
+    },
+    {
+      "id": "reading-fair-trial",
+      "url": "https://cfj.org/reports/belarus-v-katsiaryna-andreyeva-and-daria-chultsova/",
+      "page": 54
+    }
+  ],
+  "answers": [
+    {
+      "question": "What is the three-part test for restricting speech?",
+      "keywords": [
+        "three",
+        "part",
+        "test",
+        "restrict",
+        "restriction",
+        "article 19",
+        "iccpr",
+        "limit"
+      ],
+      "answer": "Under Article 19 of the ICCPR, a restriction on speech is lawful only if it passes three tests: it must be provided by law, serve a legitimate objective, and be necessary and proportionate to that objective [reading-indonesia]. The UN Human Rights Committee says such limits must be strictly and narrowly tailored [reading-proportionality]. TrialWatch reports apply this test to each prosecution, for example the reports on Indonesia vs. Suzethe Margaret and Turkey v. Veysel Ok.",
+      "evidence": [
+        {
+          "source_id": "reading-indonesia",
+          "quote": "restrictions on the right to freedom of expression must (i) be provided by law (the principle of legality), (ii) serve a legitimate objective, and (iii) be necessary to achieve and proportionate to that objective"
+        },
+        {
+          "source_id": "reading-proportionality",
+          "quote": "any limitations on the Article 19 right to freedom of expression must be strictly and narrowly tailored in accordance with a three-part test"
+        }
+      ]
+    },
+    {
+      "question": "Why do vague laws violate the principle of legality?",
+      "keywords": [
+        "vague",
+        "vagueness",
+        "legality",
+        "precise",
+        "precision",
+        "unclear",
+        "discretion"
+      ],
+      "answer": "The legality prong requires a law to be precise enough for people to regulate their conduct, and it must not give unfettered discretion to those who enforce it [reading-legality]. The TrialWatch report on Poland's Article 196 found that a subjective offence, offending religious feelings, gave the authorities broad discretion and was ripe for abuse; such a law fails the test even if the other two prongs are met [reading-vagueness].",
+      "evidence": [
+        {
+          "source_id": "reading-legality",
+          "quote": "formulated with sufficient precision to enable an individual to regulate his or her conduct accordingly"
+        },
+        {
+          "source_id": "reading-vagueness",
+          "quote": "Article 196’s imprecision gives the authorities broad discretion in making charging decisions, rendering it ripe for abuse"
+        },
+        {
+          "source_id": "reading-vagueness",
+          "quote": "even if the government could demonstrate the law complied with the latter two requirements, it would contravene the threshold legality requirement"
+        }
+      ]
+    },
+    {
+      "question": "What makes a law overbroad?",
+      "keywords": [
+        "overbroad",
+        "broad",
+        "broadness",
+        "overbreadth",
+        "wide",
+        "unbounded"
+      ],
+      "answer": "A law is overbroad when it reaches far more speech than needed and leaves the authorities unbounded discretion. The TrialWatch report on Malaysia v. Malaysiakini and Steven Gan notes that laws cannot be overbroad, and cites the UN Special Rapporteur: restrictions must be precise, public and transparent, and must not give the authorities unbounded discretion [reading-broadness].",
+      "evidence": [
+        {
+          "source_id": "reading-broadness",
+          "quote": "laws cannot be overbroad"
+        },
+        {
+          "source_id": "reading-broadness",
+          "quote": "the restriction must be provided by laws that are precise, public and transparent; it must avoid providing authorities with unbounded discretion"
+        }
+      ]
+    },
+    {
+      "question": "Can prison be a proportionate penalty for speech?",
+      "keywords": [
+        "prison",
+        "imprisonment",
+        "jail",
+        "penalty",
+        "sentence",
+        "proportionate",
+        "necessity",
+        "necessary"
+      ],
+      "answer": "TrialWatch reports treat prison for speech as very hard to justify. The report on Kazakhstan v. Nazym Tabyldieva found that the possibility of imprisonment clearly failed the third prong of the three-part test [reading-necessity]. Even a restriction with a legitimate aim fails the necessity test if the protection could be achieved in less restrictive ways [reading-necessity].",
+      "evidence": [
+        {
+          "source_id": "reading-necessity",
+          "quote": "provides for potential imprisonment clearly fails the third prong of the Human Rights Committee’s three-part test"
+        },
+        {
+          "source_id": "reading-necessity",
+          "quote": "violate[] the test of necessity if the protection could be achieved in other ways that do not restrict freedom of"
+        }
+      ]
+    },
+    {
+      "question": "When is detention arbitrary?",
+      "keywords": [
+        "detention",
+        "detained",
+        "arrest",
+        "arbitrary",
+        "pretrial",
+        "custody",
+        "protest",
+        "demonstration"
+      ],
+      "answer": "Detention can be arbitrary even when domestic law allows it. The UN Human Rights Committee reads arbitrariness broadly, to include inappropriateness, injustice, lack of predictability and due process, and the tests of reasonableness, necessity and proportionality [reading-detention]. The TrialWatch report on 15 post-election trials in Belarus adds that the Committee generally considers mass arrests during demonstrations to be arbitrary [reading-detention].",
+      "evidence": [
+        {
+          "source_id": "reading-detention",
+          "quote": "arrest or detention may be authorized by domestic law and nonetheless be arbitrary"
+        },
+        {
+          "source_id": "reading-detention",
+          "quote": "elements of inappropriateness, injustice, lack of predictability and due process of law"
+        },
+        {
+          "source_id": "reading-detention",
+          "quote": "the Human Rights Committee generally considers mass arrests, including during demonstrations, to be arbitrary"
+        }
+      ]
+    },
+    {
+      "question": "What does the presumption of innocence require?",
+      "keywords": [
+        "presumption",
+        "innocence",
+        "innocent",
+        "guilty",
+        "fair trial",
+        "trial"
+      ],
+      "answer": "The presumption of innocence is a cornerstone of a fair trial: anyone accused of a crime must be treated as innocent until proven guilty under a procedure set by domestic and international law. The TrialWatch report on Belarus v. Katsiaryna Andreyeva and Daria Chultsova sets out this standard [reading-fair-trial].",
+      "evidence": [
+        {
+          "source_id": "reading-fair-trial",
+          "quote": "The presumption of innocence is a cornerstone of the right to a fair trial"
+        },
+        {
+          "source_id": "reading-fair-trial",
+          "quote": "anyone accused of a crime be considered innocent until proven guilty"
+        }
+      ]
+    },
+    {
+      "question": "How do these standards apply in Indonesia?",
+      "keywords": [
+        "indonesia",
+        "indonesian",
+        "ite",
+        "eit",
+        "reform",
+        "suzethe"
+      ],
+      "answer": "TrialWatch has applied the same test in Indonesia. The report on Indonesia vs. Suzethe Margaret, by Dr Charles O’Mahony, notes that the UN Human Rights Committee places a high value on uninhibited expression and requires restrictions to be provided by law, serve a legitimate objective, and be necessary and proportionate [reading-indonesia]. To see how Indonesia's 2024–25 ITE reform affects past cases, open Stress Test [help-stress].",
+      "evidence": [
+        {
+          "source_id": "reading-indonesia",
+          "quote": "The United Nations Human Rights Committee has placed a high value on “uninhibited expression,”"
+        },
+        {
+          "source_id": "help-stress",
+          "quote": "Stress Test applies this project's draft Indonesian reform rules to recorded facts"
+        }
+      ]
+    }
   ]
 }

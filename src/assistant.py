@@ -2,9 +2,11 @@
 
 The library is a handful of TrialWatch report excerpts already published in
 data/trialwatch_argument_excerpts.jsonl, chosen in data/assistant_knowledge.json.
-Gemini (through src/llm.py, like the rest of the app) may only answer from these
-sources; every quote it gives is checked against the source text before display.
-The assistant never reads case data, so sensitive cases can't reach the model.
+The website shows prepared answers for the suggested questions (answer_for), so it
+never uses the team's Gemini quota; every quote is checked against its source.
+ask() is the Gemini version, kept for when a dedicated key is available; it answers
+only from the same sources and is checked the same way. The assistant never reads
+case data, so sensitive cases can't reach a model.
 """
 
 from __future__ import annotations
@@ -96,7 +98,37 @@ def guides() -> list[dict]:
 
 
 def questions() -> list[str]:
-    return list(config().get("questions", []))
+    return [a["question"] for a in config().get("answers", [])]
+
+
+FALLBACK = ("I can answer questions about this website and about fair-trial and free-expression standards in "
+            "TrialWatch reports. Try one of these: ")
+
+
+def _words(text: str) -> set[str]:
+    """Rough word stems (first five letters), so "detain" matches "detention" and "protesters" "protest"."""
+    return {w[:5] for w in re.findall(r"[a-z0-9]+", text.lower()) if len(w) >= 3}
+
+
+def answer_for(question: str) -> dict:
+    """A prepared, source-checked answer for the closest suggested question (no model call)."""
+    question = question.strip()
+    if not question or len(question) > MAX_QUESTION:
+        raise LLMError(f"Enter a question of 1 to {MAX_QUESTION} characters.")
+    asked, best, best_score = _words(question), None, 0
+    for item in config().get("answers", []):
+        if item["question"].lower() == question.lower():
+            best = item
+            break
+        keys = [k.lower() for k in item.get("keywords", [])]
+        score = sum(2 for k in keys if " " in k and k in question.lower()) + len(
+            asked & {w for k in keys if " " not in k for w in _words(k)})
+        if score > best_score:
+            best, best_score = item, score
+    if best is None or (best["question"].lower() != question.lower() and best_score < 1):
+        return {"role": "assistant", "content": FALLBACK + "; ".join(questions()) + ".",
+                "evidence": [], "generated": False}
+    return validate_answer({"answer": best["answer"], "evidence": best["evidence"]}, knowledge())
 
 
 def validate_answer(raw: dict, sources) -> dict:

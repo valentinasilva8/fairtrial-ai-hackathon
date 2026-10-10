@@ -1,7 +1,7 @@
 """Floating FairTrial guide: a robot in the lower-right corner of every page.
 
 Click the robot to open the chat panel (quick guides, suggested legal questions, chat).
-While Gemini works, the robot bobs and a "thinking" bubble appears above its head; the
+While it works, the robot bobs and a "thinking" bubble appears above its head; the
 answer then pops up in that speech bubble. Native Streamlit only: the CSS is scoped to
 the pa_* container keys.
 """
@@ -15,11 +15,11 @@ from functools import lru_cache
 import streamlit as st
 from streamlit.errors import StreamlitAPIException
 
-from src.assistant import MAX_HISTORY, MAX_QUESTION, ROOT, ask, guides, knowledge, questions
-from src.llm import LLMError, api_key
+from src.assistant import MAX_HISTORY, MAX_QUESTION, ROOT, answer_for, guides, knowledge, questions
+from src.llm import LLMError
 
 ROBOT = ROOT / "assets" / "assistant_robot.png"
-WAIT_SECONDS = 4  # between Gemini questions, to protect the free-tier quota
+THINK_SECONDS = 1.6  # how long the thinking animation shows
 
 CSS = """<style>
 .st-key-pa_launcher {position:fixed!important; right:20px; bottom:24px; width:124px!important; z-index:999990;}
@@ -79,7 +79,7 @@ def _state():
     ss = st.session_state
     ss.setdefault("pa_open", False)
     ss.setdefault("pa_messages", [])
-    ss.setdefault("pa_pending", None)   # question waiting for Gemini
+    ss.setdefault("pa_pending", None)   # question waiting for an answer
     ss.setdefault("pa_bubble", None)    # assistant message shown in the speech bubble
     return ss
 
@@ -115,10 +115,6 @@ def _queue(question: str):
     question = (question or "").strip()
     if not question:
         return
-    if time.monotonic() - ss.get("pa_last_request", -100.0) < WAIT_SECONDS:
-        ss.pa_error = "Wait a few seconds between questions."
-        return
-    ss.pa_last_request = time.monotonic()
     ss.pop("pa_error", None)
     _remember({"role": "user", "content": question})
     ss.pa_pending = question
@@ -142,7 +138,7 @@ def _sources(message: dict, lookup: dict):
         st.caption("No supporting excerpt attached.")
 
 
-def _panel(configured: bool, lookup: dict):
+def _panel(lookup: dict):
     ss = st.session_state
     with st.container(key="pa_panel"):
         title, clear, close = st.columns([5, 1, 1])
@@ -159,7 +155,7 @@ def _panel(configured: bool, lookup: dict):
         st.markdown('<p class="pa-label">Ask the legal guide</p>', unsafe_allow_html=True)
         with st.container(key="pa_legal"):
             for i, q in enumerate(questions()):
-                st.button(q, key=f"pa_q{i}", on_click=_queue, args=(q,), disabled=not configured)
+                st.button(q, key=f"pa_q{i}", on_click=_queue, args=(q,))
         if ss.pa_messages:
             with st.container(height=200, key="pa_history"):
                 for message in ss.pa_messages:
@@ -168,14 +164,12 @@ def _panel(configured: bool, lookup: dict):
                         st.markdown(message["content"])
                         if message["role"] == "assistant":
                             _sources(message, lookup)
-        if not configured:
-            st.caption("Quick guides work now. Add a Gemini API key to chat.")
-        st.caption("Messages go to Gemini. Don't share sensitive details. Answers are for lawyer review, "
-                   "not legal advice.")
+        st.caption("Answers come from a curated library of TrialWatch reports. For lawyer review, not legal "
+                   "advice. Don't share sensitive case details.")
         if ss.get("pa_error"):
             st.warning(ss.pa_error)
         st.chat_input("Ask a question…", key="pa_input", max_chars=MAX_QUESTION,
-                      disabled=not configured, on_submit=_submit)
+                      on_submit=_submit)
 
 
 def _bubble(page: str, lookup: dict):
@@ -185,7 +179,8 @@ def _bubble(page: str, lookup: dict):
             st.markdown(THINKING_HTML, unsafe_allow_html=True)
         question, ss.pa_pending = ss.pa_pending, None
         try:
-            answer = ask(question, ss.pa_messages[:-1], page)
+            time.sleep(THINK_SECONDS)
+            answer = answer_for(question)
             _remember(answer)
             ss.pa_bubble = answer
         except LLMError as exc:
@@ -215,5 +210,5 @@ def render_assistant(page: str = "Start here"):
                   key="pa_toggle", help="Ask the FairTrial guide", on_click=_toggle)
     lookup = {s["id"]: s for s in knowledge()}
     if ss.pa_open:
-        _panel(bool(api_key()), lookup)
+        _panel(lookup)
     _bubble(page, lookup)
