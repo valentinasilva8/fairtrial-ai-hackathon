@@ -14,10 +14,15 @@ from pathlib import Path
 # three-part test for restrictions on expression (General Comment No. 34),
 # which TrialWatch fairness reports apply.
 CATEGORIES = {
-    "legality_vagueness": r"\blegality\b|prescribed by law|\bvague|insufficiently precise|sufficient precision|unfettered discretion",
+    # The five argument labels the mentor asked for, from the UN Human Rights Committee's
+    # test for restrictions on expression (General Comment No. 34), which TrialWatch reports apply.
+    "legality": r"\blegality\b|prescribed by law|provided by law|legal certainty|nullum crimen",
+    "vagueness": r"\bvague|insufficiently precise|sufficient precision|imprecis|unfettered discretion|unbounded discretion|ill-defined",
+    "broadness": r"overbroad|overly broad|over-broad|broad swath|broadly (?:worded|defined|formulated)|sweeping",
+    "necessity": r"\bnecessity\b|necessary in a democratic society|necessary to achieve|achieved in other ways",
+    "proportionality": r"proportional|least intrusive|imprisonment is never|severity of the (?:penalty|sentence|sanction)",
+    # Other recurring points, shown after the five.
     "legitimate_aim": r"legitimate (aim|objective|purpose)",
-    "necessity_proportionality": r"\bnecessity\b|proportional|least intrusive",
-    "overbreadth": r"overbroad|overly broad",
     "pretrial_detention": r"pre-?trial detention",
     "fair_trial": r"right to (counsel|a fair|be presumed|adequate time)|presumption of innocence|equality of arms|independent and impartial",
 }
@@ -28,6 +33,39 @@ GRADE_PATTERNS = [
     re.compile(r"\b[Gg]rade:\s*([ABCDF])\b"),
     re.compile(r"grade of [“\"]([ABCDF])[”\"]"),
 ]
+
+# Who wrote the analysis: fairness reports name a TrialWatch expert, partner staff or a law firm.
+GRADE_ASSIGN = re.compile(r"assigned (?:this|these|the) (?:trials?|proceedings?) a [Gg]rade")
+AUTHOR_FALLBACKS = [
+    (re.compile(r"Staff (?:at|of) the American Bar Association(?:[’']s)?(?: \(ABA\))? Center for Human Rights(?: \(Center\))? drafted this report"),
+     "ABA Center for Human Rights staff"),
+    (re.compile(r"This report was prepared by ([^.]{5,200}?)(?:\.|$)"), None),
+    (re.compile(r"The TrialWatch initiative drafted this report"), "the TrialWatch initiative"),
+    (re.compile(r"This report was authored by a member of the TrialWatch Experts? Panel"),
+     "a member of the TrialWatch Experts Panel (not named)"),
+]
+NAME_STOP = re.compile(r",| who (?:is|are) | assigned |\s+(?:a|and)\s+member", re.I)
+
+
+def find_author(text: str) -> tuple[str, str]:
+    """(author, the sentence it was read from), or ("", "")."""
+    flat = flatten(text)
+    m = GRADE_ASSIGN.search(flat)
+    if m:
+        before = flat[max(0, m.start() - 400):m.start()]
+        before = re.split(r"SUMMARY|(?<!\b[A-Z])\.\s", before)[-1].strip()  # keep "Hannah R. Garry"
+        name = NAME_STOP.split(before, maxsplit=1)[0].strip(" :-")
+        name = re.sub(r"^(?:\d+\s+|-\s*)+", "", name)
+        name = re.sub(r"^TrialWatch Expert\s+", "", name)
+        name = re.sub(r"\bStaff\b", "staff", name)
+        if 3 <= len(name) <= 90 and name.lower() not in {"the authors", "the author"}:
+            return name, flatten(before + " " + m.group(0))[:300]
+    for pat, label in AUTHOR_FALLBACKS:
+        m = pat.search(flat)
+        if m:
+            return (label or m.group(1).strip()), m.group(0)[:300]
+    return "", ""
+
 
 HRC_DECISION = re.compile(r"CCPR/C/\d+/D/\d+/\d{4}")
 FOOTNOTE_START = re.compile(r"^\s*\d{1,3}\s+\S.{15,}")  # "203 U.N. General Assembly, ..."
@@ -95,6 +133,7 @@ def summarize_report(url: str, title: str, pages: list[str]) -> dict:
     """One metadata row per report: grade (with source), category coverage, UN decisions cited."""
     text = "\n".join(pages)
     grade, grade_source = find_grade(text)
+    author, author_source = find_author(text)
     row = {
         "url": url,
         "title": title,
@@ -102,6 +141,8 @@ def summarize_report(url: str, title: str, pages: list[str]) -> dict:
         "pages": len(pages),
         "grade": grade,
         "grade_source": grade_source,
+        "author": author,
+        "author_source": author_source,
         "freedom_of_expression": bool(re.search(r"Article 19", text)),
         "hrc_decisions_cited": len(hrc_decisions(text)),
     }
