@@ -158,3 +158,11 @@ def test_outcome_updates_page_checks_an_entry_and_produces_a_line():
     at.checkbox(key="ou_checked").check().run(timeout=30)
     assert not at.exception
     assert any("2024-05-21" in c.value for c in at.code)
+
+
+def test_start_page_links_every_page_and_counts_checked_cases():
+    at = AppTest.from_file("../app.py").run(timeout=30)
+    assert not at.exception
+    assert any(h.value == "What you can do" for h in at.header)
+    labels = {m.label: m.value for m in at.metric}
+    assert labels["Checked by a teammate"].endswith(f"of {labels['Cases']}")

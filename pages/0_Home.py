@@ -1,7 +1,9 @@
-"""Home: what the tool does, the headline numbers, cases by outcome and the Promise Clock."""
+"""Start here: what the tool does, links to every page, the headline numbers, the Indonesian cases and the Promise Clock."""
 
 from datetime import date
+from pathlib import Path
 
+import pandas as pd
 import streamlit as st
 
 from src.argument_bank import past_cases
@@ -11,6 +13,12 @@ from src.stress_test import LIKELY_BARRED, evaluate_all
 
 PROJECT_NAME = "Precedent & Practice"
 SUBTITLE = "A human rights advocacy tracker built on TrialWatch's fairness reports"
+VERIFICATION_LOG = Path(__file__).resolve().parent.parent / "data" / "verification_log.csv"
+# What keeps a checked case from being fully confirmed (from the case rows' own notes).
+OPEN_DETAIL = {
+    "nugroho": "the complainant is not named in the sources found; the court decision needs checking",
+    "laras_faizati": "the complainant rests on a single source, and which Penal Code version the court applied is unconfirmed",
+}
 HOOK = (
     "TrialWatch has analysed dozens of trials of journalists and critics. We turn those reports into "
     "arguments, precedents and sourced UN submissions for the next person prosecuted for speech."
@@ -54,6 +62,30 @@ m3.metric("Good outcomes that followed", f"{int(bank['good_outcome'].sum())} of 
                "each confirmed by a teammate with a source")
 m4.metric("Indonesian cases likely barred by the reform", f"{int((past['verdict'] == LIKELY_BARRED).sum())} of {len(past)}")
 
+st.header("What you can do")
+st.caption("Following TrialWatch's own process: evaluate a case, advocate for the defendant, then track what followed.")
+PAGES = [
+    ("Evaluation", "pages/3_Argument_Bank.py", "Argument Bank", "📚",
+     "Start here for any case, in any country. Pick a current case or describe a new one: the most similar "
+     "TrialWatch trials, what followed for each defendant, and the arguments their reports made on legality, "
+     "vagueness, broadness, necessity and proportionality, with the author, the exact page and the UN decisions cited."),
+    ("Evaluation", "pages/2_Stress_Test.py", "Stress Test", "⚖️",
+     "Where a country has just reformed its speech law (our example: Indonesia, 2024–25): would the reform already "
+     "bar each case, by which rule, and how sure we are across ten legal readings."),
+    ("Advocacy", "pages/4_UN_Letter.py", "UN Letter", "✉️",
+     "A draft submission to the UN Special Rapporteur built only from numbered sources. Check the sources, edit, "
+     "check again, then a named reviewer approves and downloads it as Word."),
+    ("Accountability", "pages/5_Outcome_Updates.py", "Outcome Updates", "📈",
+     "TrialWatch's impact after the report: verified later changes, such as a conviction overturned on appeal, "
+     "and a form to record a new one."),
+]
+for col, (stage, path, title, icon, text) in zip([*st.columns(2), *st.columns(2)], PAGES):
+    with col.container(border=True):
+        st.page_link(path, label=f"**{title}**", icon=icon)
+        st.caption(stage)
+        st.markdown(text)
+st.caption("The Promise Clock (below) shows whether officials kept the promises they made.")
+
 improved = bank[bank["outcome_improved"]]
 if not improved.empty:
     st.markdown(f"**Outcomes that changed for the better after TrialWatch's work: {len(improved)}** "
@@ -62,23 +94,22 @@ if not improved.empty:
         st.markdown(f"- {r.case}: " + " → then ".join(r.outcome_history))
     st.caption("Record a new change on the Outcome Updates page.")
 
-st.markdown(
-    "**How it works** — following TrialWatch's own process:\n"
-    "1. **Evaluation** — *Argument Bank*: for a new or current case, the most similar TrialWatch trials, what "
-    "followed, and the arguments their reports made on legality, vagueness, broadness, necessity and "
-    "proportionality, with page links, authors and the UN decisions cited. *Stress Test*: where a country has "
-    "just reformed its law (Indonesia, 2024–25), whether the reform should already bar the case.\n"
-    "2. **Advocacy** — *UN Letter*: a draft to the UN Special Rapporteur where every sentence cites its source, "
-    "approved by a person before use.\n"
-    "3. **Accountability** — *Promise Clock* (below): whether officials kept the promises they made."
-)
+st.header("Indonesian cases by outcome")
+st.caption("The cases behind the Stress Test and the UN letter examples, each checked by a teammate "
+           "(data/verification_log.csv).")
 
-st.header("Cases by outcome")
-
+log = pd.read_csv(VERIFICATION_LOG, dtype=str).fillna("")
+checked = set(log.loc[log["verified_by"].str.strip() != "", "case_id"]) | set(cases.loc[cases["verified"], "case_id"])
+open_items = cases[~cases["verified"]]
 c1, c2, c3 = st.columns(3)
 c1.metric("Cases", len(cases))
-c2.metric("Source-verified", int(cases["verified"].sum()))
-c3.metric("Unverified", int((~cases["verified"]).sum()))
+c2.metric("Checked by a teammate", f"{int(cases['case_id'].isin(checked).sum())} of {len(cases)}")
+c3.metric("Fully confirmed", f"{int(cases['verified'].sum())} of {len(cases)}",
+          help="Checked, with every field confirmed by a source. The rest were checked but one detail is still open.")
+if not open_items.empty:
+    with st.expander(f"{len(open_items)} checked case(s) with one detail still open"):
+        for r in open_items.itertuples():
+            st.markdown(f"- **{r.name}**: {OPEN_DETAIL.get(r.case_id, 'see the case notes')}")
 
 counts = (
     cases["outcome"]

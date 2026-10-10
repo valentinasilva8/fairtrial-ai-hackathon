@@ -13,7 +13,7 @@ PAGES = Path(__file__).resolve().parent / "pages"
 
 monitoring = [st.Page(PAGES / "1_Cases.py", title="Cases", icon="📁")] if (PAGES / "1_Cases.py").exists() else []
 nav = st.navigation({
-    "Overview": [st.Page(PAGES / "0_Home.py", title="Home", icon="🏠", default=True)],
+    "Overview": [st.Page(PAGES / "0_Home.py", title="Start here", icon="🧭", default=True)],
     **({"Monitoring": monitoring} if monitoring else {}),
     "Evaluation": [
         st.Page(PAGES / "3_Argument_Bank.py", title="Argument Bank", icon="📚"),
