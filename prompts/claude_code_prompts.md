@@ -51,6 +51,27 @@ Review the whole app for the demo: consistent styling, clear headings, no errors
 Prepare the app for Streamlit Community Cloud: read the API key from st.secrets with a fallback to .env, add a .streamlit/config.toml with a clean theme, make sure requirements.txt is complete, and add a "Deploy" section to the README with the exact steps.
 ```
 
+## 10. Impact categorization (Ungu)
+Before starting: pull `main` (PR #13 must be merged), create a branch `ungu/impact`, and run the five
+download/build scripts in the README once so `data/raw/trialwatch/` exists (~1 hour, unattended).
+No Gemini key is needed for this prompt.
+```
+Read CLAUDE.md, docs/ARGUMENT_BANK.md, src/reports.py, src/outcomes.py, src/argument_bank.py, src/letter.py and pages/3_Argument_Bank.py first.
+
+Add impact categorization for TrialWatch cases. Use TrialWatch's own harm criteria from the grading annex in every fairness report: (1) unjust conviction and sentence, (2) pretrial detention, (3) mistreatment (torture, ill-treatment, denial of medical care, solitary confinement), (4) reputational harm, plus (5) other restrictions (fines, travel bans, asset seizure, bans from journalism or office) and (6) prolonged proceedings (years under investigation or as a suspect).
+
+1. Create src/impacts.py with deterministic functions only (regex over report text, no LLM), following the style of src/outcomes.py. For each category return the evidence sentences that state it for the defendant (reuse defendants()/name_tokens() from src/outcomes.py so sentences about other people are excluded), the PDF page number, and where the sentence states a duration or amount (e.g. "detained for five months", "sentenced to 2 years", "fined 5 million rupiah"), the number and unit exactly as written. Never compute or guess a number that is not in the sentence. Skip footnote/citation text (see CITATION in src/outcomes.py and FOOTNOTE in src/argument_bank.py).
+2. Create scripts/build_impacts.py that writes data/trialwatch_impacts.csv for the 47 core cases: one row per case with a yes/no column per category, the evidence sentence + page + source URL for each "yes", and empty `verified_by` / `notes` columns for a person to fill. Re-running must keep anything people filled in (see scripts/build_outcomes.py).
+3. Write tests/test_impacts.py with short made-up sentences (no CFJ text), covering: each category, numbers kept exactly as written, a sentence about another person excluded, footnotes skipped.
+4. On pages/3_Argument_Bank.py, inside each similar case's expander, add an "Impact on the defendant" list: one line per category found, with the evidence sentence and a page link, marked "unconfirmed" until verified_by is filled. Keep the existing layout otherwise.
+5. In src/letter.py, add each matched case's impacts to build_sources() as sources with ids like impact:<report-slug>:<category>, so the UN letter can cite them. Update tests/test_letter.py.
+6. Add a short "Impact" section to docs/ARGUMENT_BANK.md (categories, method, limits).
+
+Rules: never invent facts, numbers or quotes; every impact must keep the exact sentence it came from; say "followed", never "caused". Run pytest until everything passes. Make one commit per step above, then push the branch and open a PR to main.
+```
+After it runs: open the Argument Bank page, check 5 cases by hand against the PDF pages, and note how many
+impact lines were right in the PR description.
+
 ## Useful one-liners anytime
 - "Check all CSVs in data/ for rows with no source or verified=false and list them."
 - "Run pytest and fix failures without changing the rules in docs/stress_test_rules.md."
