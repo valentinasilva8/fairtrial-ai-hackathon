@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+from src import theme
 from src.argument_bank import past_cases
 from src.data import DataValidationError, load_all, public_cases
 from src.promise_clock import days_since, evidence_text, status_label
@@ -24,9 +25,12 @@ HOOK = (
     "arguments, precedents and sourced UN submissions for the next person prosecuted for speech."
 )
 
-st.title(PROJECT_NAME)
-st.subheader(SUBTITLE)
-st.markdown(f"> *{HOOK}*")
+theme.doors()
+st.title(f"⚖️ {PROJECT_NAME}")
+st.markdown(f"#### {SUBTITLE}")
+with st.container(border=True, key="pp-card-hook"):
+    st.markdown(f"*{HOOK}*")
+    st.page_link("views/3_Argument_Bank.py", label="**Start with a case in the Argument Bank →**", icon="📚")
 st.caption(
     "TrialWatch Fair Trial & AI Hackathon · Track 3: Advocacy & Impact · Team: Shreya, Valentina, Ungu, Layla, Yuki. "
     "An independent hackathon project, not endorsed by the Clooney Foundation for Justice, TrialWatch or Columbia "
@@ -54,45 +58,47 @@ past = results[results["year_reported"].isna() | (results["year_reported"] < 202
 bank = past_cases()
 
 m1, m2, m3, m4 = st.columns(4)
-m1.metric("TrialWatch fairness reports searchable by argument", len(bank),
-          help="Graded TrialWatch fairness reports that analyse freedom of expression (2,075 PDF pages; some reports cover several trials or defendants)")
-m2.metric("Countries covered", bank["country"].nunique())
-m3.metric("Good outcomes that followed", f"{int(bank['good_outcome'].sum())} of {len(bank)}",
-          help="Acquittal, charges dropped, conviction overturned, release, or a UN finding of arbitrary detention; "
+m1.metric("📄 Fairness reports", len(bank), border=True, height="stretch",
+          help="TrialWatch fairness reports searchable by argument: graded reports that analyse freedom of expression (2,075 PDF pages; some reports cover several trials or defendants)")
+m2.metric("🌍 Countries covered", bank["country"].nunique(), border=True, height="stretch")
+m3.metric("✅ Good outcomes", f"{int(bank['good_outcome'].sum())} of {len(bank)}", border=True, height="stretch",
+          help="Good outcomes that followed TrialWatch's work: acquittal, charges dropped, conviction overturned, release, or a UN finding of arbitrary detention; "
                "each confirmed by a teammate with a source")
-m4.metric("Indonesian cases likely barred by the reform", f"{int((past['verdict'] == LIKELY_BARRED).sum())} of {len(past)}")
+m4.metric("🇮🇩 Likely barred by reform", f"{int((past['verdict'] == LIKELY_BARRED).sum())} of {len(past)}",
+          border=True, height="stretch", help="Past Indonesian cases the 2024–25 reform would likely bar today (for lawyer review)")
 
 st.header("What you can do")
 st.caption("Following TrialWatch's own process: evaluate a case, advocate for the defendant, then track what followed.")
 PAGES = [
-    ("Evaluation", "pages/3_Argument_Bank.py", "Argument Bank", "📚",
-     "Start here for any case, in any country. Pick a current case or describe a new one: the most similar "
-     "TrialWatch trials, what followed for each defendant, and the arguments their reports made on legality, "
-     "vagueness, broadness, necessity and proportionality, with the author, the exact page and the UN decisions cited."),
-    ("Evaluation", "pages/2_Stress_Test.py", "Stress Test", "⚖️",
-     "Where a country has just reformed its speech law (our example: Indonesia, 2024–25): would the reform already "
-     "bar each case, by which rule, and how sure we are across ten legal readings."),
-    ("Advocacy", "pages/4_UN_Letter.py", "UN Letter", "✉️",
-     "A draft submission to the UN Special Rapporteur built only from numbered sources. Check the sources, edit, "
-     "check again, then a named reviewer approves and downloads it as Word."),
-    ("Accountability", "pages/5_Outcome_Updates.py", "Outcome Updates", "📈",
-     "TrialWatch's impact after the report: verified later changes, such as a conviction overturned on appeal, "
-     "and a form to record a new one."),
+    ("1 · Evaluation", "views/3_Argument_Bank.py", "Argument Bank", "📚",
+     "For any case, in any country: the most similar TrialWatch trials, what followed, and their arguments on "
+     "legality, vagueness, broadness, necessity and proportionality, each with its author and page."),
+    ("1 · Evaluation", "views/2_Stress_Test.py", "Stress Test", "⚖️",
+     "Where a speech law was just reformed (Indonesia, 2024–25): would the reform already bar each case, by "
+     "which rule, and how sure we are across ten legal readings."),
+    ("2 · Advocacy", "views/4_UN_Letter.py", "UN Letter", "✉️",
+     "A submission to the UN Special Rapporteur built only from numbered sources: check, edit, check again, "
+     "then a named reviewer approves and downloads it as Word."),
+    ("3 · Accountability", "views/5_Outcome_Updates.py", "Outcome Updates", "📈",
+     "TrialWatch's impact after the report: verified later changes, such as a conviction overturned on "
+     "appeal, and a form to record a new one."),
 ]
-for col, (stage, path, title, icon, text) in zip([*st.columns(2), *st.columns(2)], PAGES):
-    with col.container(border=True):
-        st.page_link(path, label=f"**{title}**", icon=icon)
-        st.caption(stage)
-        st.markdown(text)
-st.caption("The Promise Clock (below) shows whether officials kept the promises they made.")
+for col, (stage, path, title, icon, text) in zip(st.columns(4), PAGES):
+    with col.container(border=True, height="stretch", vertical_alignment="distribute", key=f"pp-card-{title.replace(' ', '_')}"):
+        with st.container(gap="small"):
+            st.caption(stage)
+            st.markdown(f"#### {icon} {title}")
+            st.markdown(text)
+        st.page_link(path, label=f"Open {title} →")
 
 improved = bank[bank["outcome_improved"]]
 if not improved.empty:
-    st.markdown(f"**Outcomes that changed for the better after TrialWatch's work: {len(improved)}** "
-                "(verified updates; they followed TrialWatch's work, we don't claim it caused them)")
-    for r in improved.itertuples():
-        st.markdown(f"- {r.case}: " + " → then ".join(r.outcome_history))
-    st.caption("Record a new change on the Outcome Updates page.")
+    with st.container(border=True, key="pp-card-impact"):
+        st.markdown(f"##### 📈 Outcomes that changed for the better after TrialWatch's work: {len(improved)}")
+        for r in improved.itertuples():
+            st.markdown(f"- **{r.case}**: " + " → then ".join(r.outcome_history))
+        st.caption("Verified updates. They *followed* TrialWatch's work; we don't claim it caused them. "
+                   "The Promise Clock (below) shows whether officials kept their pledges.")
 
 st.header("Indonesian cases by outcome")
 st.caption("The cases behind the Stress Test and the UN letter examples, each checked by a teammate "
@@ -102,9 +108,9 @@ log = pd.read_csv(VERIFICATION_LOG, dtype=str).fillna("")
 checked = set(log.loc[log["verified_by"].str.strip() != "", "case_id"]) | set(cases.loc[cases["verified"], "case_id"])
 open_items = cases[~cases["verified"]]
 c1, c2, c3 = st.columns(3)
-c1.metric("Cases", len(cases))
-c2.metric("Checked by a teammate", f"{int(cases['case_id'].isin(checked).sum())} of {len(cases)}")
-c3.metric("Fully confirmed", f"{int(cases['verified'].sum())} of {len(cases)}",
+c1.metric("Cases", len(cases), border=True)
+c2.metric("Checked by a teammate", f"{int(cases['case_id'].isin(checked).sum())} of {len(cases)}", border=True)
+c3.metric("Fully confirmed", f"{int(cases['verified'].sum())} of {len(cases)}", border=True,
           help="Checked, with every field confirmed by a source. The rest were checked but one detail is still open.")
 if not open_items.empty:
     with st.expander(f"{len(open_items)} checked case(s) with one detail still open"):

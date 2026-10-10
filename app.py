@@ -7,9 +7,11 @@ from pathlib import Path
 
 import streamlit as st
 
+from src import theme
+
 st.set_page_config(page_title="Precedent & Practice", page_icon="⚖️", layout="wide")
 
-PAGES = Path(__file__).resolve().parent / "pages"
+PAGES = Path(__file__).resolve().parent / "views"
 
 monitoring = [st.Page(PAGES / "1_Cases.py", title="Cases", icon="📁")] if (PAGES / "1_Cases.py").exists() else []
 nav = st.navigation({
@@ -22,4 +24,6 @@ nav = st.navigation({
     "Advocacy": [st.Page(PAGES / "4_UN_Letter.py", title="UN Letter", icon="✉️")],
     "Accountability": [st.Page(PAGES / "5_Outcome_Updates.py", title="Outcome Updates", icon="📈")],
 })
+theme.apply()
 nav.run()
+theme.footer()
