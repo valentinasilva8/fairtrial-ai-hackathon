@@ -81,6 +81,7 @@ Human rights defenders **Fatia Maulidiyanti and Haris Azhar** were reported by a
 - **Reform Stress Test and Argument Bank — Shreya**
 - App — Streamlit interface
 - Briefs + pitch
+- Outcome confirmation and argument accuracy check (Yuki)
 
 ## Stack
 Python, Streamlit, pandas, Google Gemini API (free tier), poppler for PDF text. Open-source (MIT).
