@@ -8,8 +8,12 @@ and its history (e.g. "convicted → conviction overturned (2023-06-05)").
 - The log is **append-only**: one row per verified change. Never delete or rewrite a row; add a new one.
 - A case's current outcome is its **latest verified update** (by `event_date`); with none, the confirmed outcome in
   `data/trialwatch_outcomes.csv` stands.
-- The Argument Bank (good outcomes first, badges, "changed for the better"), the Home page impact count and the
+- The Argument Bank (good outcomes first, badges, "changed for the better"), the Start here page's impact count and the
   UN letter's sources all use the current outcome and history automatically.
+- **Finding and adding a change is done by a person, on purpose.** Nothing is added to the log automatically:
+  a court decision has to be read and matched to the right defendant, and the hosted app cannot write to
+  GitHub. Once the line is merged, everything else updates by itself. A later step could re-run the CFJ news
+  scan (`scripts/fetch_trialwatch_news.py`, `scripts/build_outcomes.py`) on a schedule to *suggest* changes to check.
 
 ## Columns
 | column | rule |

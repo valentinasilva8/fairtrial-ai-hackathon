@@ -50,7 +50,7 @@ st.subheader("Record a new change")
 st.markdown(
     "1. Find the source: ideally the judgment or court record, otherwise a reliable report naming the defendant.\n"
     "2. Fill in the form; it checks the entry.\n"
-    "3. Copy the line it produces, open the log on GitHub, paste it as a new last line, and commit it as a pull "
+    "3. A person adds it (nothing is added automatically: someone has to read the decision). Copy the line it produces, open the log on GitHub, paste it as a new last line, and commit it as a pull "
     "request. The automated tests check it again before it can be merged. Then sync the fork so the live app updates."
 )
 names = dict(zip(bank["report_url"], bank["case"]))
