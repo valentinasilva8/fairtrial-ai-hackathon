@@ -31,18 +31,12 @@ See [docs/SUBMISSION.md](docs/SUBMISSION.md) for the full description.
 | **Stress Test** | Runs each Indonesian case through rules R1–R4 from the reformed law and the 2025 ruling: *likely barred / at risk / still prosecutable*, with the rule and reason, and a ten-scenario sensitivity analysis. Paste a news story to have Gemini suggest the rule inputs, each with a verbatim quote |
 | **UN Letter** | A draft submission to the UN Special Rapporteur on freedom of expression, for a seeded Indonesian case or **a new case in any country** you describe, built from the case, the Argument Bank, and (for Indonesia) the stress test and the pledges. Drafts with an uncited sentence, an unknown source or an invented quotation are rejected; a second check flags sentences the sources don't fully support. Four steps: **(1) source checks before editing**, **(2) edit the letter**, **(3) source checks after editing** (every edit is re-checked (citation numbers must exist, quotations must still match a source word for word, new sentences need a citation; the support check can be run again on the edited text), **(4) approve and download** — once a named reviewer ticks both check reviews, **download it as Word (.docx) or Markdown**, with a note of who approved it and any open warnings |
 
-## Related work
-[Advocacy Trace](https://github.com/valentinasilva8/human-rights-advocacy-tracker) is an earlier prototype by the same
-team (Valentina): a review-first explorer where a person approves each argument record before it is shown. Its review of
-this repository shaped several choices here: the five argument labels, naming each report's author instead of "TrialWatch
-argued", counting a paragraph reused across reports once, dated outcomes with "followed, not caused", the independence
-disclaimer, and keeping full CFJ reports out of git. Its approval workflow uses SQLite; this app does not need a database.
 
 ## Team
 | | Role |
 |---|---|
 | **Shreya** | Reform stress test, sensitivity analysis, Argument Bank, UN letter |
-| **Valentina** | Repository, case tracker, case verification, Advocacy Trace review rules |
+| **Valentina** | Repository, case tracker, case verification, mentor 5 argument categories review rules |
 | **Ungu** | Indonesian case research and verification, impact categories |
 | **Layla** | Data lead: Meila and Asrul cases, sensitive-case review, pitch |
 | **Yuki** | Confirmed all 47 TrialWatch outcomes with sources |
@@ -88,7 +82,7 @@ Opens at http://localhost:8501.
 |---|---|---|---|
 | *screenshot to add* | *screenshot to add* | *screenshot to add* | *screenshot to add* |
 
-## Pitch deck
+## Pitch deck (template generatedfor initial draft only, actual deck to be updated by Shreya, Ungu, Layla, and Yuki after Canva deck updates)
 `pitch/Precedent_and_Practice.pptx` is generated from the hackathon template with numbers read live from the data.
 After any data or feature change, rebuild it so the slides stay true:
 ```bash
