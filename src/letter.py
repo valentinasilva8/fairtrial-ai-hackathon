@@ -139,6 +139,12 @@ def template_draft(sources: list[Source]) -> dict:
     events = [s for s in sources if s.id.startswith("event:")]
     promises = [s for s in sources if s.id.startswith("promise:")]
     tw = [s for s in sources if s.id.startswith("tw:")]
+    impacts = [s for s in sources if s.id.startswith("impact:")]
+
+    def label(s: Source) -> str:
+        # A straight quote in a case title ('Katanyu "Pan"') would be read by validate() as the start of a quotation.
+        return s.label.replace('"', "'")
+
     return {"sections": [
         {"heading": "Summary", "sentences": [
             {"text": f"We write regarding the case of {case.label.split(': ', 1)[1]}.", "sources": [case.id]},
@@ -149,7 +155,8 @@ def template_draft(sources: list[Source]) -> dict:
         {"heading": "The reform and how it applies", "sentences":
             [{"text": p.text, "sources": [p.id]} for p in promises]},
         {"heading": "International standards and TrialWatch's findings in similar cases", "sentences":
-            [{"text": f"{s.label}: “{s.text[:300].rsplit(' ', 1)[0]}”", "sources": [s.id]} for s in tw]},
+            [{"text": f"{label(s)}: “{s.text[:300].rsplit(' ', 1)[0]}”", "sources": [s.id]} for s in tw]
+            + [{"text": f"{label(s)}: “{s.text}”", "sources": [s.id]} for s in impacts]},
         {"heading": "Requested action", "sentences": [
             {"text": "We ask that you consider raising this case with the Government of Indonesia, "
                      "including whether the prosecution is consistent with the 2025 Constitutional Court ruling.",

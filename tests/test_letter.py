@@ -149,3 +149,35 @@ def test_quote_check_ignores_punctuation_but_not_words():
         {"text": "It noted “the subjective nature of many defamation laws”.", "sources": ["tw:a:p1"]}]}]}
     assert validate(ok, src) == []
     assert validate(changed, src)
+
+
+def test_plain_draft_includes_the_impact_sentences_with_their_status():
+    draft = template_draft(sources())
+    section = next(sec for sec in draft["sections"] if sec["heading"].startswith("International standards"))
+    impact = [s for s in section["sentences"] if s["sources"] == ["impact:thailand-v-b:pretrial_detention"]]
+    assert len(impact) == 1
+    assert "Mr. B was detained for five months prior to trial." in impact[0]["text"]
+    assert "unconfirmed" in impact[0]["text"]
+    assert validate(draft, sources()) == []
+
+
+def test_plain_draft_quotes_an_impact_sentence_that_has_quotation_marks_inside():
+    past = [{**PAST[0], "impacts": [{**PAST[0]["impacts"][0],
+             "sentence": "Mr. B was prosecuted and convicted for \u201cincitement to disrupt social order.\u201d"}]}]
+    src = build_sources(CASE, EVENTS, STRESS, PROMISES, past)
+    assert validate(template_draft(src), src) == []
+
+
+def test_plain_draft_without_impacts_is_unchanged():
+    past = [{k: v for k, v in PAST[0].items() if k != "impacts"}]
+    src = build_sources(CASE, EVENTS, STRESS, PROMISES, past)
+    draft = template_draft(src)
+    assert not any(s["sources"][0].startswith("impact:") for sec in draft["sections"] for s in sec["sentences"])
+    assert validate(draft, src) == []
+
+
+def test_plain_draft_passes_the_citation_check_when_a_case_title_has_straight_quotes():
+    past = [{**PAST[0], "case": 'Thailand v. Katanyu "Pan"'}]
+    src = build_sources(CASE, EVENTS, STRESS, PROMISES, past)
+    assert validate(template_draft(src), src) == []
+
