@@ -17,7 +17,10 @@ PROMISES = [{"promise_id": "p2", "made_by": "Constitutional Court", "promise_tex
              "date": "2025-04", "status": "no_evidence_yet", "source": "http://example.org/p", "verified": True}]
 PAST = [{"case": "Thailand v. B", "report_url": "https://cfj.org/reports/thailand-v-b/", "pdf_url": "https://cfj.org/b.pdf",
          "outcome": "good", "outcome_confirmed": False,
-         "arguments": {"legality_vagueness": [{"page": 19, "text": "Restrictions must be prescribed by law and proportionate."}]}}]
+         "arguments": {"legality_vagueness": [{"page": 19, "text": "Restrictions must be prescribed by law and proportionate."}]},
+         "impacts": [{"category": "pretrial_detention", "label": "Detention", "page": 17, "quantities": ["five months"],
+                      "sentence": "Mr. B was detained for five months prior to trial.",
+                      "url": "https://cfj.org/b.pdf#page=17", "confirmed": False}]}]
 
 
 def sources():
@@ -26,9 +29,37 @@ def sources():
 
 def test_sources_cover_all_inputs():
     ids = [s.id for s in sources()]
-    assert ids == ["case:x", "event:x:1", "stress:x", "promise:p2", "tw:thailand-v-b:p19"]
-    tw = sources()[-1]
+    assert ids == ["case:x", "event:x:1", "stress:x", "promise:p2", "tw:thailand-v-b:p19",
+                   "impact:thailand-v-b:pretrial_detention"]
+    tw = next(s for s in sources() if s.id.startswith("tw:"))
     assert tw.url == "https://cfj.org/b.pdf#page=19" and "unconfirmed" in tw.label
+
+
+def test_impact_source_keeps_the_sentence_and_is_unverified_until_confirmed():
+    imp = next(s for s in sources() if s.id.startswith("impact:"))
+    assert imp.text == "Mr. B was detained for five months prior to trial."
+    assert imp.url == "https://cfj.org/b.pdf#page=17" and "Detention" in imp.label and "unconfirmed" in imp.label
+    assert imp.verified is False
+    confirmed = [{**PAST[0], "impacts": [{**PAST[0]["impacts"][0], "confirmed": True}]}]
+    imp = next(s for s in build_sources(CASE, EVENTS, STRESS, PROMISES, confirmed) if s.id.startswith("impact:"))
+    assert imp.verified is True and "confirmed" in imp.label and "unconfirmed" not in imp.label
+
+
+def test_a_past_case_without_impacts_still_works():
+    past = [{k: v for k, v in PAST[0].items() if k != "impacts"}]
+    ids = [s.id for s in build_sources(CASE, EVENTS, STRESS, PROMISES, past)]
+    assert not any(i.startswith("impact:") for i in ids)
+
+
+def test_a_draft_may_cite_an_impact_source_and_quote_it_exactly():
+    ok = {"sections": [{"heading": "Summary", "sentences": [
+        {"text": "In that case, the report records that “Mr. B was detained for five months prior to trial”.",
+         "sources": ["impact:thailand-v-b:pretrial_detention"]}]}]}
+    changed = {"sections": [{"heading": "Summary", "sentences": [
+        {"text": "In that case, the report records that “Mr. B was detained for six months prior to trial”.",
+         "sources": ["impact:thailand-v-b:pretrial_detention"]}]}]}
+    assert validate(ok, sources()) == []
+    assert any("quotation not found" in e for e in validate(changed, sources()))
 
 
 def test_sensitive_case_blocked():

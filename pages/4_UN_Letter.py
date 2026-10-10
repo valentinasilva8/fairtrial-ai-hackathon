@@ -7,6 +7,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.argument_bank import arguments_available, best_arguments, similar_cases
+from src.impacts import impacts_for, load_impacts
 from src.data import DataValidationError, load_all, public_cases
 from src.letter import (
     LLMError,
@@ -60,7 +61,9 @@ if not arguments_available():
 
 events = data.events[data.events["case_id"] == case_id].to_dict("records") if data.events is not None else []
 matches = similar_cases(features_from_case(case), top_n=n_past)
-past = [{**m, "arguments": best_arguments(m["report_url"])} for m in matches.to_dict("records")]
+impact_sheet = load_impacts()
+past = [{**m, "arguments": best_arguments(m["report_url"]), "impacts": impacts_for(m["report_url"], impact_sheet)}
+        for m in matches.to_dict("records")]
 sources = build_sources(case, events, evaluate_case(case), data.promises.to_dict("records"), past)
 
 with st.expander(f"Sources the letter may use ({len(sources)})"):
