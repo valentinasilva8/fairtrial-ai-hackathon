@@ -194,3 +194,19 @@ def test_shared_paragraph_is_one_source_naming_both_reports():
     tw = [s for s in build_sources(CASE, [], STRESS, [], past) if s.id.startswith("tw:")]
     assert len(tw) == 1
     assert "by Ann Lee" in tw[0].label and "B v. Y by Ben Ode" in tw[0].label
+
+
+def test_new_case_in_another_country_without_stress_test():
+    new = {"case_id": "new_case", "name": "R. Example", "role": "journalist", "country": "Kenya",
+           "law": "the Computer Misuse and Cybercrimes Act", "complainant": "not given", "complainant_type": "unknown",
+           "article": "false publication", "year_reported": "2026", "outcome": "pending",
+           "outcome_detail": "Charged over a news report.", "source": "https://example.org/report",
+           "verified": False, "sensitive": False}
+    sources = build_sources(new, [], None, [], PAST)
+    assert not any(s.id.startswith("stress:") for s in sources)
+    assert "prosecuted in Kenya under the Computer Misuse" in sources[0].text
+    draft = template_draft(sources)
+    assert validate(draft, sources) == []
+    headings = [s["heading"] for s in draft["sections"]]
+    assert "The reform and how it applies" not in headings
+    assert "Government of Kenya" in draft["sections"][-1]["sentences"][0]["text"]
