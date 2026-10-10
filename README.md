@@ -79,7 +79,7 @@ Opens at http://localhost:8501.
 | *screenshot to add* | *screenshot to add* | *screenshot to add* | *screenshot to add* |
 
 ## Pitch deck
-`pitch/Paper_vs_Practice.pptx` is generated from the hackathon template with numbers read live from the data.
+`pitch/Precedent_and_Practice.pptx` is generated from the hackathon template with numbers read live from the data.
 After any data or feature change, rebuild it so the slides stay true:
 ```bash
 pip install python-pptx
