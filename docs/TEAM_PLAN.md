@@ -97,7 +97,7 @@ Pull before starting · own branch per person · small commits · PR to `main` �
 **Deadline: Sat Oct 10, 3:30 pm ET.** Mentor dry run Sat 11:00.
 
 After judge feedback we added the **Argument Bank**: similar past TrialWatch cases, the arguments
-TrialWatch's experts made in them, and a **UN Special Rapporteur letter** that cites them. It sits on top
+TrialWatch fairness reports made in them, and a **UN Special Rapporteur letter** that cites them. It sits on top
 of the stress test. The AI is now **Google Gemini (free tier)**: put `GEMINI_API_KEY` in `.env`.
 Details: `docs/ARGUMENT_BANK.md`. The Argument Bank needs the TrialWatch reports on your laptop; run the
 five scripts in the README once (~1 hour, unattended).

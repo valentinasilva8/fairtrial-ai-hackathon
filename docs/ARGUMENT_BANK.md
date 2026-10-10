@@ -34,8 +34,12 @@ python scripts/build_case_features.py        # features for similar-case matchin
 
 ## Argument categories
 The first four follow the UN Human Rights Committee's three-part test for restrictions on expression
-(General Comment No. 34), which TrialWatch reports apply: `legality_vagueness`, `legitimate_aim`,
-`necessity_proportionality`, `overbreadth`. Plus `pretrial_detention` and `fair_trial`.
+(General Comment No. 34), which TrialWatch reports apply. The five headline labels are the ones the TrialWatch
+mentor asked for: `legality`, `vagueness`, `broadness`, `necessity`, `proportionality`. Other recurring points:
+`legitimate_aim`, `pretrial_detention`, `fair_trial`. Each report's author is extracted with the sentence it was
+read from (all 47 core reports); the app says "report by [author]", because the analysis is the named expert's or
+partner's, not necessarily the Clooney Foundation for Justice's. A paragraph reused word for word across reports
+(e.g. the Cambodia Article 495 reports) is shown and cited once.
 
 ## Limits
 - Tags come from keyword matching and over-tag (a paragraph mentioning "law" in passing may be tagged).

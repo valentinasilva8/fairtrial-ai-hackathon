@@ -1,4 +1,4 @@
-# Paper vs. Practice — project context for Claude Code
+# Precedent & Practice (formerly Paper vs. Practice) — project context for Claude Code
 
 ## What this is
 Hackathon project for the TrialWatch Fair Trial & AI Hackathon (Columbia Law School Human Rights Institute), Oct 9–10, 2026. Track 3: Advocacy & Impact.
