@@ -226,9 +226,9 @@ def build(n: dict):
                                   "for discussing a human rights report."])
     s16 = shape(S[16], 901)
     s16.top, s16.height = Inches(3.3), Inches(1.9)
-    set_text(s16, size=12, lines=[f"{n['good']} of the {n['core']} reported cases had a good outcome after TrialWatch's work: "
+    set_text(s16, size=12, lines=[f"{n['good']} of the {n['core']} reported cases had a good outcome: "
                    "acquittal, dropped charges, overturned conviction, release, or a UN finding of arbitrary "
-                   "detention. We show what followed, never what caused it."])
+                   "detention. We show what happened, never what caused it."])
     notes(S[16], "The tool lets TrialWatch spot a case the reform should have stopped on the day the complaint is "
                  "filed, before months of detention add up.")
 
@@ -251,7 +251,7 @@ def build(n: dict):
     set_text(shape(S[7], 701), ["SERVICE PIPELINE"])
     steps = [
         ("TrialWatch reports", f"{REPORT_PAGES} cfj.org listings, {n['pdfs']} PDFs"),
-        ("Parse, no AI", f"{n['graded']} grades · {n['authors']} authors · {ARGUMENT_PARAGRAPHS:,} arguments · "
+        ("Parse, no AI", f"{n['graded']} grades · {n['authors']} authors · {ARGUMENT_PARAGRAPHS:,} paragraphs · "
                          f"{n['decisions']} UN decisions"),
         ("People confirm", f"{n['confirmed']}/{n['core']} outcomes · {n['impacts']} impact sentences"),
         ("Match current case", "stress test + closest past trials, with reasons"),
@@ -301,14 +301,14 @@ def build(n: dict):
     set_text(shape(S[14], 850), size=12, lines=["Quotes checked word for word; uncited sentences rejected; each argument "
                                              "credited to its report's author; a person approves."])
     set_text(shape(S[14], 854), size=13, bold=True, lines=["Honest and safe"])
-    set_text(shape(S[14], 851), size=12, lines=[f"No predictions: “followed”, never “caused”. {n['sensitive']} at-risk people hidden "
-                                  "and never sent to AI. Only cited excerpts published, © CFJ."])
+    set_text(shape(S[14], 851), size=12, lines=[f"No predictions: “followed”, never “caused”. {n['sensitive']} at-risk cases hidden "
+                                  "in the app and never sent to AI. Cited excerpts only, © CFJ."])
     notes(S[14], "Responsible AI is 20% of judging: deterministic core, sources everywhere, human approval.")
 
     # 17 · Validation (reuses the example's how-it-works layout)
     set_text(shape(S[17], 913), ["VALIDATION"])
     set_text(shape(S[17], 915), ["Sources check out"])
-    set_text(shape(S[17], 914), [f"{ARGUMENT_PARAGRAPHS:,} / {ARGUMENT_PARAGRAPHS:,} arguments on the page they cite",
+    set_text(shape(S[17], 914), [f"{ARGUMENT_PARAGRAPHS:,} / {ARGUMENT_PARAGRAPHS:,} tagged paragraphs on the page they cite",
                                  f"{n['impacts']} / {n['impacts']} impact sentences on the page they cite",
                                  f"Authors for {n['authors']} / {n['core']} reports, each with its source sentence"])
     set_text(shape(S[17], 917), ["People confirmed the data"])
@@ -365,7 +365,7 @@ def build(n: dict):
                                   "OPEN SOURCE", "github.com/valentinasilva8/fairtrial-ai-hackathon",
                                   "Code MIT · report excerpts © Clooney Foundation for Justice",
                                   "Independent project, not endorsed by CFJ, TrialWatch or Columbia Law School"])
-    notes(S[11], "Demo: Home → Stress Test (Fatia & Haris) → Argument Bank → UN Letter. Start from the Home link.")
+    notes(S[11], "Demo: Home → Argument Bank (Fatia & Haris) → UN Letter → Stress Test. Start from the Home link.")
 
     # order and drop the rest of the example deck
     order = [1, 2, 3, 4, 5, 16, 6, 7, 8, 14, 17, 9, 10, 11]
