@@ -23,7 +23,7 @@ TrialWatch's own process is Monitoring → Evaluation → Advocacy. The tool fol
    - R2 the victim must file the complaint personally
    - R3 hate speech requires real, imminent harm
    - R4 public-interest speech has a defense
-   Each case gets **Likely barred / At risk / Still prosecutable**, with the rule and source shown, labeled "for lawyer review". Current result: **5 of 14 past cases would likely be barred.** A sensitivity analysis reruns this under ten scenarios: it ranges from **3 of 14** (if public officials can still be defamation victims) to **8 of 14** (if the "only individuals" rule also covers hate-speech complaints by groups), and falls to 1 of 14 without R1. The headline rests mainly on R1, and the key open legal question is whether public officials are excluded.
+   Each case gets **Likely barred / At risk / Still prosecutable**, with the rule and source shown, labeled "for lawyer review". Current result: **5 of 13 past cases would likely be barred.** A sensitivity analysis reruns this under ten scenarios: it ranges from **3 of 13** (if public officials can still be defamation victims) to **8 of 13** (if the "only individuals" rule also covers hate-speech complaints by groups), and falls to 1 of 13 without R1. The headline rests mainly on R1, and the key open legal question is whether public officials are excluded.
 3. **Evaluation — Argument Bank** (added after judge feedback on day 1). For a current case, find the most similar past TrialWatch cases, show what happened in them, and show the arguments TrialWatch's experts made, by category:
    - legality and vagueness
    - legitimate aim
@@ -41,7 +41,7 @@ Human rights defenders **Fatia Maulidiyanti and Haris Azhar** were reported by a
 - **UN letter:** the draft cites the case record, the ruling, the police pledge and those TrialWatch pages, with every quotation checked against its source.
 
 ## Data (all public)
-- **CFJ report** *Protecting Online Speech in Indonesia* (hackathon packet): 6 case studies plus further cases, based on a 73-case dataset (we will ask TrialWatch for access). Our Indonesian case table has 16 cases, each checked by a named teammate.
+- **CFJ report** *Protecting Online Speech in Indonesia* (hackathon packet): 6 case studies plus further cases, based on a 73-case dataset (we will ask TrialWatch for access). Our Indonesian case table has 16 cases, each with sources; teammates sign off each one in a verification log, and 2 at-risk people are marked sensitive and hidden.
 - **Every TrialWatch report on cfj.org:** 96 report pages = 90 distinct reports, 94 PDFs, downloaded at the rate cfj.org's robots.txt asks for.
   - 63 trials carry an A–F grade.
   - 47 graded trials analyse freedom of expression; these form the Argument Bank.
