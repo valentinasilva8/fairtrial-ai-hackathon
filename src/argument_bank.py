@@ -70,7 +70,8 @@ def is_good(label: str, confirmed: bool) -> bool:
 def past_cases() -> pd.DataFrame:
     feats = pd.read_csv(DATA / "trialwatch_case_features.csv", keep_default_na=False)
     outcomes = pd.read_csv(DATA / "trialwatch_outcomes.csv", keep_default_na=False)
-    reports = pd.read_csv(DATA / "trialwatch_reports.csv", keep_default_na=False)[["url", "pdf_url", "hrc_decisions_cited"]]
+    reports = pd.read_csv(DATA / "trialwatch_reports.csv", keep_default_na=False)[
+        ["url", "pdf_url", "hrc_decisions_cited", "author", "author_source"]]
     df = feats.merge(outcomes.drop(columns=["case", "grade"]), on="report_url", how="left")
     df = df.merge(reports, left_on="report_url", right_on="url", how="left").drop(columns=["url"])
     for col in ["charges", "speech", "roles"]:
@@ -152,6 +153,45 @@ def best_arguments(report_url: str, per_category: int = 1) -> dict[str, list[dic
 
 def hrc_decisions(report_url: str) -> list[str]:
     return _load_arguments()[1].get(report_url, [])
+
+
+def _words(text: str) -> set[str]:
+    return set(re.findall(r"[a-z]{3,}", text.lower()))
+
+
+def same_drafting(a: str, b: str, threshold: float = 0.7) -> bool:
+    """True when two paragraphs are the same drafting (e.g. three Cambodia reports reusing one paragraph)."""
+    wa, wb = _words(a), _words(b)
+    return bool(wa and wb) and len(wa & wb) / len(wa | wb) >= threshold
+
+
+def grouped_arguments(matches: pd.DataFrame, labels: list[str] | None = None) -> dict[str, list[dict]]:
+    """For each label, the arguments from the matched cases, with shared drafting merged into one group.
+
+    Each group: {"text", "cases": [{case, author, page, link, outcome, confirmed, good}]}.
+    Groups that include a case with a good outcome come first, then larger groups.
+    """
+    labels = labels or list(CATEGORY_LABELS)
+    out: dict[str, list[dict]] = {}
+    for label in labels:
+        groups: list[dict] = []
+        for m in matches.to_dict("records"):
+            paras = best_arguments(m["report_url"]).get(label)
+            if not paras:
+                continue
+            p = paras[0]
+            entry = {"case": m["case"], "author": m.get("author", ""), "page": p["page"],
+                     "link": page_link(m.get("pdf_url", ""), p["page"]) or m["report_url"],
+                     "outcome": m["outcome"], "confirmed": m["outcome_confirmed"], "good": m["good_outcome"]}
+            home = next((g for g in groups if same_drafting(g["text"], p["text"])), None)
+            if home:
+                home["cases"].append(entry)
+            else:
+                groups.append({"text": p["text"], "cases": [entry]})
+        groups.sort(key=lambda g: (not any(c["good"] for c in g["cases"]), -len(g["cases"])))
+        if groups:
+            out[label] = groups
+    return out
 
 
 def page_link(pdf_url: str, page: int) -> str:
