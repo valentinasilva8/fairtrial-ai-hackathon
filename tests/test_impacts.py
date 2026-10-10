@@ -244,3 +244,28 @@ def test_impact_markdown_marks_status_and_keeps_numbers():
     assert "*confirmed*" in "\n".join(impact_markdown(impact_lines(row)))
     assert impact_markdown([]) == []
 
+
+# --- misses found when Shreya checked the first full run ----------------------
+
+def test_a_capitalised_conditional_with_a_prediction_is_excluded():
+    ev = found(page("If the conviction is upheld, Mr. Rowe will be barred from the practice of law."))
+    assert not ev["other_restrictions"]
+    assert not found(page("Ms. Rowe will be barred from leaving the country."))["other_restrictions"]
+
+
+def test_the_month_may_is_not_a_hedge():
+    ev = found(page("On May 4, Ms. Rowe was detained at the airport."))
+    assert ev["pretrial_detention"]
+
+
+def test_delay_in_telling_someone_the_charges_is_not_prolonged_proceedings():
+    ev = found(page("This lengthy delay in informing Ms. Rowe of the cause of the charges against her violated her rights."))
+    assert not ev["prolonged_proceedings"]
+
+
+def test_delay_in_bringing_the_case_to_trial_is_prolonged_proceedings():
+    ev = found(page("The long delay in bringing Ms. Rowe's case to trial was not justified by the complexity of the charges."))
+    assert ev["prolonged_proceedings"]
+    ev = found(page("Ms. Rowe's trial was delayed for months while she remained in pretrial detention."))
+    assert ev["prolonged_proceedings"]
+

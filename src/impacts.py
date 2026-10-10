@@ -52,8 +52,10 @@ CATEGORIES = {
     ),
     "prolonged_proceedings": (
         r"\bremained (?:a )?suspect\b|\bsuspect for\b|\bunder investigation for\b"
-        r"|\b(?:prolonged|protracted|lengthy|undue) (?:delay|proceedings?|investigation|trial)\b"
-        r"|\bdelays?\b|\bdelayed\b"
+        r"|\b(?:prolonged|protracted|lengthy|undue) (?:proceedings?|investigation|trial|pre-?trial)\b"
+        r"|\bdelays? (?:in|of) (?:the )?(?:trial|proceedings?|investigation|prosecution|case|hearings?|verdict|judgment|ruling)\b"
+        r"|\bdelays? in bringing\b.{0,60}?\bto trial\b"
+        r"|\b(?:trial|proceedings?|investigation|case|hearings?|verdict|judgment|ruling) (?:was |were |has been |have been )?(?:\w+ )?delayed\b"
     ),
 }
 
@@ -75,10 +77,10 @@ BOILERPLATE = re.compile(
     re.I,
 )
 
-# Sentences that are not statements of fact about the defendant: conditionals and
-# hypotheticals ("if she had been detained ... would be"), and the penalty a statute
+# Sentences that are not statements of fact about the defendant: conditionals, hypotheticals
+# and predictions ("If the conviction is upheld, he will be barred ..."), and the penalty a statute
 # provides for, which is not the sentence imposed.
-HEDGE = re.compile(r"\b(?:if|would|could|might|may|whether|unless)\b")
+HEDGE = re.compile(r"(?i:\b(?:if|would|could|might|whether|unless)\b)|\b(?:may|will)\b")
 STATUTE = re.compile(r"\bprovides? for\b|\bprescrib\w+|\bpunishable\b|\bpunishment\b|\branging from\b|\bcarries a\b|\bstatutory\b", re.I)
 HONORIFIC = re.compile(r"\b(Mr|Ms|Mrs|Dr|Prof|No|Art|St)\.\s")
 # A footnote number stuck to the end of a sentence ("station.44 The officers ..."), which
@@ -153,6 +155,18 @@ def quantities(sentence: str, near: list[tuple[int, int]] | None = None, reach: 
     return found
 
 
+def usable(sentence: str) -> bool:
+    """False for citation text, the grading annex, hypotheticals and predictions, and statutory penalty ranges."""
+    return not (CITATION.search(sentence) or BOILERPLATE.search(sentence) or HEDGE.search(sentence)
+                or STATUTE.search(sentence))
+
+
+def category_hits(sentence: str, category: str) -> list[re.Match]:
+    """Matches of the category's pattern that are not someone else's quoted words and not negated."""
+    return [m for m in re.finditer(CATEGORIES[category], sentence, re.I)
+            if not _in_quotes(sentence, m.start()) and not _negated(sentence, m.start())]
+
+
 def impact_evidence(pages: list[str], names: list[str], per_category: int = 6) -> dict[str, list[dict]]:
     """For each category, sentences that state it for the defendant.
 
@@ -166,15 +180,12 @@ def impact_evidence(pages: list[str], names: list[str], per_category: int = 6) -
     for n, page in enumerate(pages, 1):
         for para in body_paragraphs(page, min_chars=20):
             for s in _split(para):
-                if CITATION.search(s) or BOILERPLATE.search(s) or not names_defendant(s, names):
+                if not usable(s) or not names_defendant(s, names):
                     continue
-                if HEDGE.search(s) or STATUTE.search(s):
-                    continue
-                for cat, pat in CATEGORIES.items():
+                for cat in CATEGORIES:
                     if (cat, s) in seen or len(found[cat]) >= per_category:
                         continue
-                    hits = [m for m in re.finditer(pat, s, re.I)
-                            if not _in_quotes(s, m.start()) and not _negated(s, m.start())]
+                    hits = category_hits(s, cat)
                     if not hits:
                         continue
                     seen.add((cat, s))
