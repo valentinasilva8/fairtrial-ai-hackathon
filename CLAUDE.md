@@ -56,6 +56,7 @@ references/               # source PDFs (CFJ EIT report) — not required to run
 - Keep the rule engine, report parsing and case matching deterministic; use the LLM only to fill rule inputs from text and to draft letters, and show its reasoning.
 - Never predict the outcome of a live trial; show what followed in similar past cases.
 - TrialWatch outcomes count only once a person fills `verified_by` in `data/trialwatch_outcomes.csv`.
+- Later outcome changes go in `data/trialwatch_outcome_updates.csv` (append-only, one verified dated row per change; rules in `docs/OUTCOME_UPDATES.md`). Never edit an old row; add a new one.
 - Don't commit full CFJ report text or PDFs. Only the paragraphs the app displays are published
   (`data/trialwatch_argument_excerpts.jsonl`, regenerate with `scripts/export_argument_excerpts.py`)
   under CFJ's copyright notice in `data/NOTICE.md`.

@@ -22,6 +22,10 @@ a person fills `verified_by`.
 
 Re-running `python scripts/build_outcomes.py` keeps everything people have filled in.
 
+## Later changes
+If a case's outcome changes after you confirmed it (e.g. a conviction overturned on appeal), don't edit
+`trialwatch_outcomes.csv`: add a row to `trialwatch_outcome_updates.csv` instead ([OUTCOME_UPDATES.md](OUTCOME_UPDATES.md)).
+
 ## Wording
 A good outcome **followed** TrialWatch's work and the arguments in its report; we never say the
 arguments **caused** it.

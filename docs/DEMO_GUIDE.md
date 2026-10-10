@@ -24,6 +24,10 @@ Start the app from its **Home** link (not a page link). Free Streamlit apps slee
 - **Step 3 · Source checks after editing:** the edit re-check, plus the support check run again on the edited text; tick "reviewed".
 - **Step 4 · Approve and download:** enter a reviewer name, tick the box, then **Download Word (.docx)**. The file says who approved it and whether any warnings were left. Sensitive cases can't be used.
 
+## 3b. Outcome Updates (1 min): TrialWatch's impact over time
+- **Show:** Home's "Outcomes that changed for the better" (Bao Choy, Stella Nyanzi: convicted → conviction overturned), then the Outcome Updates page: the log, and the form that checks a new verified change and gives the line to add on GitHub.
+- **Say:** "When a TrialWatch case changes after the report, we record it with a source and a named checker, and the app's outcomes update everywhere. It followed TrialWatch's work; we don't claim it caused it."
+
 ## 4. Stress Test (1–2 min): where a law has just been reformed
 - **Show:** "5 of 13 past cases would likely be barred under the 2025 ruling", then open "How robust is this number?": 3 to 8 of 13 across ten legal readings.
 - **Click Fatia & Haris:** reported by a minister; R1 says a public official can no longer be a defamation victim.
