@@ -69,11 +69,12 @@ Innovation 25 · Feasibility within TrialWatch's infrastructure 25 · Human Righ
 
 ## Team
 See `docs/TEAM_PLAN.md` for each person's tasks and the timeline.
-4 data science students, no law students. Legal claims come from cited sources (CFJ/TrialWatch report, HRW, court decisions), not our own judgment.
+5 data science students (Shreya, Valentina, Ungu, Layla, Yuki), no law students. Legal claims come from cited sources (CFJ/TrialWatch report, HRW, court decisions), not our own judgment.
 - Data: build `data/cases_seed.csv` / `events.csv` from the CFJ report + news
 - Stress Test + Argument Bank + UN letter: Shreya
 - App: Streamlit pages
 - Briefs + pitch
+- Outcome confirmation + argument accuracy check: Yuki
 
 ## Key sources
 - `references/` — CFJ report "Protecting Online Speech in Indonesia: Lessons from the EIT Law and the Road Ahead" (based on a 73-case dataset; 6 deep-dive case studies)
