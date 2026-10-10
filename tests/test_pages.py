@@ -119,5 +119,28 @@ def test_un_letter_edit_review_and_download():
     assert any("no citation" in w.value for w in at.warning)
     at.text_input(key=next(t.key for t in at.text_input if t.key and t.key.endswith("_reviewer"))).set_value("Tester").run(timeout=30)
     next(c for c in at.checkbox if c.key and c.key.endswith("_read")).check().run(timeout=30)
+    save = lambda: next(b for b in at.button if b.label == "Save a copy in outputs/")
+    assert save().disabled  # both source-check reviews still unticked
+    next(c for c in at.checkbox if c.key and c.key.endswith("_pre_ok")).check().run(timeout=30)
+    next(c for c in at.checkbox if c.key and c.key.endswith("_post_ok")).check().run(timeout=30)
     assert not at.exception
-    assert not next(b for b in at.button if b.label == "Save a copy in outputs/").disabled
+    assert not save().disabled
+
+
+def test_arriving_from_argument_bank_prefills_and_drafts():
+    at = AppTest.from_file("../pages/4_UN_Letter.py")
+    at.session_state["letter_case"] = "fatia_haris"
+    at.session_state["letter_n_past"] = 4
+    at.session_state["letter_autodraft"] = True
+    at.session_state["letter_features"] = {"case_id": "fatia_haris", "country": "Indonesia", "region": "Southeast Asia",
+                                           "charges": ["defamation or insult"], "speech": ["online post"], "roles": []}
+    at.run(timeout=30)
+    assert not at.exception
+    assert at.selectbox(key="letter_case").value == "fatia_haris"
+    assert any("Citation check passed" in s.value for s in at.success)
+    assert any("Argument Bank" in c.value for c in at.caption)
+
+
+def test_argument_bank_has_letter_button():
+    at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
+    assert any(b.label.endswith("Draft a UN letter for this case") for b in at.button)
