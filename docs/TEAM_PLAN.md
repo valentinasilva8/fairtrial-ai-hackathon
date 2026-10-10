@@ -90,3 +90,26 @@ Rule of thumb: Claude Code writes the code. **People find and verify facts, make
 
 ## Git habits
 Pull before starting · own branch per person · small commits · PR to `main` · don't edit files another role owns.
+
+---
+
+## Update, Fri Oct 9 evening: Argument Bank direction (after judge feedback)
+A judge suggested using TrialWatch's past cases: group the arguments TrialWatch made, find similar past
+cases with good outcomes, and draft UN Special Rapporteur letters that cite them. This is now built on top
+of the stress test (see `docs/ARGUMENT_BANK.md`). The AI is now Google Gemini (free tier), not Claude:
+put `GEMINI_API_KEY` in `.env`.
+
+| Status | Item |
+|---|---|
+| ✅ | All 96 TrialWatch report pages fetched; 63 graded trials; 47 freedom-of-expression trials = Argument Bank |
+| ✅ | 226 CFJ news posts fetched; outcome evidence for all 47 cases (suggested labels) |
+| ✅ | Similar-case matching, Argument Bank page, UN Letter page with citation checks |
+| ⬜ | **Confirm the 47 outcomes** (anyone free, ~1 h): `docs/VERIFY_OUTCOMES.md`. Start with the cases suggested as good or mixed |
+| ⬜ | **Hand-check arguments in 10 reports** (Layla): for each tagged paragraph, is the category right? Gives our accuracy figure |
+| ⬜ | Merge Valentina's case tracker (PR #5) |
+| ⬜ | Fix Yulei's PR #2 before merging: it deletes the `asrul` row and uses values outside the allowed lists |
+| ⬜ | Polish + deploy (prompts 8, 9) |
+
+Demo flow suggestion: Fatia & Haris → Stress Test (likely barred, R1) → Argument Bank (closest match:
+Thailand v. Boonlert & Donnapee, acquitted — once confirmed) → UN Letter (every sentence sourced, support
+check, reviewer approves).
