@@ -12,6 +12,9 @@ from src.data import DataValidationError, load_all, public_cases
 from src.letter import (
     LLMError,
     SensitiveCaseError,
+    check_edited,
+    numbered_sources,
+    to_docx,
     build_sources,
     check_support,
     generate_draft,
@@ -152,22 +155,50 @@ if state.get("support"):
                     f"*{c['heading']}*, sentence {c['n']}: {c['text']}")
         st.caption(c["reason"])
 
+# --- edit -----------------------------------------------------------------------
+st.divider()
+st.subheader("Edit the letter")
+st.caption("Edit freely. Keep the [n] citations and the source list; every edit is re-checked below "
+           "(no AI): citation numbers must exist and any quotation must still match a source word for word.")
+edited = st.text_area("Letter", value=letter, height=420, key=f"{key}_edit_{hash(letter)}",
+                      label_visibility="collapsed")
+numbered = numbered_sources(state["draft"], sources)
+edit_problems = check_edited(edited, numbered, original=letter)
+changed = edited.strip() != letter.strip()
+if edit_problems:
+    st.warning("Check before approving:\n- " + "\n- ".join(edit_problems))
+elif changed:
+    st.success("Edited letter re-checked: citations and quotations still match the sources.")
+
 # --- human decision ---------------------------------------------------------
 st.divider()
-st.subheader("Review")
+st.subheader("Review, approve and download")
 reviewer = st.text_input("Reviewer name", key=f"{key}_reviewer")
-read_all = st.checkbox("I have read the whole draft and every flagged sentence", key=f"{key}_read")
-a1, a2 = st.columns(2)
-if a1.button("Approve and save", disabled=not (reviewer.strip() and read_all)):
+read_all = st.checkbox("I have read the whole letter, every flagged sentence and every warning above",
+                       key=f"{key}_read")
+approved = bool(reviewer.strip() and read_all)
+stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+checked = state.get("support")
+support_note = (f"{sum(c['verdict'] == 'supported' for c in checked)}/{len(checked)} sentences fully supported"
+                if checked else "support check not run")
+note = (f"Approved by {reviewer.strip() or '—'} on {stamp}. Drafted by {state['by']}; {support_note}; "
+        f"{'edited by the reviewer' if changed else 'not edited'}; "
+        f"{len(edit_problems)} open warning(s) after editing. Draft for lawyer review.")
+file_stem = f"UN_letter_{re.sub(r'[^A-Za-z0-9]+', '_', case['name']).strip('_')}_{stamp}"
+if not approved:
+    st.caption("Enter your name and confirm you have read everything to enable approval and download.")
+d1, d2, d3, d4 = st.columns(4)
+d1.download_button("Download Word (.docx)", data=to_docx(edited, f"UN letter: {case['name']}", note) if approved else b"",
+                   file_name=f"{file_stem}.docx", disabled=not approved,
+                   mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+d2.download_button("Download Markdown (.md)", data=f"{edited}\n\n*{note}*\n" if approved else "",
+                   file_name=f"{file_stem}.md", disabled=not approved, mime="text/markdown")
+if d3.button("Save a copy in outputs/", disabled=not approved):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    path = OUT_DIR / f"{re.sub(r'[^a-z0-9_]', '', case_id)}_{stamp}.md"
-    checked = state.get("support")
-    note = (f"{sum(c['verdict'] == 'supported' for c in checked)}/{len(checked)} sentences fully supported"
-            if checked else "support check not run")
-    path.write_text(f"<!-- approved by {reviewer.strip()} on {stamp}; drafted by {state['by']}; {note} -->\n\n{letter}\n")
+    path = OUT_DIR / f"{file_stem}.md"
+    path.write_text(f"<!-- {note} -->\n\n{edited}\n")
     st.success(f"Saved to outputs/briefs/{path.name}.")
-if a2.button("Mark sensitive (don't use)"):
+if d4.button("Mark sensitive (don't use)"):
     st.session_state.pop(key, None)
     st.warning(f"Draft discarded. To keep {case['name']} out of all public views and briefs, set "
                f"sensitive=true for `{case_id}` in data/cases_seed.csv.")

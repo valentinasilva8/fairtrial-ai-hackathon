@@ -108,3 +108,16 @@ def test_un_letter_for_a_new_case_in_another_country():
     assert not at.exception
     assert any("Citation check passed" in s.value for s in at.success)
     assert any("Government of Kenya" in m.value for m in at.markdown)
+
+
+def test_un_letter_edit_review_and_download():
+    at = AppTest.from_file("../pages/4_UN_Letter.py").run(timeout=30)
+    next(b for b in at.button if b.label == "Build plain draft (no AI)").click().run(timeout=30)
+    assert not at.exception
+    editor = next(t for t in at.text_area if t.key and "_edit_" in t.key)
+    editor.set_value(editor.value.replace("### Sources", "An added sentence with no citation at all, written by the reviewer.\n\n### Sources")).run(timeout=30)
+    assert any("no citation" in w.value for w in at.warning)
+    at.text_input(key=next(t.key for t in at.text_input if t.key and t.key.endswith("_reviewer"))).set_value("Tester").run(timeout=30)
+    next(c for c in at.checkbox if c.key and c.key.endswith("_read")).check().run(timeout=30)
+    assert not at.exception
+    assert not next(b for b in at.button if b.label == "Save a copy in outputs/").disabled
