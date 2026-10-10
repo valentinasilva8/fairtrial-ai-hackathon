@@ -85,6 +85,8 @@ def build_sources(case: dict, events: list[dict], stress: dict | None, promises:
     for m in past:
         slug = m["report_url"].rstrip("/").rsplit("/", 1)[-1]
         outcome = f"{m['outcome']} ({'confirmed' if m['outcome_confirmed'] else 'unconfirmed'})"
+        if m.get("outcome_history"):
+            outcome += "; history: " + "; ".join(m["outcome_history"])
         by = f" by {m['author']}" if m.get("author") else ""
         for cat, paras in m["arguments"].items():
             for para in paras:

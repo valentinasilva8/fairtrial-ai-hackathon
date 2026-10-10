@@ -25,8 +25,9 @@ See [docs/SUBMISSION.md](docs/SUBMISSION.md) for the full description.
 ## What's in the app
 | Page | What it does |
 |---|---|
-| **Home** | Headline numbers, how it works, cases by outcome, and the **Promise Clock**: days since each official pledge and the evidence that it was kept |
+| **Start here** | Headline numbers, a linked card for every page saying what it does, the outcomes that changed for the better, the Indonesian cases (checked by a teammate / fully confirmed, with any open detail named), and the **Promise Clock**: days since each official pledge and the evidence that it was kept |
 | **Argument Bank** | Pick a current case or describe a new one, then **"Draft a UN letter for this case"** opens the UN Letter page with the same case, matching features and similar cases, and a sourced draft already built. **By argument:** the arguments from the most similar TrialWatch trials, grouped by legality, vagueness, broadness, necessity and proportionality (then legitimate aim, pretrial detention, fair trial), each with case, report author, page link and outcome; identical paragraphs reused across reports shown once. **By case:** each similar trial with why it matched, its confirmed outcome, the impact on the defendant and the UN decisions cited |
+| **Outcome Updates** | The impact over time: a log of verified later changes (e.g. a conviction overturned on appeal). The latest becomes the case's current outcome everywhere, with its history ("convicted → conviction overturned (2023-06-05)") and a "changed for the better" marker. A form checks a new entry and produces the line to add on GitHub; tests check the log on every PR. Rules: [docs/OUTCOME_UPDATES.md](docs/OUTCOME_UPDATES.md) |
 | **Stress Test** | Runs each Indonesian case through rules R1–R4 from the reformed law and the 2025 ruling: *likely barred / at risk / still prosecutable*, with the rule and reason, and a ten-scenario sensitivity analysis. Paste a news story to have Gemini suggest the rule inputs, each with a verbatim quote |
 | **UN Letter** | A draft submission to the UN Special Rapporteur on freedom of expression, for a seeded Indonesian case or **a new case in any country** you describe, built from the case, the Argument Bank, and (for Indonesia) the stress test and the pledges. Drafts with an uncited sentence, an unknown source or an invented quotation are rejected; a second check flags sentences the sources don't fully support. Four steps: **(1) source checks before editing**, **(2) edit the letter**, **(3) source checks after editing** (every edit is re-checked (citation numbers must exist, quotations must still match a source word for word, new sentences need a citation; the support check can be run again on the edited text), **(4) approve and download** — once a named reviewer ticks both check reviews, **download it as Word (.docx) or Markdown**, with a note of who approved it and any open warnings |
 
@@ -83,7 +84,7 @@ Opens at http://localhost:8501.
 
 ## Screenshots
 <!-- Add before submission: docs/screenshots/*.png -->
-| Home | Stress Test | Argument Bank | UN Letter |
+| Start here | Stress Test | Argument Bank | UN Letter |
 |---|---|---|---|
 | *screenshot to add* | *screenshot to add* | *screenshot to add* | *screenshot to add* |
 
@@ -116,8 +117,9 @@ Tests run on every pull request and push to `main` (GitHub Actions). They use ma
 
 ## Project structure
 ```
-app.py                       # entry point: page navigation (Monitoring / Evaluation / Advocacy)
-pages/0_Home.py              # overview, cases by outcome, Promise Clock
+app.py                       # entry point: page navigation (Overview / Evaluation / Advocacy / Accountability)
+pages/0_Home.py              # "Start here": links to every page, Indonesian cases, Promise Clock
+pages/5_Outcome_Updates.py   # verified later outcome changes + form
 pages/2_Stress_Test.py       # reform stress test + "add a case from text"
 pages/3_Argument_Bank.py     # similar TrialWatch cases, outcomes, arguments
 pages/4_UN_Letter.py         # sourced UN Special Rapporteur letter

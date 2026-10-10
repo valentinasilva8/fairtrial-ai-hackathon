@@ -2,11 +2,11 @@
 
 Live app: https://fairtrial-ai-hackathongit-cyvqxeqekcqd4hjsqr7b5w.streamlit.app/
 
-Start the app from its **Home** link (not a page link). Free Streamlit apps sleep when unused: open the link a few minutes before presenting. Total: about 10 minutes.
+Start the app from its main link, which opens **Start here** (not a page link). Free Streamlit apps sleep when unused: open the link a few minutes before presenting. Total: about 10 minutes.
 
-## 1. Home (1 min)
+## 1. Start here (1 min)
 - **Say:** "TrialWatch has graded dozens of trials of journalists and critics. Precedent & Practice turns those reports into arguments, precedents and sourced UN submissions for the next person prosecuted for speech."
-- **Show:** the four numbers (47 fairness reports searchable by argument · 23 countries · 21 of 47 good outcomes that followed · 5 of 13 Indonesian cases likely barred) and "How it works": Evaluation → Advocacy → Accountability.
+- **Show:** the four numbers (47 fairness reports searchable by argument · 23 countries · 21 of 47 good outcomes that followed · 5 of 13 Indonesian cases likely barred) then "What you can do": one card per page (Argument Bank, Stress Test, UN Letter, Outcome Updates), each with a link and what it does, following Evaluation → Advocacy → Accountability. Below, the Indonesian cases: 14 of 14 checked by a teammate, 12 fully confirmed, 2 with one detail still open (we show which).
 - **Scroll to the Promise Clock:** days since each official pledge; the police pledge's date is marked "to verify". We don't overstate.
 
 ## 2. Argument Bank (3 min): the core
@@ -23,6 +23,10 @@ Start the app from its **Home** link (not a page link). Free Streamlit apps slee
 - **Step 2 · Edit the letter:** change a sentence or delete a citation number and show the warning that appears; put it back and it re-checks clean.
 - **Step 3 · Source checks after editing:** the edit re-check, plus the support check run again on the edited text; tick "reviewed".
 - **Step 4 · Approve and download:** enter a reviewer name, tick the box, then **Download Word (.docx)**. The file says who approved it and whether any warnings were left. Sensitive cases can't be used.
+
+## 3b. Outcome Updates (1 min): TrialWatch's impact over time
+- **Show:** Start here's "Outcomes that changed for the better" (Bao Choy, Stella Nyanzi: convicted → conviction overturned), then the Outcome Updates page: the log, and the form that checks a new verified change and gives the line to add on GitHub.
+- **Say:** "When a TrialWatch case changes after the report, we record it with a source and a named checker, and the app's outcomes update everywhere. It followed TrialWatch's work; we don't claim it caused it."
 
 ## 4. Stress Test (1–2 min): where a law has just been reformed
 - **Show:** "5 of 13 past cases would likely be barred under the 2025 ruling", then open "How robust is this number?": 3 to 8 of 13 across ten legal readings.

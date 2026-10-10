@@ -25,7 +25,8 @@ The app follows TrialWatch's own process: **Monitoring → Evaluation → Advoca
    - **By case:** shows each similar trial's outcome, the impact on the defendant (conviction and sentence, detention, mistreatment, reputational harm, other restrictions, prolonged proceedings), and its arguments.
 2. **UN Special Rapporteur letter (advocacy).** For a seeded case or a new case in any country, a draft built only from numbered sources: the case record, the Argument Bank, the stress test and official pledges. Code rejects any sentence without a source and any quotation not found word for word; a second check flags sentences the sources don't fully support; a named reviewer approves before it is saved. A plain version can be built without AI.
 3. **Reform stress test (where a law has just changed).** For Indonesia, four rules from the reformed law and the 2025 ruling, written as transparent code, show that **5 of 13 past cases would likely be barred today**. A sensitivity analysis shows the range across ten legal readings (3 to 8 of 13), which tells a lawyer exactly what to confirm.
-4. **Promise Clock (accountability).** Days since each official pledge, with the evidence that it was kept.
+4. **Outcome Updates (accountability).** TrialWatch's impact often shows after the report. A log of verified, dated changes (e.g. a conviction overturned on appeal) makes the latest one each case's current outcome everywhere, shows the history ("convicted → conviction overturned"), and counts the cases that changed for the better. A person checks every entry against a source; automated tests check the log on every change.
+5. **Promise Clock (accountability).** Days since each official pledge, with the evidence that it was kept.
 
 ## Why lawyers can use it
 - **Easy:** a web app. Pick a case or describe a new one; no installation, no AI knowledge.

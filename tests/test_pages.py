@@ -144,3 +144,25 @@ def test_arriving_from_argument_bank_prefills_and_drafts():
 def test_argument_bank_has_letter_button():
     at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
     assert any(b.label.endswith("Draft a UN letter for this case") for b in at.button)
+
+
+def test_outcome_updates_page_checks_an_entry_and_produces_a_line():
+    at = AppTest.from_file("../pages/5_Outcome_Updates.py").run(timeout=30)
+    assert not at.exception
+    assert any("Verified updates" in m.label for m in at.metric)
+    at.text_input(key="ou_date").set_value("2024-05-21").run(timeout=30)
+    at.text_area(key="ou_summary").set_value("The appeal court overturned the conviction.").run(timeout=30)
+    at.text_input(key="ou_source").set_value("https://example.org/ruling").run(timeout=30)
+    at.text_input(key="ou_verifier").set_value("Tester").run(timeout=30)
+    assert not any(c.language == "text" for c in at.code)  # source box not ticked yet
+    at.checkbox(key="ou_checked").check().run(timeout=30)
+    assert not at.exception
+    assert any("2024-05-21" in c.value for c in at.code)
+
+
+def test_start_page_links_every_page_and_counts_checked_cases():
+    at = AppTest.from_file("../app.py").run(timeout=30)
+    assert not at.exception
+    assert any(h.value == "What you can do" for h in at.header)
+    labels = {m.label: m.value for m in at.metric}
+    assert labels["Checked by a teammate"].endswith(f"of {labels['Cases']}")

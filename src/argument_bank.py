@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from src import outcome_updates
 from src.reports import CATEGORIES
 from src.similarity import match
 
@@ -24,7 +25,7 @@ ARGUMENTS = DATA / "raw" / "trialwatch" / "arguments.jsonl"
 EXCERPTS = DATA / "trialwatch_argument_excerpts.jsonl"
 
 GOOD_OUTCOMES = {
-    "acquitted", "charges dropped", "conviction overturned",
+    "acquitted", "acquittal upheld", "charges dropped", "conviction overturned",
     "released early / pardoned", "UN found detention arbitrary",
 }
 CATEGORY_LABELS = {
@@ -79,7 +80,18 @@ def past_cases() -> pd.DataFrame:
     labels = df.apply(lambda r: outcome_of(r.to_dict()), axis=1)
     df["outcome"] = [l for l, _ in labels]
     df["outcome_confirmed"] = [c for _, c in labels]
-    df["good_outcome"] = [is_good(l, c) for l, c in labels]
+    # Later verified changes (data/trialwatch_outcome_updates.csv): the latest one is the current outcome.
+    updates = outcome_updates.load()
+    histories = [outcome_updates.history(updates, u) for u in df["report_url"]]
+    for i, hist in enumerate(histories):
+        if hist:
+            latest = hist[-1]
+            df.at[i, "outcome"] = latest["new_outcome"]
+            df.at[i, "outcome_confirmed"] = True
+            df.at[i, "outcome_source_url"] = latest["source_url"]
+    df["outcome_history"] = [[outcome_updates.describe(h) for h in hist] for hist in histories]
+    df["outcome_improved"] = [any(outcome_updates.improved(h) for h in hist) for hist in histories]
+    df["good_outcome"] = [is_good(l, c) for l, c in zip(df["outcome"], df["outcome_confirmed"])]
     return df
 
 
@@ -182,7 +194,8 @@ def grouped_arguments(matches: pd.DataFrame, labels: list[str] | None = None) ->
             p = paras[0]
             entry = {"case": m["case"], "author": m.get("author", ""), "page": p["page"],
                      "link": page_link(m.get("pdf_url", ""), p["page"]) or m["report_url"],
-                     "outcome": m["outcome"], "confirmed": m["outcome_confirmed"], "good": m["good_outcome"]}
+                     "outcome": m["outcome"], "confirmed": m["outcome_confirmed"], "good": m["good_outcome"],
+                     "improved": bool(m.get("outcome_improved", False))}
             home = next((g for g in groups if same_drafting(g["text"], p["text"])), None)
             if home:
                 home["cases"].append(entry)
