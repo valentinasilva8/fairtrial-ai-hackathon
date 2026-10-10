@@ -327,7 +327,8 @@ def build(n: dict):
     for sid, text in [(774, "Today"), (775, "With TrialWatch"), (776, "Next reform")]:
         set_text(shape(S[9], sid), [text])
     set_text(shape(S[9], 768), ["DEMO & HANDOVER"])
-    set_text(shape(S[9], 771), ["Live app, open-source repo and written guide. Every number here recomputed from the data."])
+    set_text(shape(S[9], 771), ["Live app, open-source repo and written guide. Every number here recomputed from the data. "
+                                 "Full report list: docs/TRIALWATCH_REPORTS.md."])
     set_text(shape(S[9], 769), ["LAWYER REVIEW"])
     set_text(shape(S[9], 772), ["Confirm rules R1–R4 and the argument categories with TrialWatch lawyers; "
                                  "add the 73-case Indonesia dataset."])
