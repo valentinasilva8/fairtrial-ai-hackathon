@@ -7,7 +7,7 @@ Start the app from its main link: the courtroom doors open onto **Start here** (
 ## 1. Start here (1 min)
 - **Say:** "TrialWatch has graded dozens of trials of journalists and critics. Precedent & Practice turns those reports into arguments, precedents and sourced UN submissions for the next person prosecuted for speech."
 - **Show:** the four numbers (47 fairness reports searchable by argument · 23 countries · 21 of 47 good outcomes that followed · 5 of 13 Indonesian cases likely barred) then "What you can do": one card per page (Argument Bank, Stress Test, UN Letter, Outcome Updates), each with a link and what it does, following Evaluation → Advocacy → Accountability. Below, the Indonesian cases: 14 of 14 checked by a teammate and fully confirmed with sources. The team's names are in the footer of every page.
-- **Scroll to the Promise Clock:** days since each official pledge; the police pledge's date is marked "to verify". We don't overstate.
+- **Scroll to the Promise Clock:** days since each official pledge and the sourced evidence. Three pledges are **Partly kept**: the revised law is in force but SAFEnet still counted 34 cases in Jan–Mar 2025 (most under Article 27A) and 29 in Apr–Jun 2025, often reported by officials or politicians; police told the TNI in Sept 2025 that an institution cannot report defamation (Ferry Irwandi); no written police guidance found. The hate-speech pledge still has no evidence. We don't overstate: the police pledge's source still awaits a teammate's check.
 
 ## 2. Argument Bank (3 min): the core
 - **Pick Fatia Maulidiyanti & Haris Azhar** (or "A new case" and describe one: charge, speech, defendant, region).
