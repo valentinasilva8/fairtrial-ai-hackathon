@@ -63,3 +63,51 @@ aren't in the cited source (ignoring punctuation), and sends the problems back t
 second Gemini pass rates each sentence as supported, partly supported or not supported, and its quoted
 evidence is itself checked against the source. A named reviewer approves before the letter is saved
 to `outputs/briefs/` (git-ignored). A plain draft can be built without AI.
+
+## Impact on the defendant (src/impacts.py)
+What the prosecution did to the defendant, in the report's own sentences, so a lawyer can see the
+human cost of a past case next to its arguments. Deterministic: regular expressions over the report
+text, no LLM.
+
+| Category | Where it comes from |
+|---|---|
+| Conviction and sentence | TrialWatch's grading annex: "whether the defendant was unjustly convicted and, if so, the sentence imposed" |
+| Detention | the annex: "unjustified pretrial detention" |
+| Mistreatment | the annex: "mistreated in connection with the charges or trial" |
+| Reputational harm | the annex: "the extent to which the defendant's reputation was harmed" |
+| Other restrictions (fines, travel bans, seizures, bans from office or journalism) | **ours**, not in the annex |
+| Prolonged proceedings (years as a suspect, long delays) | **ours**, not in the annex |
+
+**Method.** For each core report, take the body text of every page (footnote blocks dropped), split it
+into sentences, and keep a sentence under a category only if it names the defendant (full name, or
+Mr./Ms./Dr. plus part of the name; a bare name part is not enough, since "Kong" also names Kong Mas) and
+matches that category's patterns. Each hit keeps the exact sentence, its **PDF page** (not the printed
+page number) and a link to that page. A duration or amount in the sentence ("five months", "2 years",
+"5 million rupiah") is kept exactly as written and only when it sits next to the category's own words;
+a number is never computed or added. Skipped: citations and footnotes, the grading annex, sentences
+about other people, sentences with only a pronoun, conditionals and hypotheticals ("if", "would",
+"could", "may", "whether"), the penalty a statute provides for, negated statements ("was not
+convicted"), and someone else's quoted words.
+
+**Files.**
+- `python scripts/build_impacts.py` writes `data/trialwatch_impacts.csv` (one row per core case: yes/no
+  per category and, for each yes, the sentence, page, quantities and page link) and
+  `data/trialwatch_impact_evidence.csv` (every sentence found). It needs the PDFs from
+  `fetch_trialwatch_reports.py` and poppler's `pdftotext`.
+- A person confirms by filling `verified_by` (and `notes`) in `trialwatch_impacts.csv`. Re-running keeps
+  what people filled in. Until then the Argument Bank page marks the impact *unconfirmed*.
+- The UN letter can cite each as a source with an id like `impact:<report-slug>:<category>`; quotations
+  are checked against the sentence like any other source.
+
+**Limits.**
+- A hit shows that the report *states* a conviction, a detention and so on for the defendant. It does
+  not show that it was unjust: that is TrialWatch's grade, not ours. "Detention" does not separate
+  pretrial from post-conviction detention.
+- Precision is chosen over recall. A sentence that doesn't name the defendant ("The officers confiscated
+  the t-shirts…") is skipped, and unusual wording is missed. The filters are blunt: a real fact in a
+  sentence containing "may" or "prescribes" is dropped. An empty category means "none found", not "none".
+- A first run on three reports (Kong Raiya, Moses Bwayo, Suzethe Margaret) gave 17 sentences, 16 of which
+  state a fact about the defendant; the other, a detention order that was suspended at once, needs a
+  human reading. Three reports are a small sample; the check on all 47 is still to do.
+- The words are the report's. We say a good or bad outcome *followed* the prosecution and TrialWatch's
+  work, never that an argument or an impact *caused* it.
