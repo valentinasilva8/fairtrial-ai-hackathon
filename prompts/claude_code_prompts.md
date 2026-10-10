@@ -2,6 +2,10 @@
 
 Run each one, check the result, commit, then the next.
 
+**Status (Fri Oct 9 evening):** 1–4 and 6 done (4 now uses Gemini, not Claude). 5 is in Valentina's PR #5.
+7 was rebuilt as the UN Letter page on top of the Argument Bank (see `docs/ARGUMENT_BANK.md`); the English
+press release and Bahasa post are not built. 8 and 9 remain. The LLM is Google Gemini: use `GEMINI_API_KEY`.
+
 ## 1. Scaffold
 ```
 Read CLAUDE.md, docs/PROPOSAL.md, docs/stress_test_rules.md and the CSVs in data/. Scaffold the repo exactly per the structure in CLAUDE.md: requirements.txt (streamlit, pandas, anthropic, python-dotenv, pytest), .gitignore (include .env), MIT LICENSE, README.md with setup and run instructions, src/data.py that loads and validates the CSVs, and an app.py home page that shows the project name, the one-line hook, and counts of cases by outcome. Make it run with `streamlit run app.py`. Don't build the other pages yet.

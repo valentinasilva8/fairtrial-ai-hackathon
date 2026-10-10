@@ -6,6 +6,7 @@ from types import SimpleNamespace
 import pytest
 
 from src.llm import (
+    MODEL,
     ExtractionError,
     extract_case_fields,
     quote_in_text,
@@ -30,16 +31,18 @@ GOOD = {
 
 
 class FakeClient:
-    def __init__(self, payload=None, stop_reason="end_turn", text=None):
+    """Stands in for google.genai.Client: client.models.generate_content(...)."""
+
+    def __init__(self, payload=None, finish_reason="STOP", text=None):
         body = text if text is not None else json.dumps(payload)
         self.response = SimpleNamespace(
-            stop_reason=stop_reason,
-            content=[SimpleNamespace(type="text", text=body)],
+            text=body,
+            candidates=[SimpleNamespace(finish_reason=f"FinishReason.{finish_reason}")],
         )
         self.calls = []
-        self.beta = SimpleNamespace(messages=SimpleNamespace(create=self._create))
+        self.models = SimpleNamespace(generate_content=self._generate)
 
-    def _create(self, **kwargs):
+    def _generate(self, **kwargs):
         self.calls.append(kwargs)
         return self.response
 
@@ -90,14 +93,26 @@ def test_extract_case_fields_with_fake_client():
     out = extract_case_fields(TEXT, client=client)
     assert out["complainant_type"]["verified"]
     call = client.calls[0]
-    assert call["model"] == "claude-opus-5-5"
-    assert call["output_config"]["format"]["type"] == "json_schema"
-    assert TEXT in call["messages"][0]["content"]
+    assert call["model"] == MODEL
+    assert call["config"].response_mime_type == "application/json"
+    assert call["config"].response_json_schema["required"]
+    assert TEXT in call["contents"]
 
 
-def test_refusal_raises():
+def test_blocked_answer_raises():
     with pytest.raises(ExtractionError):
-        extract_case_fields(TEXT, client=FakeClient(GOOD, stop_reason="refusal"))
+        extract_case_fields(TEXT, client=FakeClient(finish_reason="SAFETY", text=""))
+
+
+def test_cut_off_answer_raises():
+    with pytest.raises(ExtractionError, match="cut off"):
+        extract_case_fields(TEXT, client=FakeClient(GOOD, finish_reason="MAX_TOKENS"))
+
+
+def test_missing_key_raises(monkeypatch):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    with pytest.raises(ExtractionError, match="GEMINI_API_KEY"):
+        extract_case_fields(TEXT)
 
 
 def test_unparseable_answer_raises():
@@ -108,3 +123,34 @@ def test_unparseable_answer_raises():
 def test_empty_text_rejected():
     with pytest.raises(ValueError):
         extract_case_fields("   ", client=FakeClient(GOOD))
+
+
+def test_overloaded_model_falls_back_to_next():
+    from google.genai import errors
+
+    client = FakeClient(GOOD)
+    calls = []
+
+    def flaky(**kwargs):
+        calls.append(kwargs["model"])
+        if len(calls) == 1:
+            raise errors.ServerError(503, {"error": {"message": "high demand", "status": "UNAVAILABLE"}})
+        return client.response
+
+    client.models.generate_content = flaky
+    out = extract_case_fields(TEXT, client=client)
+    assert out["complainant_type"]["verified"]
+    assert calls[0] == MODEL and calls[1] != MODEL
+
+
+def test_rate_limit_on_every_model_raises_clear_error():
+    from google.genai import errors
+
+    client = FakeClient(GOOD)
+
+    def limited(**kwargs):
+        raise errors.ClientError(429, {"error": {"message": "quota", "status": "RESOURCE_EXHAUSTED"}})
+
+    client.models.generate_content = limited
+    with pytest.raises(ExtractionError, match="rate limit"):
+        extract_case_fields(TEXT, client=client)
