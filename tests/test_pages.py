@@ -50,3 +50,9 @@ def test_un_letter_page_builds_plain_draft():
     assert not at.exception
     assert any("Citation check passed" in s.value for s in at.success)
     assert any("Special Rapporteur" in m.value for m in at.markdown)
+
+
+def test_stress_test_page_shows_sensitivity():
+    at = AppTest.from_file("../pages/2_Stress_Test.py").run(timeout=30)
+    assert not at.exception
+    assert any("How robust" in e.label for e in at.expander)
