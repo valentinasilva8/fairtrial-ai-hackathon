@@ -367,7 +367,7 @@ def build(n: dict):
                                   "OPEN SOURCE", "github.com/valentinasilva8/fairtrial-ai-hackathon",
                                   "Code MIT · report excerpts © Clooney Foundation for Justice",
                                   "Independent project, not endorsed by CFJ, TrialWatch or Columbia Law School"])
-    notes(S[11], "Demo: Home → Stress Test (Fatia & Haris) → Argument Bank → UN Letter. Start from the Home link.")
+    notes(S[11], "Demo: Start here → Stress Test (Fatia & Haris) → Argument Bank → UN Letter. Start from the main link (Start here).")
 
     # order and drop the rest of the example deck
     order = [1, 2, 3, 4, 5, 16, 6, 7, 8, 14, 17, 9, 10, 11]
