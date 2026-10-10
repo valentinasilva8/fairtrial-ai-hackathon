@@ -27,3 +27,11 @@ nav = st.navigation({
 theme.apply()
 nav.run()
 theme.footer()
+
+# FairTrial guide on every page. Fail-safe: if the assistant ever errors, the site still runs.
+try:
+    from src.assistant_ui import render_assistant
+
+    render_assistant(nav.title)
+except Exception:
+    pass

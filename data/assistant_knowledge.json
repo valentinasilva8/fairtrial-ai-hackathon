@@ -1,0 +1,55 @@
+{
+  "guides": [
+    {
+      "id": "help-start",
+      "title": "Where should I start?",
+      "text": "Start here gives an overview, the headline numbers and the Promise Clock. Then open Argument Bank: choose a current case or describe a new one, and inspect similar TrialWatch cases and report excerpts. Use Stress Test for the Indonesian reform example, UN Letter to prepare a sourced draft, and Outcome Updates to see verified changes after a report. A lawyer should review any legal use."
+    },
+    {
+      "id": "help-arguments",
+      "title": "How does Argument Bank work?",
+      "text": "Open Argument Bank. Choose a case or describe a new case using charge, speech, role and region filters. Explore By argument or By case, and open the report page links to check the original text. Similarity is not a prediction, and a good outcome following advocacy does not prove advocacy caused it."
+    },
+    {
+      "id": "help-stress",
+      "title": "What does Stress Test mean?",
+      "text": "Stress Test applies this project's draft Indonesian reform rules to recorded facts. LIKELY BARRED means R1 or R2 fired; AT RISK means R3 or R4 fired without R1 or R2; STILL PROSECUTABLE means none of those rules fired. These labels describe the rule check, not the defendant's personal risk or a court outcome. Review the reasons and the sensitivity analysis; missing facts limit the result."
+    },
+    {
+      "id": "help-letter",
+      "title": "How do I prepare a UN letter?",
+      "text": "Open UN Letter, choose or describe a case, inspect the numbered sources, then use Draft with Gemini or Build plain draft (no AI). Review and edit the draft, check citations and source support, and complete the reviewer checks before saving. The website does not submit the letter to the UN."
+    },
+    {
+      "id": "help-promise",
+      "title": "What is the Promise Clock?",
+      "text": "The Promise Clock on Start here counts the days since each official pledge about Indonesia's reformed ITE Law and shows the evidence that it has been carried out. Open Evidence on a card to read the sources. Partly kept means there is evidence the pledge is applied, but also gaps or counter-examples."
+    },
+    {
+      "id": "help-trust",
+      "title": "Can I trust the answers?",
+      "text": "This is an independent hackathon project. Assistant answers are guidance for review, not legal advice. Answers based on the legal library include source IDs and verbatim excerpts, which are checked before display. A matching quote does not prove an inference is correct, so open the original report. The assistant has a small curated library and does not search the web or read case forms."
+    },
+    {
+      "id": "help-privacy",
+      "title": "What is sent to Gemini?",
+      "text": "Only the messages you send in this chat, a short recent chat history, the current page title and the curated guide and library text are sent to Gemini. Case data and forms are not read. Do not paste confidential or sensitive case details: on the free tier, Google may use prompts to improve its products. Clear chat removes the conversation from this session only."
+    }
+  ],
+  "questions": [
+    "What is the three-part test for restricting speech?",
+    "Why do vague laws violate the principle of legality?",
+    "Can prison be a proportionate penalty for speech?",
+    "When is detention arbitrary?"
+  ],
+  "readings": [
+    {"id": "reading-legality", "url": "https://cfj.org/reports/15-post-election-trials-a-window-into-courts-in-belarus/", "page": 91},
+    {"id": "reading-indonesia", "url": "https://cfj.org/reports/indonesia-vs-suzethe-margaret/", "page": 28, "category": "legality"},
+    {"id": "reading-vagueness", "url": "https://cfj.org/reports/poland-vs-elzbieta-podlesna-anna-prus-and-joanna-gzyra-iskandar/", "page": 24},
+    {"id": "reading-broadness", "url": "https://cfj.org/reports/malaysia-v-malaysiakini-and-steven-gan/", "page": 30},
+    {"id": "reading-necessity", "url": "https://cfj.org/reports/fairness-report-kazakhstan-v-nazym-tabyldieva/", "page": 50},
+    {"id": "reading-proportionality", "url": "https://cfj.org/reports/turkey-v-veysel-ok/", "page": 16},
+    {"id": "reading-detention", "url": "https://cfj.org/reports/15-post-election-trials-a-window-into-courts-in-belarus/", "page": 49},
+    {"id": "reading-fair-trial", "url": "https://cfj.org/reports/belarus-v-katsiaryna-andreyeva-and-daria-chultsova/", "page": 54}
+  ]
+}
