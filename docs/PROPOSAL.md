@@ -10,7 +10,7 @@ Indonesia's ITE Law has been used to criminally prosecute journalists, activists
 
 ## Problem
 - TrialWatch documents unfair prosecutions and pushes for legal reform, but has no systematic way to measure whether a reform changed outcomes.
-- TrialWatch has published 90 reports on trials in more than 20 countries, but there is no way to search the arguments its experts made in them: a lawyer facing a new case can't quickly find how TrialWatch argued a similar one.
+- TrialWatch has published 90 reports, including 63 graded trials in more than 20 countries, but there is no way to search the arguments its experts made in them: a lawyer facing a new case can't quickly find how TrialWatch argued a similar one.
 - Case information is scattered across court records, NGO reports and news, in English and Bahasa Indonesia.
 - Advocacy letters are written by hand for each case.
 
@@ -54,7 +54,7 @@ Human rights defenders **Fatia Maulidiyanti and Haris Azhar** were reported by a
 - **Faster, better-sourced advocacy:** a UN submission draft that cites TrialWatch's own findings and UN Committee decisions, ready for a lawyer to edit the same day.
 - **Searching its own work:** the Argument Bank makes 47 fairness reports searchable by argument for the first time.
 - **Measuring its own impact:** track whether outcomes followed TrialWatch's reports and whether reforms it campaigned for are being kept.
-- **Other countries:** the stress-test rules live in one file and the Argument Bank already covers 25 countries, so the same tool works for the next country's speech-law reform.
+- **Other countries:** the stress-test rules live in one file and the Argument Bank already covers 23 countries and territories, so the same tool works for the next country's speech-law reform.
 - **Fits existing infrastructure:** CSV files and a small Streamlit app, no database, free-tier AI.
 
 ## Responsible AI
