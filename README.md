@@ -139,6 +139,16 @@ docs/                        # proposal, rules, team plan, data and verification
 tests/                       # pytest
 ```
 
+## Data at a glance
+| | |
+|---|---|
+| TrialWatch report listings on cfj.org | 96 (90 distinct reports, 94 PDFs) |
+| Graded reports | 63 graded A-F; 47 on freedom of expression, 2,075 PDF pages, covering 23 countries |
+| Argument Bank | 2,381 tagged argument paragraphs (five labels), 248 published excerpts, 154 UN Human Rights Committee decisions cited |
+| Indonesian cases | 16 in `data/cases_seed.csv`; the 14 shown in the app are listed below. Two at-risk people are in the data but hidden in the app. |
+
+The 14 Indonesian cases shown in the app: Fatia Maulidiyanti & Haris Azhar, Daniel Frits Maurits Tangkilisan, three #SaveKarimunjawa activists, Septia Dwi Pertiwi, Tinus Restanto Eka, Thomas Madilis, Ismail Marzuki, Roy Suryo, Dandhy Dwi Laksono, Dr. Richard Lee, Wahyu Dwi Nugroho, Edy Mulyadi, Muhammad Asrul and Laras Faizati Khairunnisa.
+
 ## Data
 - **Indonesian cases** (`data/cases_seed.csv`, `events.csv`): from the CFJ report *Protecting Online Speech in Indonesia* and news, each row with a source. `data/verification_log.csv` records who checked each case.
 - **TrialWatch reports** (`data/trialwatch_reports.csv`, [docs/TRIALWATCH_REPORTS.md](docs/TRIALWATCH_REPORTS.md)): all 96 report listings on cfj.org (90 distinct reports, 94 PDFs). 63 reports grade a trial A–F, each stored with the text it was read from; 47 graded reports analyse freedom of expression and form the Argument Bank. They cite 154 distinct UN Human Rights Committee decisions.
