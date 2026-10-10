@@ -53,7 +53,7 @@ def test_prolonged_proceedings():
 def test_numbers_are_kept_exactly_as_written():
     assert quantities("Ms. Rowe was detained for five months.") == ["five months"]
     assert quantities("She was sentenced to 2 years and fined 5 million rupiah.") == ["2 years", "5 million rupiah"]
-    assert quantities("Ms. Rowe paid a fine of Rp 5,000,000 and served 18 months.") == ["18 months", "Rp 5,000,000"]
+    assert quantities("Ms. Rowe paid a fine of Rp 5,000,000 and served 18 months.") == ["Rp 5,000,000", "18 months"]
     assert quantities("It was the three-year anniversary of his death and a 30-year-old man.") == []
     assert quantities("She was held without a date.") == []
 
@@ -268,4 +268,47 @@ def test_delay_in_bringing_the_case_to_trial_is_prolonged_proceedings():
     assert ev["prolonged_proceedings"]
     ev = found(page("Ms. Rowe's trial was delayed for months while she remained in pretrial detention."))
     assert ev["prolonged_proceedings"]
+
+
+# --- numbers found missing or wrong when the review list was pre-screened -----
+
+def test_two_numbers_in_one_clause_are_both_kept():
+    ev = found(page("Mr. Rowe was sentenced to prison for 18 months on the forgery charges and three years on the incitement charges."))
+    assert ev["conviction_sentence"][0]["quantities"] == ["18 months", "three years"]
+
+
+def test_a_prosecutors_recommendation_after_a_dash_is_not_attached_to_the_sentence():
+    ev = found(page("Ms. Rowe was convicted and sentenced to nine years in prison - more than the seven to eight years recommended by prosecutors."))
+    assert ev["conviction_sentence"][0]["quantities"] == ["nine years"]
+    ev = found(page("Ms. Rowe was convicted and sentenced to nine years in prison\u2014more than the seven to eight years recommended."))
+    assert ev["conviction_sentence"][0]["quantities"] == ["nine years"]
+
+
+def test_each_number_goes_to_the_category_it_sits_next_to_when_a_sentence_has_two():
+    ev = found(page("The court sentenced Mr. Rowe to prison for 18 months and fined him 3,000,000 riels (approximately USD $733.50)."))
+    assert ev["conviction_sentence"][0]["quantities"] == ["18 months"]
+    assert ev["other_restrictions"][0]["quantities"] == ["3,000,000 riels"]
+
+
+def test_currency_units_are_kept_exactly_as_written():
+    assert quantities("She paid 3,000,000 riels.") == ["3,000,000 riels"]
+    assert quantities("The court imposed a fine of 500,000 rubles (approximately US $6,950).") == ["500,000 rubles", "US $6,950"]
+    assert quantities("She was fined HK $6,000.") == ["HK $6,000"]
+    assert quantities("He received a 500 Dirham fine.") == ["500 Dirham"]
+
+
+def test_a_fine_written_after_its_amount_is_a_restriction():
+    ev = found(page("Ms. Rowe was found guilty and given a four-month suspended sentence and a 500 Dirham fine."))
+    assert ev["other_restrictions"]
+    assert ev["other_restrictions"][0]["quantities"] == ["500 Dirham"]
+
+
+def test_a_trial_length_before_the_verdict_is_not_the_length_of_the_sentence():
+    ev = found(page("After a one-day trial on December 14, 2021, Ms. Rowe was convicted and sentenced to nine years in prison."))
+    assert ev["conviction_sentence"][0]["quantities"] == ["nine years"]
+
+
+def test_a_number_right_before_its_category_word_is_kept():
+    ev = found(page("Following their arrests, Ms. Rowe spent approximately 9 months in pretrial detention."))
+    assert ev["pretrial_detention"][0]["quantities"] == ["9 months"]
 

@@ -45,7 +45,7 @@ CATEGORIES = {
         r"\breputation(?:al)?\b|\bsmear\w*|\bstigmati[sz]\w*|\bdiscredit\w*|\bhumiliat\w*"
     ),
     "other_restrictions": (
-        r"\bfined\b|\bfines\b|\ba fine\b|\bfine of\b|travel ban|\bpassport (?:was |were )?(?:confiscated|seized|revoked|withheld)"
+        r"\bfined\b|\bfines\b|\ba fine\b|\bfine of\b|\d[\d,.]*\s+(?:\w+\s+)?fine\b|travel ban|\bpassport (?:was |were )?(?:confiscated|seized|revoked|withheld)"
         r"|\bassets? (?:were |was )?(?:frozen|seized|confiscated)|\bconfiscated\b|\b(?:seizure|confiscation) of\b"
         r"|\b(?:barred|banned|prohibited) from\b|\blicen[cs]e (?:was |were )?(?:revoked|suspended)\b"
         r"|\bstripped of\b|\bdisqualified\b|\bprobation\b|\bhouse arrest\b|\bcurfew\b"
@@ -114,8 +114,8 @@ DURATION = re.compile(
     re.I,
 )
 AMOUNT = re.compile(
-    r"(?:(?:Rp\.?|IDR|USD|US\$|\$|€|£|RM|UGX|KHR)\s?\d[\d.,]*(?:\s?(?:million|billion|thousand))?"
-    r"|\d[\d.,]*\s?(?:million|billion|thousand)?\s?(?:rupiah|dollars|riel|shillings|ringgit|euros|pounds))",
+    r"(?:(?:(?:HK|US|AU|NZ|S)\s?)?\$|Rp\.?|IDR|USD|EUR|GBP|RM|UGX|KHR|RUB)\s?\d[\d.,]*(?:\s?(?:million|billion|thousand))?"
+    r"|\d[\d.,]*\s?(?:million|billion|thousand)?\s?(?:rupiah|dollars?|riels?|shillings?|ringgit|euros?|pounds?|rubles?|roubles?|dirhams?)\b",
     re.I,
 )
 
@@ -141,18 +141,51 @@ def names_defendant(sentence: str, names: list[str]) -> bool:
     return any(re.search(rf"\b(?:Mr|Ms|Mrs|Dr|Prof)\.? (?:\w+ )?{re.escape(t)}\b", sentence, re.I) for t in parts)
 
 
-def quantities(sentence: str, near: list[tuple[int, int]] | None = None, reach: int = 40) -> list[str]:
-    """Durations and amounts exactly as written in the sentence ('five months', '2 years', '5 million rupiah').
+# A number that comes before its category word must be right next to it ("9 months in pretrial detention"),
+# so that "after a one-day trial ... was convicted" does not give the conviction a one-day length.
+FOLLOWING_REACH = 25
+CLAUSE_BREAK = re.compile(r"[;\u2014\u2013()]|\s-\s|[.!?]\s")
 
-    With near (character spans of a category's match), only quantities within
-    `reach` characters of one of them are kept, so the 'two years' of a
-    suspended sentence is not also reported as the length of a detention.
+
+def _quantity_spans(sentence: str) -> list[tuple[int, int, str]]:
+    return sorted((m.start(), m.end(), m.group(0).strip(" .,")) for m in [*DURATION.finditer(sentence), *AMOUNT.finditer(sentence)])
+
+
+def quantities(sentence: str) -> list[str]:
+    """Every duration and amount in the sentence, exactly as written ('five months', '2 years', '5 million rupiah')."""
+    return [t for _, _, t in _quantity_spans(sentence)]
+
+
+def assign_quantities(sentence: str, spans_by_category: dict[str, list[tuple[int, int]]], reach: int = 60) -> dict[str, list[str]]:
+    """Give each number to one category, in the same clause.
+
+    A number belongs to the category word it is part of ("two years' imprisonment"); otherwise to the nearest
+    category word *before* it ("sentenced to 18 months", "fined 3,000,000 riels", "detained for two days");
+    otherwise to the nearest one after it ("9 months in pretrial detention"). A dash or bracket ends the
+    clause, so "sentenced to nine years - more than the seven to eight years recommended" keeps only the
+    first. A number with no category within `reach` characters is left out; ties go to every tied category.
     """
-    found = []
-    for m in [*DURATION.finditer(sentence), *AMOUNT.finditer(sentence)]:
-        if near is None or any(m.start() <= e + reach and m.end() >= b - reach for b, e in near):
-            found.append(m.group(0).strip(" .,"))
-    return found
+    out: dict[str, list[str]] = {c: [] for c in spans_by_category}
+    for qs, qe, text in _quantity_spans(sentence):
+        best, owners = None, []
+        for cat, spans in spans_by_category.items():
+            for b, e in spans:
+                if qs < e and qe > b:
+                    rank, between = (0, 0), ""
+                elif e <= qs:
+                    rank, between = (1, qs - e), sentence[e:qs]
+                else:
+                    rank, between = (2, b - qe), sentence[qe:b]
+                limit = reach if rank[0] < 2 else FOLLOWING_REACH
+                if rank[1] > limit or CLAUSE_BREAK.search(HONORIFIC.sub(lambda m: m.group(1) + " ", between)):
+                    continue
+                if best is None or rank < best:
+                    best, owners = rank, [cat]
+                elif rank == best and cat not in owners:
+                    owners.append(cat)
+        for cat in owners:
+            out[cat].append(text)
+    return out
 
 
 def usable(sentence: str) -> bool:
@@ -182,15 +215,14 @@ def impact_evidence(pages: list[str], names: list[str], per_category: int = 6) -
             for s in _split(para):
                 if not usable(s) or not names_defendant(s, names):
                     continue
-                for cat in CATEGORIES:
+                hits_by_cat = {c: category_hits(s, c) for c in CATEGORIES}
+                spans_by_cat = {c: [m.span() for m in h] for c, h in hits_by_cat.items() if h}
+                numbers = assign_quantities(s, spans_by_cat)
+                for cat in spans_by_cat:
                     if (cat, s) in seen or len(found[cat]) >= per_category:
                         continue
-                    hits = category_hits(s, cat)
-                    if not hits:
-                        continue
                     seen.add((cat, s))
-                    spans = [m.span() for m in hits]
-                    found[cat].append({"sentence": s, "page": n, "quantities": quantities(s, spans)})
+                    found[cat].append({"sentence": s, "page": n, "quantities": numbers[cat]})
     return found
 
 
