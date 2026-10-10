@@ -190,7 +190,7 @@ Rules:
 - If you quote, copy the words exactly from the cited source and put them in quotation marks.
 - Sections, in order: {", ".join(SECTIONS)}.
 - In the international-standards section, explain how the arguments TrialWatch's experts made in similar past
-  cases (legality and vagueness, legitimate aim, necessity and proportionality, overbreadth) apply to this case,
+  cases (legality, vagueness, broadness, necessity, proportionality) apply to this case,
   naming the past case for each point. Say an outcome "followed", never that an argument "caused" it.
   When you mention a past case's outcome, say whether it is confirmed, e.g. "(outcome not yet confirmed)";
   the case itself is not "unconfirmed".

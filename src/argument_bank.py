@@ -28,13 +28,16 @@ GOOD_OUTCOMES = {
     "released early / pardoned", "UN found detention arbitrary",
 }
 CATEGORY_LABELS = {
-    "legality_vagueness": "Legality and vagueness",
+    "legality": "Legality",
+    "vagueness": "Vagueness",
+    "broadness": "Broadness",
+    "necessity": "Necessity",
+    "proportionality": "Proportionality",
     "legitimate_aim": "Legitimate aim",
-    "necessity_proportionality": "Necessity and proportionality",
-    "overbreadth": "Overbreadth",
     "pretrial_detention": "Pretrial detention",
     "fair_trial": "Fair trial",
 }
+MENTOR_LABELS = ["legality", "vagueness", "broadness", "necessity", "proportionality"]
 # Paragraphs that apply the international standard are the useful ones for a new case.
 # Template text that appears in every report (methodology, grading annex), not case arguments.
 BOILERPLATE = re.compile(

@@ -17,7 +17,7 @@ PROMISES = [{"promise_id": "p2", "made_by": "Constitutional Court", "promise_tex
              "date": "2025-04", "status": "no_evidence_yet", "source": "http://example.org/p", "verified": True}]
 PAST = [{"case": "Thailand v. B", "report_url": "https://cfj.org/reports/thailand-v-b/", "pdf_url": "https://cfj.org/b.pdf",
          "outcome": "good", "outcome_confirmed": False,
-         "arguments": {"legality_vagueness": [{"page": 19, "text": "Restrictions must be prescribed by law and proportionate."}]},
+         "arguments": {"legality": [{"page": 19, "text": "Restrictions must be prescribed by law and proportionate."}]},
          "impacts": [{"category": "pretrial_detention", "label": "Detention", "page": 17, "quantities": ["five months"],
                       "sentence": "Mr. B was detained for five months prior to trial.",
                       "url": "https://cfj.org/b.pdf#page=17", "confirmed": False}]}]
