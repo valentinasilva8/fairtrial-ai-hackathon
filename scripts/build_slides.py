@@ -73,6 +73,7 @@ def numbers() -> dict:
         "pdfs": len(reports), "graded": int((reports["grade"] != "").sum()),
         "core": len(bank), "countries": bank["country"].nunique(), "decisions": len(decisions),
         "confirmed": int(bank["outcome_confirmed"].sum()), "good": int(bank["good_outcome"].sum()),
+        "improved": int(bank["outcome_improved"].sum()),
         "impacts": len(impacts), "signed": int((log["verified_by"] != "").sum()), "cases": len(log),
         "sensitive": int(data.cases["sensitive"].sum()), "tests": n_tests,
         "scenarios": len(SCENARIOS),
@@ -228,7 +229,8 @@ def build(n: dict):
     s16.top, s16.height = Inches(3.3), Inches(1.9)
     set_text(s16, size=12, lines=[f"{n['good']} of the {n['core']} reported cases had a good outcome after TrialWatch's work: "
                    "acquittal, dropped charges, overturned conviction, release, or a UN finding of arbitrary "
-                   "detention. We show what followed, never what caused it."])
+                   f"detention. {n['improved']} convictions were later overturned (e.g. Bao Choy, Stella Nyanzi); a "
+                   "verified update log keeps this current. We show what followed, never what caused it."])
     notes(S[16], "The tool lets TrialWatch spot a case the reform should have stopped on the day the complaint is "
                  "filed, before months of detention add up.")
 
