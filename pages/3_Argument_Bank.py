@@ -14,7 +14,7 @@ from src.argument_bank import (
 )
 from src.data import DataValidationError, load_all, public_cases
 from src.impacts import impact_lines, impact_markdown, load_impacts
-from src.similarity import CHARGES, REGION, ROLES, SPEECH, features_from_case
+from src.similarity import CHARGES, COUNTRIES, REGION, ROLES, SPEECH, features_from_case, region_of
 
 
 st.title("Argument Bank")
@@ -47,7 +47,10 @@ names = {NEW: "➕ A new case (describe it below)", **dict(zip(cases["case_id"],
 case_id = st.selectbox("Current case", list(names), index=1, format_func=names.get, key="ab_case")
 if case_id == NEW:
     st.text_input("Case name (for your reference)", key="ab_new_name", placeholder="e.g. a journalist charged over a Facebook post")
-    default = {"country": "", "region": "Southeast Asia", "charges": [], "speech": [], "roles": []}
+    new_country = st.selectbox("Country (optional; listed if TrialWatch has graded a trial there)",
+                               [""] + COUNTRIES, key="ab_new_country")
+    default = {"country": new_country, "region": region_of(new_country) or "Southeast Asia",
+               "charges": [], "speech": [], "roles": []}
 else:
     case = cases.set_index("case_id").loc[case_id].to_dict()
     default = features_from_case(case)
