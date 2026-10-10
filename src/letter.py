@@ -64,7 +64,7 @@ def build_sources(case: dict, events: list[dict], stress: dict, promises: list[d
         src.append(Source(f"event:{cid}:{i}", f"Timeline, {e['date']}", f"{e['date']}: {e['description']}",
                           e.get("source", ""), _yes(e.get("verified"))))
     src.append(Source(
-        f"stress:{cid}", "Paper vs. Practice reform stress test (for lawyer review)",
+        f"stress:{cid}", "Precedent & Practice reform stress test (for lawyer review)",
         f"Verdict: {stress['verdict']}. " + " ".join(stress["reasons"]),
         "docs/stress_test_rules.md",
     ))
