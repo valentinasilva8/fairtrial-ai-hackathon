@@ -7,6 +7,7 @@ from datetime import date
 
 STATUS_LABELS = {
     "kept": "Kept",
+    "partly_kept": "Partly kept",
     "broken": "Broken",
     "no_evidence_yet": "No evidence yet",
 }

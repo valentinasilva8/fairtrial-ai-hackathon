@@ -1,4 +1,4 @@
-"""Look and feel: burgundy styling, a gavel cursor on clickable things, a courtroom-door intro and a credits footer.
+"""Look and feel: burgundy styling, a gavel cursor across the app, a courtroom-door intro and a credits footer.
 
 Pure CSS injected through st.markdown, so it works on Streamlit Community Cloud with no extra packages.
 Animations are skipped for people who ask their system for reduced motion.
@@ -8,7 +8,7 @@ from urllib.parse import quote
 
 import streamlit as st
 
-# A small gavel, drawn as SVG and used as the cursor over anything clickable (hotspot at the head's tip).
+# A small gavel, drawn as SVG and used as the cursor everywhere except text boxes (hotspot at the head's tip).
 GAVEL_SVG = """<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'>
 <g transform='rotate(-40 16 16)'>
 <rect x='14.5' y='12' width='3' height='18' rx='1.5' fill='#7a4a24' stroke='#3b2412' stroke-width='0.8'/>
@@ -26,12 +26,13 @@ html, body, [data-testid="stAppViewContainer"] { font-family: 'Inter', sans-seri
 h1, h2, h3, h4, [data-testid="stHeading"] * { font-family: 'Libre Baskerville', Georgia, serif !important; letter-spacing: -0.01em; }
 h1 { color: #7b1e2b; }
 
-/* Gavel cursor on everything you can click or pick */
-a, button, [role="button"], [role="tab"], [role="option"], [role="checkbox"], [role="radio"],
-[data-baseweb="select"], [data-baseweb="tab"], [data-testid="stPageLink"] *, label, summary,
-[data-testid="stSidebarNav"] a { cursor: %(cursor)s !important; }
+/* Gavel cursor across the whole app; text boxes keep the text cursor so typing still feels normal */
+html, body, *, *::before, *::after { cursor: %(cursor)s !important; }
+input:not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"],
+[data-baseweb="input"] input, [data-baseweb="textarea"] textarea { cursor: text !important; }
 
 /* Soft cards (containers keyed "pp-card-...") that lift a little on hover */
+[data-testid="stMetric"] { padding: 14px 18px; box-sizing: border-box; }
 [class*="st-key-pp-card"], [data-testid="stMetric"] { border-radius: 14px; background: #ffffff;
   transition: transform .15s ease, box-shadow .15s ease; }
 [class*="st-key-pp-card"]:hover, [data-testid="stMetric"]:hover { box-shadow: 0 6px 18px rgba(123, 30, 43, .16); transform: translateY(-2px); }
