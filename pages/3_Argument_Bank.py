@@ -71,7 +71,8 @@ if matches.empty:
 n_good = int(matches["good_outcome"].sum())
 st.header(f"{len(matches)} similar TrialWatch cases · {n_good} with a good outcome")
 st.caption("Outcomes marked *unconfirmed* are machine suggestions waiting for a person to check them "
-           "(see docs/VERIFY_OUTCOMES.md).")
+           "(see docs/VERIFY_OUTCOMES.md). Argument categories are assigned by keyword matching and are "
+           "about 75–80% right in our spot checks; the page link always shows the exact text.")
 
 if not arguments_available():
     st.info(
