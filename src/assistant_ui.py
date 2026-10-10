@@ -48,7 +48,7 @@ CSS = """<style>
 .st-key-pa_panel [data-testid="stChatMessage"] {padding:8px; font-size:14px;}
 .st-key-pa_chips button, .st-key-pa_legal button {width:100%%; justify-content:flex-start; text-align:left;
   font-size:13px; min-height:0; padding:5px 10px; border-radius:14px; border-color:#d9c3bf;}
-.pa-label {font-size:12px; color:#7a6466; margin:2px 0 -4px;}
+.pa-label {font-size:12px; color:#7a6466; margin:6px 0 2px;}
 .pa-thinking {display:flex; align-items:center; gap:10px; font-size:14px; color:#5b4547;}
 .pa-dots {display:inline-flex; gap:5px;}
 .pa-dots span {width:8px; height:8px; border-radius:50%%; background:#7b1e2b; animation:pa-bounce 1.2s infinite ease-in-out;}
