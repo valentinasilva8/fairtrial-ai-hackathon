@@ -348,6 +348,32 @@ def check_edited(text: str, numbered: list[Source], original: str = "") -> list[
     return problems
 
 
+def parse_edited(text: str, numbered: list[Source]) -> dict:
+    """Turn an edited letter back into sections of sentences with their cited source ids,
+    so the same sentence-by-sentence support check can run on the edited text."""
+    body = text.split("### Sources")[0]
+    sections, heading = [], "Letter"
+    for line in body.split("\n"):
+        line = line.strip()
+        if line.startswith("### "):
+            heading = line[4:].strip()
+            continue
+        if not line or line.startswith(("**To:**", "**Re:**", "*Draft")):
+            continue
+        sents = []
+        for chunk in re.split(r"(?<=\])\s+(?=[A-Z“\"])", line):
+            ids = [numbered[int(n) - 1].id for n in CITE.findall(chunk) if 1 <= int(n) <= len(numbered)]
+            clean = CITE.sub("", chunk).strip()
+            if clean:
+                sents.append({"text": clean, "sources": ids})
+        if sents:
+            if sections and sections[-1]["heading"] == heading:
+                sections[-1]["sentences"].extend(sents)
+            else:
+                sections.append({"heading": heading, "sentences": sents})
+    return {"sections": sections}
+
+
 def to_docx(text: str, title: str, note: str) -> bytes:
     """A Word version of the letter (markdown headings, bold labels and the numbered source list)."""
     import io
@@ -405,4 +431,4 @@ def render(draft: dict, sources: list[Source], case_name: str) -> str:
 
 
 __all__ = ["LLMError", "SensitiveCaseError", "build_sources", "check_edited", "check_support", "generate_draft",
-           "numbered_sources", "render", "sentences_of", "template_draft", "to_docx", "validate"]
+           "numbered_sources", "parse_edited", "render", "sentences_of", "template_draft", "to_docx", "validate"]

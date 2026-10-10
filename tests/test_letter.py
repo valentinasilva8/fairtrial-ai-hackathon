@@ -240,3 +240,16 @@ def test_to_docx_keeps_headings_and_note():
     assert "Summary" in texts and "Sources" in texts
     assert texts[-1] == "Approved by Tester."
     assert any(p.text.startswith("To:") and p.runs[0].bold for p in doc.paragraphs)
+
+
+def test_parse_edited_round_trips_citations():
+    from src.letter import numbered_sources, parse_edited
+
+    draft = template_draft(sources())
+    md = render(draft, sources(), "A. Person")
+    numbered = numbered_sources(draft, sources())
+    parsed = parse_edited(md, numbered)
+    assert [s["heading"] for s in parsed["sections"]] == [s["heading"] for s in draft["sections"]]
+    cited = {i for sec in parsed["sections"] for sent in sec["sentences"] for i in sent["sources"]}
+    assert cited == {s.id for s in numbered}
+    assert validate(parsed, sources()) == []
