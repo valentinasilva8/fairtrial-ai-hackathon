@@ -18,7 +18,7 @@ For a lawyer facing a new speech prosecution anywhere, Precedent & Practice:
 2. **shows the arguments their reports made**, grouped under the five labels the TrialWatch mentor asked for (**legality, vagueness, broadness, necessity, proportionality**), each with its author, the exact report page and the UN Human Rights Committee decisions cited, counting a paragraph reused across reports once;
 3. **drafts a submission to the UN Special Rapporteur** in which every sentence cites its source and a lawyer approves before use.
 
-Where a country has just reformed its speech law, a **reform stress test** adds whether the reform should already bar the case. Our worked example is Indonesia's ITE Law (revised 2024, narrowed by Constitutional Court Decision 105/PUU-XXII/2024): 5 of 13 past cases would likely be barred, 3 to 8 across contested legal readings.
+Where a country has just reformed its speech law, a **reform stress test** adds whether the reform should already bar the case. Our worked example is Indonesia's ITE Law (revised 2024, narrowed by Constitutional Court Decision 105/PUU-XXII/2024): 5 of 13 past cases would likely be barred, 3 to 9 across contested legal readings.
 
 See [docs/SUBMISSION.md](docs/SUBMISSION.md) for the full description.
 
