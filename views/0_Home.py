@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+from src import theme
 from src.argument_bank import past_cases
 from src.data import DataValidationError, load_all, public_cases
 from src.promise_clock import days_since, evidence_text, status_label
@@ -24,11 +25,12 @@ HOOK = (
     "arguments, precedents and sourced UN submissions for the next person prosecuted for speech."
 )
 
+theme.doors()
 st.title(f"⚖️ {PROJECT_NAME}")
 st.markdown(f"#### {SUBTITLE}")
 with st.container(border=True, key="pp-card-hook"):
     st.markdown(f"*{HOOK}*")
-    st.page_link("pages/3_Argument_Bank.py", label="**Start with a case in the Argument Bank →**", icon="📚")
+    st.page_link("views/3_Argument_Bank.py", label="**Start with a case in the Argument Bank →**", icon="📚")
 st.caption(
     "TrialWatch Fair Trial & AI Hackathon · Track 3: Advocacy & Impact · Team: Shreya, Valentina, Ungu, Layla, Yuki. "
     "An independent hackathon project, not endorsed by the Clooney Foundation for Justice, TrialWatch or Columbia "
@@ -68,16 +70,16 @@ m4.metric("🇮🇩 Likely barred by reform", f"{int((past['verdict'] == LIKELY_
 st.header("What you can do")
 st.caption("Following TrialWatch's own process: evaluate a case, advocate for the defendant, then track what followed.")
 PAGES = [
-    ("1 · Evaluation", "pages/3_Argument_Bank.py", "Argument Bank", "📚",
+    ("1 · Evaluation", "views/3_Argument_Bank.py", "Argument Bank", "📚",
      "For any case, in any country: the most similar TrialWatch trials, what followed, and their arguments on "
      "legality, vagueness, broadness, necessity and proportionality, each with its author and page."),
-    ("1 · Evaluation", "pages/2_Stress_Test.py", "Stress Test", "⚖️",
+    ("1 · Evaluation", "views/2_Stress_Test.py", "Stress Test", "⚖️",
      "Where a speech law was just reformed (Indonesia, 2024–25): would the reform already bar each case, by "
      "which rule, and how sure we are across ten legal readings."),
-    ("2 · Advocacy", "pages/4_UN_Letter.py", "UN Letter", "✉️",
+    ("2 · Advocacy", "views/4_UN_Letter.py", "UN Letter", "✉️",
      "A submission to the UN Special Rapporteur built only from numbered sources: check, edit, check again, "
      "then a named reviewer approves and downloads it as Word."),
-    ("3 · Accountability", "pages/5_Outcome_Updates.py", "Outcome Updates", "📈",
+    ("3 · Accountability", "views/5_Outcome_Updates.py", "Outcome Updates", "📈",
      "TrialWatch's impact after the report: verified later changes, such as a conviction overturned on "
      "appeal, and a form to record a new one."),
 ]

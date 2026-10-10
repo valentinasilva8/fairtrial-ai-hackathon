@@ -91,7 +91,7 @@ if st.button("✉️ Draft a UN letter for this case", type="primary", key="ab_t
         st.session_state["lt_speech"] = speech
         st.session_state["lt_roles"] = roles
         st.session_state["lt_region"] = region
-    st.switch_page("pages/4_UN_Letter.py")
+    st.switch_page("views/4_UN_Letter.py")
 
 n_good = int(matches["good_outcome"].sum())
 st.header(f"{len(matches)} similar TrialWatch cases · {n_good} with a good outcome")

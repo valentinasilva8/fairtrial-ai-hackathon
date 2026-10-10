@@ -9,20 +9,20 @@ def test_home_page_runs():
 
 
 def test_stress_test_page_runs():
-    at = AppTest.from_file("../pages/2_Stress_Test.py").run(timeout=30)
+    at = AppTest.from_file("../views/2_Stress_Test.py").run(timeout=30)
     assert not at.exception
     assert any("would likely be barred" in h.value for h in at.header)
     assert any("not legal advice" in w.value for w in at.warning)
 
 
 def test_stress_test_verdict_filter():
-    at = AppTest.from_file("../pages/2_Stress_Test.py").run(timeout=30)
+    at = AppTest.from_file("../views/2_Stress_Test.py").run(timeout=30)
     at.multiselect[0].set_value(["AT RISK"]).run(timeout=30)
     assert not at.exception
 
 
 def test_add_case_by_hand_runs_stress_test():
-    at = AppTest.from_file("../pages/2_Stress_Test.py").run(timeout=30)
+    at = AppTest.from_file("../views/2_Stress_Test.py").run(timeout=30)
     at.selectbox[0].set_value("public_official")
     at.multiselect[2].set_value(["27(3)"])
     next(b for b in at.button if b.label == "Run stress test").click().run(timeout=30)
@@ -38,13 +38,13 @@ def test_home_page_shows_promise_clock():
 
 
 def test_argument_bank_page_runs():
-    at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
+    at = AppTest.from_file("../views/3_Argument_Bank.py").run(timeout=30)
     assert not at.exception
     assert any("similar TrialWatch cases" in h.value for h in at.header)
 
 
 def test_un_letter_page_builds_plain_draft():
-    at = AppTest.from_file("../pages/4_UN_Letter.py").run(timeout=30)
+    at = AppTest.from_file("../views/4_UN_Letter.py").run(timeout=30)
     assert not at.exception
     next(b for b in at.button if b.label == "Build plain draft (no AI)").click().run(timeout=30)
     assert not at.exception
@@ -53,7 +53,7 @@ def test_un_letter_page_builds_plain_draft():
 
 
 def test_stress_test_page_shows_sensitivity():
-    at = AppTest.from_file("../pages/2_Stress_Test.py").run(timeout=30)
+    at = AppTest.from_file("../views/2_Stress_Test.py").run(timeout=30)
     assert not at.exception
     assert any("How robust" in e.label for e in at.expander)
 
@@ -81,7 +81,7 @@ def test_argument_bank_shows_impact_on_the_defendant(tmp_path, monkeypatch):
         w.writeheader()
         w.writerow(row)
     monkeypatch.setattr(impacts, "IMPACTS_CSV", sheet)
-    at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
+    at = AppTest.from_file("../views/3_Argument_Bank.py").run(timeout=30)
     assert not at.exception
     text = "\n".join(m.value for m in at.markdown)
     assert "Impact on the defendant" in text
@@ -89,7 +89,7 @@ def test_argument_bank_shows_impact_on_the_defendant(tmp_path, monkeypatch):
 
 
 def test_argument_bank_new_case_and_by_argument_tab():
-    at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
+    at = AppTest.from_file("../views/3_Argument_Bank.py").run(timeout=30)
     assert not at.exception
     assert [t.label for t in at.tabs] == ["By argument", "By case"]
     at.selectbox(key="ab_case").set_value("__new__").run(timeout=30)
@@ -98,7 +98,7 @@ def test_argument_bank_new_case_and_by_argument_tab():
 
 
 def test_un_letter_for_a_new_case_in_another_country():
-    at = AppTest.from_file("../pages/4_UN_Letter.py").run(timeout=30)
+    at = AppTest.from_file("../views/4_UN_Letter.py").run(timeout=30)
     at.selectbox(key="letter_case").set_value("new_case").run(timeout=30)
     at.text_input(key="lt_name").set_value("R. Example").run(timeout=30)
     at.text_input(key="lt_country").set_value("Kenya").run(timeout=30)
@@ -111,7 +111,7 @@ def test_un_letter_for_a_new_case_in_another_country():
 
 
 def test_un_letter_edit_review_and_download():
-    at = AppTest.from_file("../pages/4_UN_Letter.py").run(timeout=30)
+    at = AppTest.from_file("../views/4_UN_Letter.py").run(timeout=30)
     next(b for b in at.button if b.label == "Build plain draft (no AI)").click().run(timeout=30)
     assert not at.exception
     editor = next(t for t in at.text_area if t.key and "_edit_" in t.key)
@@ -128,7 +128,7 @@ def test_un_letter_edit_review_and_download():
 
 
 def test_arriving_from_argument_bank_prefills_and_drafts():
-    at = AppTest.from_file("../pages/4_UN_Letter.py")
+    at = AppTest.from_file("../views/4_UN_Letter.py")
     at.session_state["letter_case"] = "fatia_haris"
     at.session_state["letter_n_past"] = 4
     at.session_state["letter_autodraft"] = True
@@ -142,12 +142,12 @@ def test_arriving_from_argument_bank_prefills_and_drafts():
 
 
 def test_argument_bank_has_letter_button():
-    at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
+    at = AppTest.from_file("../views/3_Argument_Bank.py").run(timeout=30)
     assert any(b.label.endswith("Draft a UN letter for this case") for b in at.button)
 
 
 def test_outcome_updates_page_checks_an_entry_and_produces_a_line():
-    at = AppTest.from_file("../pages/5_Outcome_Updates.py").run(timeout=30)
+    at = AppTest.from_file("../views/5_Outcome_Updates.py").run(timeout=30)
     assert not at.exception
     assert any("Verified updates" in m.label for m in at.metric)
     at.text_input(key="ou_date").set_value("2024-05-21").run(timeout=30)
