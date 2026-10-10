@@ -256,3 +256,15 @@ def impacts_for(report_url: str, impacts: dict[str, dict] | None = None) -> list
     impacts = load_impacts() if impacts is None else impacts
     row = impacts.get(report_url)
     return impact_lines(row) if row else []
+
+
+def impact_markdown(lines: list[dict]) -> list[str]:
+    """Markdown bullets for the lines from impact_lines(): label, status, any number as written, the sentence, a page link."""
+    out = []
+    for ln in lines:
+        status = "confirmed" if ln["confirmed"] else "unconfirmed"
+        qty = f" ({', '.join(ln['quantities'])})" if ln["quantities"] else ""
+        link = f" · [page {ln['page']}]({ln['url']})" if ln["url"] else f" · page {ln['page']}"
+        out.append(f"- **{ln['label']}**{qty} · *{status}* — {ln['sentence']}{link}")
+    return out
+

@@ -50,3 +50,33 @@ def test_un_letter_page_builds_plain_draft():
     assert not at.exception
     assert any("Citation check passed" in s.value for s in at.success)
     assert any("Special Rapporteur" in m.value for m in at.markdown)
+
+
+def test_argument_bank_shows_impact_on_the_defendant(tmp_path, monkeypatch):
+    import src.impacts as impacts
+    from src.argument_bank import similar_cases
+    from src.data import load_all, public_cases
+    from src.similarity import features_from_case
+
+    cases = public_cases(load_all().cases)
+    first = cases.iloc[0].to_dict()
+    top = similar_cases(features_from_case(first), top_n=6)
+    url = top.iloc[0]["report_url"]
+    row = impacts.case_row(
+        {"url": url, "title": "Country v. Anna Rowe", "grade": "D", "pdf_url": "https://cfj.org/x.pdf"},
+        ["Anna Rowe"],
+        {"pretrial_detention": [{"sentence": "Ms. Rowe was detained for five months before trial.",
+                                 "page": 17, "quantities": ["five months"]}]},
+    )
+    sheet = tmp_path / "impacts.csv"
+    import csv
+    with open(sheet, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(row))
+        w.writeheader()
+        w.writerow(row)
+    monkeypatch.setattr(impacts, "IMPACTS_CSV", sheet)
+    at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
+    assert not at.exception
+    text = "\n".join(m.value for m in at.markdown)
+    assert "Impact on the defendant" in text
+    assert "**Detention** (five months) · *unconfirmed*" in text and "#page=17" in text

@@ -11,6 +11,7 @@ from src.argument_bank import (
     similar_cases,
 )
 from src.data import DataValidationError, load_all, public_cases
+from src.impacts import impact_lines, impact_markdown, load_impacts
 from src.similarity import CHARGES, REGION, ROLES, SPEECH, features_from_case
 
 st.set_page_config(page_title="Argument Bank · Paper vs. Practice", page_icon="⚖️", layout="wide")
@@ -73,6 +74,11 @@ st.header(f"{len(matches)} similar TrialWatch cases · {n_good} with a good outc
 st.caption("Outcomes marked *unconfirmed* are machine suggestions waiting for a person to check them "
            "(see docs/VERIFY_OUTCOMES.md).")
 
+impacts = load_impacts()  # small CSV; not cached so a rebuilt sheet shows at once
+if not impacts:
+    st.caption("The impact sheet isn't built on this machine (`python scripts/build_impacts.py`); "
+               "everything else works.")
+
 if not arguments_available():
     st.info(
         "Argument text isn't loaded on this machine (it's CFJ's text, so it isn't in the repository). "
@@ -98,6 +104,16 @@ for m in matches.itertuples():
         elif m.suggested_from:
             links.append(f"[source of suggested outcome]({m.suggested_from})")
         st.markdown(" · ".join(links))
+
+        row = impacts.get(m.report_url)
+        if row:
+            lines = impact_lines(row)
+            st.markdown("**Impact on the defendant** (sentences from the report that state it; "
+                        "found by pattern matching, so they can miss things)")
+            if lines:
+                st.markdown("\n".join(impact_markdown(lines)))
+            else:
+                st.caption("No impact sentence found for the defendant in this report's text.")
 
         args = best_arguments(m.report_url)
         for cat, label in CATEGORY_LABELS.items():

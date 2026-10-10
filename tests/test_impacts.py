@@ -160,7 +160,16 @@ def test_a_number_belongs_only_to_the_category_it_sits_next_to():
 
 import csv
 
-from src.impacts import case_row, evidence_rows, impact_lines, impacts_for, is_confirmed, load_impacts, page_link
+from src.impacts import (
+    case_row,
+    evidence_rows,
+    impact_lines,
+    impact_markdown,
+    impacts_for,
+    is_confirmed,
+    load_impacts,
+    page_link,
+)
 
 REP = {"url": "https://cfj.org/reports/x-v-rowe/", "title": "Country v. Anna Rowe", "grade": "D",
        "pdf_url": "https://cfj.org/x.pdf"}
@@ -224,3 +233,14 @@ def test_impact_lines_are_unconfirmed_until_verified_by_is_filled(tmp_path):
 def test_missing_sheet_or_report_gives_no_lines(tmp_path):
     assert load_impacts(tmp_path / "nope.csv") == {}
     assert impacts_for("https://cfj.org/reports/unknown/", {}) == []
+
+
+def test_impact_markdown_marks_status_and_keeps_numbers():
+    ev = found(page("Ms. Rowe was detained for five months before her trial began."))
+    row = case_row(REP, NAMES, ev)
+    md = "\n".join(impact_markdown(impact_lines(row)))
+    assert "**Detention** (five months) · *unconfirmed*" in md and "[page 1](https://cfj.org/x.pdf#page=1)" in md
+    row = case_row(REP, NAMES, ev, {"verified_by": "A. Checker"})
+    assert "*confirmed*" in "\n".join(impact_markdown(impact_lines(row)))
+    assert impact_markdown([]) == []
+
