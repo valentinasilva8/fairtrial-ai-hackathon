@@ -97,6 +97,17 @@ def test_check_support_downgrades_fake_evidence():
     assert result[1]["verdict"] == "supported"
 
 
+def test_check_support_accepts_evidence_in_pieces():
+    from src.letter import check_support, sentences_of
+
+    draft = template_draft(sources())
+    n = len(sentences_of(draft))
+    checks = [{"n": i, "verdict": "supported", "evidence": "", "reason": "ok"} for i in range(1, n + 1)]
+    checks[0] = {"n": 1, "verdict": "supported", "evidence": "A. Person … charged under: 27(3)", "reason": "ok"}
+    result = check_support(draft, sources(), client=FakeGemini([{"checks": checks}]))
+    assert result[0]["verdict"] == "supported"
+
+
 def test_quote_check_ignores_punctuation_but_not_words():
     from src.letter import Source
 

@@ -248,9 +248,9 @@ def check_support(draft: dict, sources: list[Source], client=None) -> list[dict]
         c = checks.get(n, {"verdict": "not checked", "evidence": "", "reason": "No answer for this sentence."})
         evidence = c.get("evidence", "")
         # The checker's evidence must itself be real text from a cited source.
-        if c["verdict"] == "supported" and evidence and not any(
-            _norm(evidence) in _norm(f"{by_id[i].label}: {by_id[i].text}") for i in sent["sources"] if i in by_id
-        ):
+        cited_text = " ".join(_norm(f"{by_id[i].label}: {by_id[i].text}") for i in sent["sources"] if i in by_id)
+        pieces = [_norm(p) for p in re.split(r"\.\.\.|…|\[\.\.\.\]", evidence) if _norm(p)]
+        if c["verdict"] == "supported" and pieces and not all(p in cited_text for p in pieces):
             c = {**c, "verdict": "partly supported", "reason": "Quoted evidence not found in the source. " + c["reason"]}
         out.append({"n": n, "text": sent["text"], "heading": sent["heading"], **c})
     return out
