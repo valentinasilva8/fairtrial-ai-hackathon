@@ -24,7 +24,7 @@ The app follows TrialWatch's own process: **Monitoring → Evaluation → Advoca
    - **By argument:** groups the arguments from those trials under the five labels the mentor asked for (legality, vagueness, broadness, necessity, proportionality), then legitimate aim, pretrial detention and fair trial. Each argument names the report's author, links the exact PDF page and lists the UN Human Rights Committee decisions cited. A paragraph reused word for word across reports, such as in three Cambodia cases, is shown once;
    - **By case:** shows each similar trial's outcome, the impact on the defendant (conviction and sentence, detention, mistreatment, reputational harm, other restrictions, prolonged proceedings), and its arguments.
 2. **UN Special Rapporteur letter (advocacy).** For a seeded case or a new case in any country, a draft built only from numbered sources: the case record, the Argument Bank, the stress test and official pledges. Code rejects any sentence without a source and any quotation not found word for word; a second check flags sentences the sources don't fully support; a named reviewer approves before it is saved. A plain version can be built without AI.
-3. **Reform stress test (where a law has just changed).** For Indonesia, four rules from the reformed law and the 2025 ruling, written as transparent code, show that **5 of 13 past cases would likely be barred today**. A sensitivity analysis shows the range across ten legal readings (3 to 8 of 13), which tells a lawyer exactly what to confirm.
+3. **Reform stress test (where a law has just changed).** For Indonesia, four rules from the reformed law and the 2025 ruling, written as transparent code, show that **5 of 13 past cases would likely be barred today**. A sensitivity analysis shows the range across ten legal readings (3 to 9 of 13), which tells a lawyer exactly what to confirm.
 4. **Outcome Updates (accountability).** TrialWatch's impact often shows after the report. A log of verified, dated changes (e.g. a conviction overturned on appeal) makes the latest one each case's current outcome everywhere, shows the history ("convicted → conviction overturned"), and counts the cases that changed for the better. A person checks every entry against a source; automated tests check the log on every change.
 5. **Promise Clock (accountability).** Days since each official pledge, with sourced evidence of whether it was kept: three of Indonesia's four pledges are partly kept (e.g. SAFEnet still counted 34 online-expression cases in Jan–Mar 2025, most under the defamation article, and 29 more in Apr–Jun), one has no evidence yet.
 
@@ -62,7 +62,7 @@ The tool's value lies in what it does for human rights work, beyond any single c
 | TrialWatch outcomes confirmed by a teammate with a source | 47 / 47 |
 | Argument labels (hand-read sample of 40, earlier label set) | about 75–80% right |
 | Impact categories (hand-read sample of 10) | 8 / 10, both misses since fixed |
-| Stress-test headline across ten legal readings | 3 to 8 of 13 (baseline 5) |
+| Stress-test headline across ten legal readings | 3 to 9 of 13 (baseline 5) |
 | Automated tests, run on every change | all passing |
 
 ## Limits

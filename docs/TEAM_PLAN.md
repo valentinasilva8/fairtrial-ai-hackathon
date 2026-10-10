@@ -106,7 +106,7 @@ five scripts in the README once (~1 hour, unattended).
 | | |
 |---|---|
 | Stress test engine + page | 5 of 13 past cases likely barred (was 4 before Karimunjawa 3's complainant was sourced); "add a case from text" with Gemini |
-| Rule sensitivity analysis | 10 scenarios on the Stress Test page: 3–8 of 13 across legal readings; 1 of 13 without R1 |
+| Rule sensitivity analysis | 10 scenarios on the Stress Test page: 3–9 of 13 across legal readings; 1 of 13 without R1 |
 | Promise Clock | Start here page |
 | TrialWatch data | all 96 cfj.org report listings (90 distinct reports); 63 graded reports; 47 freedom-of-expression reports (2,075 PDF pages) = Argument Bank; 226 news posts; outcome evidence |
 | Argument Bank page | similar cases, outcomes, arguments by category with page links |

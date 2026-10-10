@@ -29,14 +29,14 @@ Start the app from its main link: the courtroom doors open onto **Start here** (
 - **Say:** "When a TrialWatch case changes after the report, we record it with a source and a named checker, and the app's outcomes update everywhere. It followed TrialWatch's work; we don't claim it caused it."
 
 ## 4. Stress Test (1–2 min): where a law has just been reformed
-- **Show:** "5 of 13 past cases would likely be barred under the 2025 ruling", then open "How robust is this number?": 3 to 8 of 13 across ten legal readings.
+- **Show:** "5 of 13 past cases would likely be barred under the 2025 ruling", then open "How robust is this number?": 3 to 9 of 13 across ten legal readings.
 - **Click Fatia & Haris:** reported by a minister; R1 says a public official can no longer be a defamation victim.
 
 ## 5. Validation (1 min)
 - Report authors extracted for 47 / 47 reports, each with its source sentence.
 - Page citations: 2,381 / 2,381 argument paragraphs and 288 / 288 impact sentences found on the page they cite.
 - 47 / 47 TrialWatch outcomes confirmed by a teammate with a source; 21 good outcomes.
-- Sensitivity analysis: 3 to 8 of 13.
+- Sensitivity analysis: 3 to 9 of 13.
 - Argument categories about 75–80% right in a hand-read sample; impacts 8 / 10, both misses fixed.
 - 149 automated tests on every change.
 
