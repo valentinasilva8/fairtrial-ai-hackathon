@@ -20,5 +20,6 @@ nav = st.navigation({
         st.Page(PAGES / "2_Stress_Test.py", title="Stress Test", icon="⚖️"),
     ],
     "Advocacy": [st.Page(PAGES / "4_UN_Letter.py", title="UN Letter", icon="✉️")],
+    "Accountability": [st.Page(PAGES / "5_Outcome_Updates.py", title="Outcome Updates", icon="📈")],
 })
 nav.run()
