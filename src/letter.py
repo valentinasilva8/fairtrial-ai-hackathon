@@ -176,7 +176,8 @@ Rules:
 - In the international-standards section, explain how the arguments TrialWatch's experts made in similar past
   cases (legality and vagueness, legitimate aim, necessity and proportionality, overbreadth) apply to this case,
   naming the past case for each point. Say an outcome "followed", never that an argument "caused" it.
-  Mention whether a past outcome is confirmed or unconfirmed when you rely on it.
+  When you mention a past case's outcome, say whether it is confirmed, e.g. "(outcome not yet confirmed)";
+  the case itself is not "unconfirmed".
 - Describe the stress test as the authors' preliminary analysis for lawyer review, not a legal conclusion.
 - Formal, factual tone. About 350 to 550 words."""
 
