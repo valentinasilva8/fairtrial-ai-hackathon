@@ -4,6 +4,8 @@ import streamlit as st
 
 from src.argument_bank import (
     CATEGORY_LABELS,
+    MENTOR_LABELS,
+    grouped_arguments,
     arguments_available,
     best_arguments,
     hrc_decisions,
@@ -40,10 +42,15 @@ except DataValidationError as e:
     st.stop()
 
 # --- the current case ------------------------------------------------------
-names = dict(zip(cases["case_id"], cases["name"]))
-case_id = st.selectbox("Current case", list(names), format_func=names.get, key="ab_case")
-case = cases.set_index("case_id").loc[case_id].to_dict()
-default = features_from_case(case)
+NEW = "__new__"
+names = {NEW: "➕ A new case (describe it below)", **dict(zip(cases["case_id"], cases["name"]))}
+case_id = st.selectbox("Current case", list(names), index=1, format_func=names.get, key="ab_case")
+if case_id == NEW:
+    st.text_input("Case name (for your reference)", key="ab_new_name", placeholder="e.g. a journalist charged over a Facebook post")
+    default = {"country": "", "region": "Southeast Asia", "charges": [], "speech": [], "roles": []}
+else:
+    case = cases.set_index("case_id").loc[case_id].to_dict()
+    default = features_from_case(case)
 
 st.markdown("**How we describe this case for matching** (edit if the data is incomplete)")
 c1, c2 = st.columns(2)
@@ -71,8 +78,8 @@ if matches.empty:
 n_good = int(matches["good_outcome"].sum())
 st.header(f"{len(matches)} similar TrialWatch cases · {n_good} with a good outcome")
 st.caption("Outcomes marked *unconfirmed* are machine suggestions waiting for a person to check them "
-           "(see docs/VERIFY_OUTCOMES.md). Argument categories are assigned by keyword matching and are "
-           "about 75–80% right in our spot checks; the page link always shows the exact text.")
+           "(see docs/VERIFY_OUTCOMES.md). Argument labels are assigned by keyword matching and a person should "
+           "confirm them (spot checks of our earlier labels: about 75–80% right); every page link shows the exact text.")
 
 impacts = load_impacts()  # small CSV; not cached so a rebuilt sheet shows at once
 if not impacts:
@@ -86,44 +93,78 @@ if not arguments_available():
         "Matches, outcomes and links still work."
     )
 
-# --- similar cases ---------------------------------------------------------
-for m in matches.itertuples():
-    color = "green" if m.good_outcome else "gray"
-    confirmed = "confirmed" if m.outcome_confirmed else "unconfirmed"
-    with st.expander(f"{m.case} · grade {m.grade} · outcome: {m.outcome} ({confirmed})", expanded=m.Index == 0):
-        st.markdown(
-            f":{color}-background[{m.outcome} · {confirmed}] · TrialWatch grade **{m.grade}** · "
-            f"match score {m.score}"
-        )
-        st.caption("Why it matched: " + "; ".join(m.why))
-        links = [f"[TrialWatch report]({m.report_url})"]
-        if m.pdf_url:
-            links.append(f"[PDF]({m.pdf_url})")
-        if m.outcome_confirmed and m.outcome_source_url:
-            links.append(f"[outcome source]({m.outcome_source_url})")
-        elif m.suggested_from:
-            links.append(f"[source of suggested outcome]({m.suggested_from})")
-        st.markdown(" · ".join(links))
+by_argument, by_case = st.tabs(["By argument", "By case"])
 
-        row = impacts.get(m.report_url)
-        if row:
-            lines = impact_lines(row)
-            st.markdown("**Impact on the defendant** (sentences from the report that state it; "
-                        "found by pattern matching, so they can miss things)")
-            if lines:
-                st.markdown("\n".join(impact_markdown(lines)))
-            else:
-                st.caption("No impact sentence found for the defendant in this report's text.")
+# --- by argument: the five labels across all similar cases -----------------
+with by_argument:
+    st.caption(
+        "The arguments made in the similar cases, grouped by the five labels (then other recurring points). "
+        "Identical paragraphs reused across reports are shown once, with every report that uses them. "
+        "Each report's analysis is its named author's, not necessarily the Clooney Foundation for Justice's."
+    )
+    groups = grouped_arguments(matches)
+    if not groups:
+        st.info("No argument text available for these cases.")
+    for label in list(MENTOR_LABELS) + [c for c in CATEGORY_LABELS if c not in MENTOR_LABELS]:
+        if label not in groups:
+            continue
+        n_reports = sum(len(g["cases"]) for g in groups[label])
+        with st.expander(f"{CATEGORY_LABELS[label]} · {len(groups[label])} distinct arguments from {n_reports} reports",
+                         expanded=label == "legality"):
+            for g in groups[label]:
+                shared = len(g["cases"]) > 1
+                for c in g["cases"]:
+                    tag = (":green-background[" if c["good"] else ":gray-background[") + \
+                          f"{c['outcome']}{'' if c['confirmed'] else ' · unconfirmed'}]"
+                    by = f" · report by {c['author']}" if c["author"] else ""
+                    st.markdown(f"**{c['case']}**{by} · [page {c['page']}]({c['link']}) {tag}")
+                if shared:
+                    st.caption(f"Same paragraph in {len(g['cases'])} reports — one drafting, counted once.")
+                st.markdown(f"> {g['text']}")
+                st.divider()
 
-        args = best_arguments(m.report_url)
-        for cat, label in CATEGORY_LABELS.items():
-            if cat not in args:
-                continue
-            p = args[cat][0]
-            st.markdown(f"**{label}** — [page {p['page']}]({page_link(m.pdf_url, p['page'])})")
-            st.markdown(f"> {p['text']}")
+# --- by case ------------------------------------------------------------------
+with by_case:
+    for m in matches.itertuples():
+        color = "green" if m.good_outcome else "gray"
+        confirmed = "confirmed" if m.outcome_confirmed else "unconfirmed"
+        with st.expander(f"{m.case} · grade {m.grade} · outcome: {m.outcome} ({confirmed})", expanded=m.Index == 0):
+            st.markdown(
+                f":{color}-background[{m.outcome} · {confirmed}] · TrialWatch grade **{m.grade}** · "
+                f"match score {m.score}"
+            )
+            st.caption("Why it matched: " + "; ".join(m.why))
+            if m.author:
+                st.caption(f"Report by {m.author} for TrialWatch. The analysis is the author's and not necessarily "
+                           "the Clooney Foundation for Justice's.")
+            links = [f"[TrialWatch report]({m.report_url})"]
+            if m.pdf_url:
+                links.append(f"[PDF]({m.pdf_url})")
+            if m.outcome_confirmed and m.outcome_source_url:
+                links.append(f"[outcome source]({m.outcome_source_url})")
+            elif m.suggested_from:
+                links.append(f"[source of suggested outcome]({m.suggested_from})")
+            st.markdown(" · ".join(links))
 
-        decisions = hrc_decisions(m.report_url)
-        if decisions:
-            st.caption(f"UN Human Rights Committee decisions cited in this report ({len(decisions)}): "
-                       + ", ".join(decisions))
+            row = impacts.get(m.report_url)
+            if row:
+                lines = impact_lines(row)
+                st.markdown("**Impact on the defendant** (sentences from the report that state it; "
+                            "found by pattern matching, so they can miss things)")
+                if lines:
+                    st.markdown("\n".join(impact_markdown(lines)))
+                else:
+                    st.caption("No impact sentence found for the defendant in this report's text.")
+
+            args = best_arguments(m.report_url)
+            for cat, label in CATEGORY_LABELS.items():
+                if cat not in args:
+                    continue
+                p = args[cat][0]
+                st.markdown(f"**{label}** — [page {p['page']}]({page_link(m.pdf_url, p['page'])})")
+                st.markdown(f"> {p['text']}")
+
+            decisions = hrc_decisions(m.report_url)
+            if decisions:
+                st.caption(f"UN Human Rights Committee decisions cited in this report ({len(decisions)}): "
+                           + ", ".join(decisions))

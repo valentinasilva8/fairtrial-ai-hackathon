@@ -86,3 +86,12 @@ def test_argument_bank_shows_impact_on_the_defendant(tmp_path, monkeypatch):
     text = "\n".join(m.value for m in at.markdown)
     assert "Impact on the defendant" in text
     assert "**Detention** (five months) · *unconfirmed*" in text and "#page=17" in text
+
+
+def test_argument_bank_new_case_and_by_argument_tab():
+    at = AppTest.from_file("../pages/3_Argument_Bank.py").run(timeout=30)
+    assert not at.exception
+    assert [t.label for t in at.tabs] == ["By argument", "By case"]
+    at.selectbox(key="ab_case").set_value("__new__").run(timeout=30)
+    assert not at.exception
+    assert any("at least one charge type" in i.value for i in at.info)
