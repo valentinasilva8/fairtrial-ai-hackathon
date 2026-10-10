@@ -29,4 +29,5 @@ def test_placeholder_evidence_hidden():
 def test_status_labels():
     assert status_label("no_evidence_yet") == "No evidence yet"
     assert status_label("kept") == "Kept"
+    assert status_label("partly_kept") == "Partly kept"
     assert status_label("weird") == "Unknown"

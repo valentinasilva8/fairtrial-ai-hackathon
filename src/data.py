@@ -46,7 +46,7 @@ OUTCOMES = {
     "acquitted", "acquitted_on_appeal", "convicted", "dropped", "pending",
     "summoned", "restorative_justice", "suspect_status_invalidated",
 }
-PROMISE_STATUSES = {"kept", "broken", "no_evidence_yet"}
+PROMISE_STATUSES = {"kept", "partly_kept", "broken", "no_evidence_yet"}
 
 PLACEHOLDER = "TO VERIFY"
 

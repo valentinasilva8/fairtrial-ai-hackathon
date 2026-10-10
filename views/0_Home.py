@@ -135,7 +135,7 @@ if hidden:
     st.caption(f"{hidden} sensitive case(s) hidden from this public view.")
 
 # --- Promise Clock ---------------------------------------------------------
-STATUS_COLORS = {"Kept": "green", "Broken": "red", "No evidence yet": "orange", "Unknown": "gray"}
+STATUS_COLORS = {"Kept": "green", "Partly kept": "blue", "Broken": "red", "No evidence yet": "orange", "Unknown": "gray"}
 
 st.header("Promise Clock")
 st.caption("How long since each official pledge, and the evidence that it has been carried out.")
