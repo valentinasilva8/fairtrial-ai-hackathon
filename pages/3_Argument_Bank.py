@@ -133,7 +133,8 @@ with by_argument:
                 shared = len(g["cases"]) > 1
                 for c in g["cases"]:
                     tag = (":green-background[" if c["good"] else ":gray-background[") + \
-                          f"{c['outcome']}{'' if c['confirmed'] else ' · unconfirmed'}]"
+                          f"{c['outcome']}{'' if c['confirmed'] else ' · unconfirmed'}" + \
+                          (" · changed for the better" if c.get("improved") else "") + "]"
                     by = f" · report by {c['author']}" if c["author"] else ""
                     st.markdown(f"**{c['case']}**{by} · [page {c['page']}]({c['link']}) {tag}")
                 if shared:
@@ -152,6 +153,11 @@ with by_case:
                 f"match score {m.score}"
             )
             st.caption("Why it matched: " + "; ".join(m.why))
+            if m.outcome_history:
+                mark = " · :green-background[changed for the better]" if m.outcome_improved else ""
+                st.markdown("**Outcome history:** " + " → then ".join(m.outcome_history) + mark)
+                st.caption("Recorded in data/trialwatch_outcome_updates.csv after a person checked the source. "
+                           "The change followed TrialWatch's work; we don't claim it caused it.")
             if m.author:
                 st.caption(f"Report by {m.author} for TrialWatch. The analysis is the author's and not necessarily "
                            "the Clooney Foundation for Justice's.")

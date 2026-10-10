@@ -54,6 +54,14 @@ m3.metric("Good outcomes that followed", f"{int(bank['good_outcome'].sum())} of 
                "each confirmed by a teammate with a source")
 m4.metric("Indonesian cases likely barred by the reform", f"{int((past['verdict'] == LIKELY_BARRED).sum())} of {len(past)}")
 
+improved = bank[bank["outcome_improved"]]
+if not improved.empty:
+    st.markdown(f"**Outcomes that changed for the better after TrialWatch's work: {len(improved)}** "
+                "(verified updates; they followed TrialWatch's work, we don't claim it caused them)")
+    for r in improved.itertuples():
+        st.markdown(f"- {r.case}: " + " → then ".join(r.outcome_history))
+    st.caption("Record a new change on the Outcome Updates page.")
+
 st.markdown(
     "**How it works** — following TrialWatch's own process:\n"
     "1. **Evaluation** — *Argument Bank*: for a new or current case, the most similar TrialWatch trials, what "
