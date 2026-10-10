@@ -52,6 +52,12 @@ def test_un_letter_page_builds_plain_draft():
     assert any("Special Rapporteur" in m.value for m in at.markdown)
 
 
+def test_stress_test_page_shows_sensitivity():
+    at = AppTest.from_file("../pages/2_Stress_Test.py").run(timeout=30)
+    assert not at.exception
+    assert any("How robust" in e.label for e in at.expander)
+
+
 def test_argument_bank_shows_impact_on_the_defendant(tmp_path, monkeypatch):
     import src.impacts as impacts
     from src.argument_bank import similar_cases

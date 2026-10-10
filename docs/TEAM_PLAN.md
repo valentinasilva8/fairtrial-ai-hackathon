@@ -105,7 +105,8 @@ five scripts in the README once (~1 hour, unattended).
 ### Done
 | | |
 |---|---|
-| Stress test engine + page | 4 of 14 past cases likely barred; "add a case from text" with Gemini |
+| Stress test engine + page | 5 of 14 past cases likely barred (was 4 before Karimunjawa 3's complainant was sourced); "add a case from text" with Gemini |
+| Rule sensitivity analysis | 10 scenarios on the Stress Test page: 3–8 of 14 across legal readings; 1 of 14 without R1 |
 | Promise Clock | home page |
 | TrialWatch data | all 96 cfj.org report pages (90 distinct reports); 63 graded trials; 47 freedom-of-expression trials = Argument Bank; 226 news posts; outcome evidence |
 | Argument Bank page | similar cases, outcomes, arguments by category with page links |
@@ -119,7 +120,6 @@ five scripts in the README once (~1 hour, unattended).
 | Verify Shreya's 4 cases (fatia_haris, daniel_frits, karimunjawa_3, septia) and tick `data/verification_log.csv` | Shreya |
 | Verify meila and asrul; fix PR #2 (deletes the `asrul` row, uses values outside the allowed lists, now conflicts) | Layla |
 | Inter-rater labels for `public_interest` / `harm_shown` (two people each, blind), tally agreement | everyone; Layla tallies |
-| Rule sensitivity analysis: rerun the headline with each rule off or changed | Shreya |
 | Merge the case tracker (PR #5) | Valentina |
 | Police pledge date (promise p4 is "TO VERIFY") | Layla |
 | Polish (prompt 8) and deploy (prompt 9) | Valentina |

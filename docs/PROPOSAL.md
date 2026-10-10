@@ -23,7 +23,7 @@ TrialWatch's own process is Monitoring → Evaluation → Advocacy. The tool fol
    - R2 the victim must file the complaint personally
    - R3 hate speech requires real, imminent harm
    - R4 public-interest speech has a defense
-   Each case gets **Likely barred / At risk / Still prosecutable**, with the rule and source shown, labeled "for lawyer review". Current result: **4 of 14 past cases would likely be barred.**
+   Each case gets **Likely barred / At risk / Still prosecutable**, with the rule and source shown, labeled "for lawyer review". Current result: **5 of 14 past cases would likely be barred.** A sensitivity analysis reruns this under ten scenarios: it ranges from **3 of 14** (if public officials can still be defamation victims) to **8 of 14** (if the "only individuals" rule also covers hate-speech complaints by groups), and falls to 1 of 14 without R1. The headline rests mainly on R1, and the key open legal question is whether public officials are excluded.
 3. **Evaluation — Argument Bank** (added after judge feedback on day 1). For a current case, find the most similar past TrialWatch cases, show what happened in them, and show the arguments TrialWatch's experts made, by category:
    - legality and vagueness
    - legitimate aim
@@ -72,6 +72,7 @@ Human rights defenders **Fatia Maulidiyanti and Haris Azhar** were reported by a
   - Argument tags come from keyword matching and need human review.
 
 ## Validation
+- Rule sensitivity analysis: the headline under ten scenarios (each rule switched off, narrower and broader readings of R1, a contested fact read the other way, only verified cases), shown on the Stress Test page.
 - Automated tests run on every change: each stress-test rule, data validation, grade extraction, quote checks, citation rejection, and the Gemini calls (with a fake client).
 - Every grade in the TrialWatch index is stored with the text it was read from.
 - Team checks: case verification log, outcome confirmation, and a hand check of extracted arguments for an accuracy figure.

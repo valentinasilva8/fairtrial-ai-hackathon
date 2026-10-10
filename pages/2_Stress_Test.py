@@ -7,6 +7,7 @@ import pandas as pd
 import streamlit as st
 
 from src.data import DataValidationError, load_all, public_cases
+from src.sensitivity import robustness, run
 from src.llm import ARTICLES, COMPLAINANT_TYPES, TRI_STATE, ExtractionError, extract_case_fields
 from src.stress_test import (
     AT_RISK,
@@ -72,6 +73,27 @@ if not post.empty:
         + ", ".join(f"{r.name} ({r.verdict.lower()})" for r in post.itertuples())
         + "."
     )
+
+# --- sensitivity ---------------------------------------------------------------
+with st.expander("How robust is this number? (rule sensitivity analysis)"):
+    st.caption(
+        "Each row changes one rule or one contested fact and reruns the same rule engine. "
+        "The spread shows which part of the headline depends on a legal reading a lawyer should confirm."
+    )
+    all_public = public_cases(load_all().cases)
+    sens = run(all_public)
+    st.dataframe(
+        sens[["scenario", "headline", "question", "newly_barred", "no_longer_barred"]],
+        hide_index=True, width="stretch",
+        column_config={
+            "scenario": "Scenario", "headline": "Likely barred", "question": st.column_config.TextColumn("What changes", width="large"),
+            "newly_barred": "Newly barred", "no_longer_barred": "No longer barred",
+        },
+    )
+    rob = robustness(all_public)
+    st.markdown("**Cases barred at baseline, and how often they stay barred**")
+    st.dataframe(rob.rename(columns={"case": "Case", "stays_barred": "Stays barred in", "scenarios": "of scenarios"}),
+                 hide_index=True, width="stretch")
 
 # --- filters ---------------------------------------------------------------
 articles = sorted({a.strip() for v in df["article"] for a in str(v).split(";") if a.strip()})
