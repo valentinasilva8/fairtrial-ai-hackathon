@@ -20,6 +20,8 @@ from src.similarity import match
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 ARGUMENTS = DATA / "raw" / "trialwatch" / "arguments.jsonl"
+# Only the paragraphs the app shows, published with CFJ's copyright notice (see data/NOTICE.md).
+EXCERPTS = DATA / "trialwatch_argument_excerpts.jsonl"
 
 GOOD_OUTCOMES = {
     "acquitted", "charges dropped", "conviction overturned",
@@ -93,16 +95,22 @@ def similar_cases(current: dict, top_n: int = 8, good_first: bool = True, min_sc
     return df.reset_index(drop=True)
 
 
+def _arguments_file() -> Path | None:
+    """The full local extraction if present, else the published excerpts."""
+    return next((f for f in (ARGUMENTS, EXCERPTS) if f.exists()), None)
+
+
 def arguments_available() -> bool:
-    return ARGUMENTS.exists()
+    return _arguments_file() is not None
 
 
 @lru_cache(maxsize=1)
 def _load_arguments() -> tuple[dict, dict]:
     paras, decisions = {}, {}
-    if not ARGUMENTS.exists():
+    path = _arguments_file()
+    if path is None:
         return paras, decisions
-    for line in open(ARGUMENTS):
+    for line in open(path):
         rec = json.loads(line)
         if "hrc_decisions" in rec:
             decisions[rec["url"]] = rec["hrc_decisions"]
@@ -133,7 +141,7 @@ def best_arguments(report_url: str, per_category: int = 1) -> dict[str, list[dic
         cands = [p for p in paras.get(report_url, [])
                  if cat in p["categories"] and AUTHORITY.search(p["text"])
                  and not BOILERPLATE.search(p["text"]) and not FOOTNOTE.search(p["text"])]
-        cands.sort(key=lambda p: _strength(p, cat), reverse=True)
+        cands.sort(key=lambda p: (-_strength(p, cat), p["page"], p["text"]))
         if cands:
             out[cat] = cands[:per_category]
     return out
