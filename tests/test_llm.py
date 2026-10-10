@@ -154,3 +154,10 @@ def test_rate_limit_on_every_model_raises_clear_error():
     client.models.generate_content = limited
     with pytest.raises(ExtractionError, match="rate limit"):
         extract_case_fields(TEXT, client=client)
+
+
+def test_api_key_falls_back_to_environment(monkeypatch):
+    from src.llm import api_key
+
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key-from-env")
+    assert api_key() == "test-key-from-env"
