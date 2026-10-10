@@ -2,7 +2,9 @@
 
 1. build_sources() makes a numbered list of sources from the project's data:
    the case facts and timeline, the stress-test result, official pledges, and
-   paragraphs from similar TrialWatch reports (with page links).
+   paragraphs from similar TrialWatch reports (with page links), and the sentences
+   those reports state about the impact on their defendants (unconfirmed until a
+   person fills verified_by).
 2. A draft is a list of sections, each a list of sentences, and every sentence
    names the source ids it relies on. Gemini writes it (generate_draft), or
    template_draft() builds a plain version from the same sources without an LLM.
@@ -80,6 +82,13 @@ def build_sources(case: dict, events: list[dict], stress: dict, promises: list[d
                     f"TrialWatch report, {m['case']}, p. {para['page']} ({CATEGORY_LABELS[cat]}; outcome: {outcome})",
                     para["text"], page_link(m.get("pdf_url", ""), para["page"]) or m["report_url"],
                 ))
+        for imp in m.get("impacts", []):
+            status = "confirmed" if imp["confirmed"] else "unconfirmed"
+            src.append(Source(
+                f"impact:{slug}:{imp['category']}",
+                f"TrialWatch report, {m['case']}, p. {imp['page']} (impact on the defendant: {imp['label']}; {status})",
+                imp["sentence"], imp["url"] or m["report_url"], imp["confirmed"],
+            ))
     # de-duplicate ids (one paragraph can serve several categories)
     seen, out = set(), []
     for s in src:
@@ -178,6 +187,10 @@ Rules:
   naming the past case for each point. Say an outcome "followed", never that an argument "caused" it.
   When you mention a past case's outcome, say whether it is confirmed, e.g. "(outcome not yet confirmed)";
   the case itself is not "unconfirmed".
+- Sources whose id starts with "impact:" are sentences from a past TrialWatch report about what the prosecution did
+  to that report's defendant (conviction and sentence, detention, mistreatment and so on). Cite them only for that
+  past case, never as facts about the current case. Keep any number exactly as written, say it is unconfirmed when
+  the source says so, and say the impact "followed" the prosecution; never that an argument caused anything.
 - Describe the stress test as the authors' preliminary analysis for lawyer review, not a legal conclusion.
 - Formal, factual tone. About 350 to 550 words."""
 
