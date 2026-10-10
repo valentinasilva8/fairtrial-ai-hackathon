@@ -16,9 +16,13 @@ Start the app from its **Home** link (not a page link). Free Streamlit apps slee
 - **Say:** "47 TrialWatch fairness reports, searchable by the five labels you asked for. Good outcomes come first; we say they *followed*, never that an argument *caused* them, and each analysis is credited to its author."
 
 ## 3. UN Letter (2 min)
+- **From the Argument Bank, click "✉️ Draft a UN letter for this case".** The UN Letter page opens with the same case, the same similar trials and a sourced draft already built.
 - **Same case, "Draft with Gemini".** If the free tier is slow, "Build plain draft (no AI)" uses the same sources.
 - **Show:** "Citation check passed", the numbered citations, the source list naming each report's author, and "Check each sentence against its sources", which flags the sentences a lawyer must look at.
-- **Show the Review box:** a named reviewer must confirm before saving. Sensitive cases can't be used.
+- **Step 1 · Source checks before editing:** citation check passed; run the sentence support check; tick "reviewed".
+- **Step 2 · Edit the letter:** change a sentence or delete a citation number and show the warning that appears; put it back and it re-checks clean.
+- **Step 3 · Source checks after editing:** the edit re-check, plus the support check run again on the edited text; tick "reviewed".
+- **Step 4 · Approve and download:** enter a reviewer name, tick the box, then **Download Word (.docx)**. The file says who approved it and whether any warnings were left. Sensitive cases can't be used.
 
 ## 4. Stress Test (1–2 min): where a law has just been reformed
 - **Show:** "5 of 13 past cases would likely be barred under the 2025 ruling", then open "How robust is this number?": 3 to 8 of 13 across ten legal readings.

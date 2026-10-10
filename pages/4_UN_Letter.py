@@ -12,6 +12,10 @@ from src.data import DataValidationError, load_all, public_cases
 from src.letter import (
     LLMError,
     SensitiveCaseError,
+    check_edited,
+    numbered_sources,
+    parse_edited,
+    to_docx,
     build_sources,
     check_support,
     generate_draft,
@@ -53,7 +57,9 @@ except DataValidationError as e:
 cases = public_cases(data.cases)
 NEW = "new_case"
 names = {NEW: "➕ A new case, any country (describe it below)", **dict(zip(cases["case_id"], cases["name"]))}
-case_id = st.selectbox("Case", list(names), index=1, format_func=names.get, key="letter_case")
+if "letter_case" not in st.session_state or st.session_state["letter_case"] not in names:
+    st.session_state["letter_case"] = list(names)[1]
+case_id = st.selectbox("Case", list(names), format_func=names.get, key="letter_case")
 
 if case_id == NEW:
     st.markdown("**Describe the case.** Only what you enter here is used about the case, and it is marked "
@@ -84,10 +90,16 @@ if case_id == NEW:
 else:
     case = {**cases.set_index("case_id").loc[case_id].to_dict(), "case_id": case_id}
     features = features_from_case(case)
+    handed = st.session_state.get("letter_features")
+    if handed and handed.get("case_id") == case_id:
+        features = {k: v for k, v in handed.items() if k != "case_id"}
+        st.caption("Using the matching features you set on the Argument Bank page.")
     stress, promises = evaluate_case(case), data.promises.to_dict("records")
     events = data.events[data.events["case_id"] == case_id].to_dict("records") if data.events is not None else []
 
-n_past = st.slider("Similar TrialWatch cases to draw arguments from", 1, 5, 3)
+if "letter_n_past" not in st.session_state:
+    st.session_state["letter_n_past"] = 3
+n_past = st.slider("Similar TrialWatch cases to draw arguments from", 1, 5, key="letter_n_past")
 if not arguments_available():
     st.info("Argument text isn't loaded on this machine; the letter will cite the case, reform and pledges only. "
             "Run the scripts in docs/ARGUMENT_BANK.md to add TrialWatch arguments.")
@@ -107,7 +119,12 @@ with st.expander(f"Sources the letter may use ({len(sources)})"):
         tag = "" if s.verified else " · :gray-background[unverified]"
         st.markdown(f"`{s.id}` **{s.label}**{tag}" + (f" — {s.url}" if s.url else ""))
 
-key = f"letter_{case_id}_{n_past}_{hash(str(case))}"
+key = f"letter_{case_id}_{n_past}_{hash(str(case))}_{hash(str(features))}"
+if st.session_state.pop("letter_autodraft", False) and key not in st.session_state:
+    # arrived from the Argument Bank: start with a plain, fully sourced draft (no AI) so the letter is there
+    d = template_draft(sources)
+    st.session_state[key] = {"draft": d, "problems": validate(d, sources), "by": "template"}
+    st.info("Draft built from the Argument Bank case. Use “Draft with Gemini” for a fuller letter.")
 b1, b2 = st.columns(2)
 if b1.button("Draft with Gemini", type="primary"):
     try:
@@ -129,45 +146,101 @@ if state["problems"]:
              + "\n- ".join(state["problems"]))
     st.stop()
 
-st.success("Citation check passed: every sentence cites a known source and every quotation is in its source.")
 letter = render(state["draft"], sources, case["name"])
 st.markdown(letter)
 
-# --- second check: does each source actually say it? ----------------------
+
+def show_support(results):
+    flagged = [c for c in results if c["verdict"] != "supported"]
+    st.markdown(f"**{len(results) - len(flagged)} of {len(results)} sentences fully supported.** "
+                "Review every flagged sentence.")
+    for c in flagged:
+        st.markdown(f":{VERDICT_COLORS.get(c['verdict'], 'gray')}-background[{c['verdict']}] "
+                    f"*{c['heading']}*, sentence {c['n']}: {c['text']}")
+        st.caption(c["reason"])
+
+
+# --- step 1: source checks before editing ------------------------------------------
 st.divider()
-st.subheader("Sentence-by-sentence support check")
-if st.button("Check each sentence against its sources"):
+st.subheader("Step 1 · Source checks before editing")
+st.success("Citation check passed: every sentence cites a known source and every quotation is in its source.")
+if st.button("Check each sentence against its sources", key=f"{key}_support_pre"):
     try:
         with st.spinner("Checking…"):
             state["support"] = check_support(state["draft"], sources)
     except LLMError as e:
         st.error(str(e))
 if state.get("support"):
-    support = state["support"]
-    flagged = [c for c in support if c["verdict"] != "supported"]
-    st.markdown(f"**{len(support) - len(flagged)} of {len(support)} sentences fully supported.** "
-                "Review every flagged sentence before approving.")
-    for c in flagged:
-        st.markdown(f":{VERDICT_COLORS.get(c['verdict'], 'gray')}-background[{c['verdict']}] "
-                    f"*{c['heading']}*, sentence {c['n']}: {c['text']}")
-        st.caption(c["reason"])
+    show_support(state["support"])
+else:
+    st.caption("Optional but recommended: the support check uses Gemini to say whether each cited source "
+               "actually states the sentence.")
+pre_ok = st.checkbox("I reviewed the source checks before editing", key=f"{key}_pre_ok")
+
+# --- step 2: edit -------------------------------------------------------------------------
+st.divider()
+st.subheader("Step 2 · Edit the letter")
+st.caption("Edit freely. Keep the [n] citations and the source list; your edits are checked in step 3.")
+edited = st.text_area("Letter", value=letter, height=420, key=f"{key}_edit_{hash(letter)}",
+                      label_visibility="collapsed")
+numbered = numbered_sources(state["draft"], sources)
+changed = edited.strip() != letter.strip()
+
+# --- step 3: source checks after editing -------------------------------------------
+st.divider()
+st.subheader("Step 3 · Source checks after editing")
+edit_problems = check_edited(edited, numbered, original=letter)
+if edit_problems:
+    st.warning("Citation check on the edited letter:\n- " + "\n- ".join(edit_problems))
+else:
+    st.success("Citation check on the edited letter passed: citation numbers exist, quotations still match "
+               "their sources, and no new sentence is uncited." + ("" if changed else " (No edits yet.)"))
+edited_key = f"{key}_support_post_{hash(edited)}"
+if st.button("Check each edited sentence against its sources", key=f"{key}_support_post"):
+    try:
+        with st.spinner("Checking…"):
+            st.session_state[edited_key] = check_support(parse_edited(edited, numbered), sources)
+    except LLMError as e:
+        st.error(str(e))
+if st.session_state.get(edited_key):
+    show_support(st.session_state[edited_key])
+post_ok = st.checkbox("I reviewed the source checks after editing", key=f"{key}_post_ok")
 
 # --- human decision ---------------------------------------------------------
 st.divider()
-st.subheader("Review")
+st.subheader("Step 4 · Approve and download")
 reviewer = st.text_input("Reviewer name", key=f"{key}_reviewer")
-read_all = st.checkbox("I have read the whole draft and every flagged sentence", key=f"{key}_read")
-a1, a2 = st.columns(2)
-if a1.button("Approve and save", disabled=not (reviewer.strip() and read_all)):
+read_all = st.checkbox("I have read the whole letter, every flagged sentence and every warning above",
+                       key=f"{key}_read")
+approved = bool(reviewer.strip() and read_all and pre_ok and post_ok)
+stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+def _support_note(results, when):
+    if not results:
+        return f"support check {when} editing not run"
+    return f"{sum(c['verdict'] == 'supported' for c in results)}/{len(results)} sentences fully supported {when} editing"
+
+
+support_note = (_support_note(state.get("support"), "before") + "; "
+                + _support_note(st.session_state.get(edited_key), "after"))
+note = (f"Approved by {reviewer.strip() or '—'} on {stamp}. Drafted by {state['by']}; {support_note}; "
+        f"{'edited by the reviewer' if changed else 'not edited'}; "
+        f"{len(edit_problems)} open warning(s) after editing. Draft for lawyer review.")
+file_stem = f"UN_letter_{re.sub(r'[^A-Za-z0-9]+', '_', case['name']).strip('_')}_{stamp}"
+if not approved:
+    st.caption("To enable download: tick both source-check reviews (steps 1 and 3), enter your name and "
+               "confirm you have read everything.")
+d1, d2, d3, d4 = st.columns(4)
+d1.download_button("Download Word (.docx)", data=to_docx(edited, f"UN letter: {case['name']}", note) if approved else b"",
+                   file_name=f"{file_stem}.docx", disabled=not approved,
+                   mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+d2.download_button("Download Markdown (.md)", data=f"{edited}\n\n*{note}*\n" if approved else "",
+                   file_name=f"{file_stem}.md", disabled=not approved, mime="text/markdown")
+if d3.button("Save a copy in outputs/", disabled=not approved):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    path = OUT_DIR / f"{re.sub(r'[^a-z0-9_]', '', case_id)}_{stamp}.md"
-    checked = state.get("support")
-    note = (f"{sum(c['verdict'] == 'supported' for c in checked)}/{len(checked)} sentences fully supported"
-            if checked else "support check not run")
-    path.write_text(f"<!-- approved by {reviewer.strip()} on {stamp}; drafted by {state['by']}; {note} -->\n\n{letter}\n")
+    path = OUT_DIR / f"{file_stem}.md"
+    path.write_text(f"<!-- {note} -->\n\n{edited}\n")
     st.success(f"Saved to outputs/briefs/{path.name}.")
-if a2.button("Mark sensitive (don't use)"):
+if d4.button("Mark sensitive (don't use)"):
     st.session_state.pop(key, None)
     st.warning(f"Draft discarded. To keep {case['name']} out of all public views and briefs, set "
                f"sensitive=true for `{case_id}` in data/cases_seed.csv.")

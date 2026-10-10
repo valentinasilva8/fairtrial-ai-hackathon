@@ -78,6 +78,21 @@ if matches.empty:
     st.info("No past TrialWatch case shares a charge type with this one.")
     st.stop()
 
+# --- hand the same case to the UN Letter page ------------------------------------
+if st.button("✉️ Draft a UN letter for this case", type="primary", key="ab_to_letter"):
+    st.session_state["letter_case"] = "new_case" if case_id == NEW else case_id
+    st.session_state["letter_features"] = {"case_id": st.session_state["letter_case"], **current}
+    st.session_state["letter_n_past"] = min(top_n, 5)
+    st.session_state["letter_autodraft"] = True
+    if case_id == NEW:
+        st.session_state["lt_name"] = st.session_state.get("ab_new_name", "")
+        st.session_state["lt_country"] = current["country"]
+        st.session_state["lt_charges"] = charges
+        st.session_state["lt_speech"] = speech
+        st.session_state["lt_roles"] = roles
+        st.session_state["lt_region"] = region
+    st.switch_page("pages/4_UN_Letter.py")
+
 n_good = int(matches["good_outcome"].sum())
 st.header(f"{len(matches)} similar TrialWatch cases · {n_good} with a good outcome")
 st.caption("Outcomes marked *unconfirmed* are machine suggestions waiting for a person to check them "

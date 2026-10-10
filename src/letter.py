@@ -309,14 +309,108 @@ def check_support(draft: dict, sources: list[Source], client=None) -> list[dict]
     return out
 
 
-def render(draft: dict, sources: list[Source], case_name: str) -> str:
-    """Markdown letter with numbered citations and a source list."""
+def numbered_sources(draft: dict, sources: list[Source]) -> list[Source]:
+    """Sources in the order the letter cites them: [1] is the first, [2] the second, …"""
+    by_id = {s.id: s for s in sources}
     order: list[str] = []
     for sec in draft["sections"]:
         for sent in sec["sentences"]:
             for i in sent["sources"]:
-                if i not in order:
+                if i not in order and i in by_id:
                     order.append(i)
+    return [by_id[i] for i in order]
+
+
+CITE = re.compile(r"\[(\d+)\]")
+
+
+def _plain_sentences(body: str) -> list[str]:
+    lines = [p.strip() for p in body.split("\n")
+             if p.strip() and not p.lstrip().startswith(("#", "**To:**", "**Re:**", "*Draft"))]
+    return [s.strip() for p in lines for s in re.split(r"(?<=[.!?])\s+(?=[A-Z“\"])", p) if s.strip()]
+
+
+def check_edited(text: str, numbered: list[Source], original: str = "") -> list[str]:
+    """Problems in a letter a reviewer has edited by hand (no AI): broken citations, changed quotations,
+    or new sentences without a citation (sentences already in the original draft are not re-flagged)."""
+    body = text.split("### Sources")[0]
+    problems = []
+    bad = sorted({int(n) for n in CITE.findall(body) if not 1 <= int(n) <= len(numbered)})
+    if bad:
+        problems.append(f"Citation numbers with no matching source: {', '.join(f'[{n}]' for n in bad)}.")
+    for q in QUOTE.findall(body):
+        if not any(_norm(q) in _norm(s.text) for s in numbered):
+            problems.append(f"Quotation not found word for word in any source: “{q[:70]}”.")
+    before = set(_plain_sentences(original.split("### Sources")[0])) if original else set()
+    uncited = [s for s in _plain_sentences(body) if len(s) > 40 and not CITE.search(s) and s not in before]
+    if uncited:
+        problems.append(f"{len(uncited)} sentence(s) have no citation, e.g. “{uncited[0][:70]}”.")
+    return problems
+
+
+def parse_edited(text: str, numbered: list[Source]) -> dict:
+    """Turn an edited letter back into sections of sentences with their cited source ids,
+    so the same sentence-by-sentence support check can run on the edited text."""
+    body = text.split("### Sources")[0]
+    sections, heading = [], "Letter"
+    for line in body.split("\n"):
+        line = line.strip()
+        if line.startswith("### "):
+            heading = line[4:].strip()
+            continue
+        if not line or line.startswith(("**To:**", "**Re:**", "*Draft")):
+            continue
+        sents = []
+        for chunk in re.split(r"(?<=\])\s+(?=[A-Z“\"])", line):
+            ids = [numbered[int(n) - 1].id for n in CITE.findall(chunk) if 1 <= int(n) <= len(numbered)]
+            clean = CITE.sub("", chunk).strip()
+            if clean:
+                sents.append({"text": clean, "sources": ids})
+        if sents:
+            if sections and sections[-1]["heading"] == heading:
+                sections[-1]["sentences"].extend(sents)
+            else:
+                sections.append({"heading": heading, "sentences": sents})
+    return {"sections": sections}
+
+
+def to_docx(text: str, title: str, note: str) -> bytes:
+    """A Word version of the letter (markdown headings, bold labels and the numbered source list)."""
+    import io
+
+    from docx import Document
+    from docx.shared import Pt
+
+    doc = Document()
+    doc.core_properties.title = title
+    doc.styles["Normal"].font.size = Pt(11)
+
+    def add_runs(par, line):
+        for i, part in enumerate(re.split(r"\*\*(.+?)\*\*", line)):
+            if part:
+                run = par.add_run(part)
+                run.bold = i % 2 == 1
+
+    for line in text.split("\n"):
+        line = line.rstrip()
+        if not line:
+            continue
+        if line.startswith("### "):
+            doc.add_heading(line[4:], level=2)
+        elif re.match(r"^\*[^*].*\*$", line):
+            doc.add_paragraph().add_run(line.strip("*")).italic = True
+        else:
+            add_runs(doc.add_paragraph(), line)
+    footer = doc.add_paragraph()
+    footer.add_run(note).italic = True
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()
+
+
+def render(draft: dict, sources: list[Source], case_name: str) -> str:
+    """Markdown letter with numbered citations and a source list."""
+    order: list[str] = [s.id for s in numbered_sources(draft, sources)]
     num = {i: n for n, i in enumerate(order, 1)}
     by_id = {s.id: s for s in sources}
     out = [f"**To:** {RECIPIENT}", f"**Re:** {case_name}", "",
@@ -336,5 +430,5 @@ def render(draft: dict, sources: list[Source], case_name: str) -> str:
     return "\n".join(out)
 
 
-__all__ = ["LLMError", "SensitiveCaseError", "build_sources", "check_support", "generate_draft", "render",
-           "sentences_of", "template_draft", "validate"]
+__all__ = ["LLMError", "SensitiveCaseError", "build_sources", "check_edited", "check_support", "generate_draft",
+           "numbered_sources", "parse_edited", "render", "sentences_of", "template_draft", "to_docx", "validate"]

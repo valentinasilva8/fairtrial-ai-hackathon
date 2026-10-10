@@ -210,3 +210,46 @@ def test_new_case_in_another_country_without_stress_test():
     headings = [s["heading"] for s in draft["sections"]]
     assert "The reform and how it applies" not in headings
     assert "Government of Kenya" in draft["sections"][-1]["sentences"][0]["text"]
+
+
+def test_check_edited_flags_broken_citations_changed_quotes_and_uncited_sentences():
+    from src.letter import check_edited, numbered_sources
+
+    draft = template_draft(sources())
+    md = render(draft, sources(), "A. Person")
+    numbered = numbered_sources(draft, sources())
+    assert check_edited(md, numbered, original=md) == []
+    broken = md.replace("### Sources", "We also note the court ignored “a completely invented sentence here”. [99]\n\n### Sources")
+    problems = check_edited(broken, numbered, original=md)
+    assert any("[99]" in p for p in problems)
+    assert any("Quotation not found" in p for p in problems)
+    uncited = md.replace("### Sources", "This new sentence has been added by the reviewer without any citation.\n\n### Sources")
+    assert any("no citation" in p for p in check_edited(uncited, numbered, original=md))
+
+
+def test_to_docx_keeps_headings_and_note():
+    import io
+
+    from docx import Document
+
+    from src.letter import to_docx
+
+    md = render(template_draft(sources()), sources(), "A. Person")
+    doc = Document(io.BytesIO(to_docx(md, "UN letter", "Approved by Tester.")))
+    texts = [p.text for p in doc.paragraphs]
+    assert "Summary" in texts and "Sources" in texts
+    assert texts[-1] == "Approved by Tester."
+    assert any(p.text.startswith("To:") and p.runs[0].bold for p in doc.paragraphs)
+
+
+def test_parse_edited_round_trips_citations():
+    from src.letter import numbered_sources, parse_edited
+
+    draft = template_draft(sources())
+    md = render(draft, sources(), "A. Person")
+    numbered = numbered_sources(draft, sources())
+    parsed = parse_edited(md, numbered)
+    assert [s["heading"] for s in parsed["sections"]] == [s["heading"] for s in draft["sections"]]
+    cited = {i for sec in parsed["sections"] for sent in sec["sentences"] for i in sent["sources"]}
+    assert cited == {s.id for s in numbered}
+    assert validate(parsed, sources()) == []
