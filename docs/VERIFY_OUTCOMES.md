@@ -1,6 +1,6 @@
 # Confirming case outcomes
 
-`data/trialwatch_outcomes.csv` has one row per core TrialWatch case (47 graded trials with
+`data/trialwatch_outcomes.csv` has one row per core TrialWatch case (47 graded fairness reports with
 freedom-of-expression analysis). The `suggested_label` column is a **machine suggestion** from
 keyword matching and is often wrong: for example, it can't tell a defendant's acquittal from a
 co-defendant's, or a release on bail from a final release. Nothing is treated as an outcome until

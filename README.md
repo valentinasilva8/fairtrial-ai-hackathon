@@ -14,7 +14,7 @@ An independent hackathon project. It is not endorsed by, or an official product 
 ## What it does
 For a lawyer facing a new speech prosecution anywhere, Precedent & Practice:
 
-1. **finds the most similar trials TrialWatch has graded** (47 freedom-of-expression trials in 23 countries) and **what followed** in each, with good outcomes first;
+1. **finds the most similar trials TrialWatch has graded** (47 graded freedom-of-expression fairness reports, 2,075 PDF pages, covering trials in 23 countries) and **what followed** in each, with good outcomes first;
 2. **shows the arguments their reports made**, grouped under the five labels the TrialWatch mentor asked for (**legality, vagueness, broadness, necessity, proportionality**), each with its author, the exact report page and the UN Human Rights Committee decisions cited, counting a paragraph reused across reports once;
 3. **drafts a submission to the UN Special Rapporteur** in which every sentence cites its source and a lawyer approves before use.
 
@@ -138,7 +138,7 @@ tests/                       # pytest
 
 ## Data
 - **Indonesian cases** (`data/cases_seed.csv`, `events.csv`): from the CFJ report *Protecting Online Speech in Indonesia* and news, each row with a source. `data/verification_log.csv` records who checked each case.
-- **TrialWatch reports** (`data/trialwatch_reports.csv`, [docs/TRIALWATCH_REPORTS.md](docs/TRIALWATCH_REPORTS.md)): all 96 report pages on cfj.org (90 distinct reports, 94 PDFs). 63 trials carry an A–F grade, each stored with the text it was read from; 47 graded trials analyse freedom of expression and form the Argument Bank. They cite 154 distinct UN Human Rights Committee decisions.
+- **TrialWatch reports** (`data/trialwatch_reports.csv`, [docs/TRIALWATCH_REPORTS.md](docs/TRIALWATCH_REPORTS.md)): all 96 report listings on cfj.org (90 distinct reports, 94 PDFs). 63 reports grade a trial A–F, each stored with the text it was read from; 47 graded reports analyse freedom of expression and form the Argument Bank. They cite 154 distinct UN Human Rights Committee decisions.
 - **Outcomes** (`data/trialwatch_outcomes.csv`): suggested from the reports and 226 CFJ news posts, with every sentence and link in `trialwatch_outcome_evidence.csv`. Suggestions are often wrong; an outcome counts only once a person fills `verified_by` ([docs/VERIFY_OUTCOMES.md](docs/VERIFY_OUTCOMES.md)).
 
 ## Responsible AI

@@ -20,7 +20,7 @@ from src.similarity import CHARGES, COUNTRIES, REGION, ROLES, SPEECH, features_f
 st.title("Argument Bank")
 st.caption(
     "Past TrialWatch cases similar to a current case, what happened in them, and the arguments "
-    "TrialWatch's experts made, from 47 graded freedom-of-expression reports on cfj.org."
+    "TrialWatch's experts made, from 47 graded freedom-of-expression reports on cfj.org (2,075 PDF pages)."
 )
 st.warning(
     "**For lawyer review — not legal advice.** The arguments are TrialWatch experts' analysis in "

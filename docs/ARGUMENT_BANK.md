@@ -27,7 +27,7 @@ python scripts/build_case_features.py        # features for similar-case matchin
 | `data/trialwatch_case_features.csv` | yes | country, region, charge types, kind of speech, defendant role, with the keyword counts behind each |
 
 ## Coverage (run of 9 Oct 2026)
-- 96 report pages in the cfj.org sitemap; 94 have a PDF; all 94 have extractable text.
+- 96 report listings in the cfj.org sitemap; 94 have a PDF; all 94 have extractable text.
 - 63 reports carry an A–F trial grade (D 43, F 11, C 9); every grade is stored with its source text, and no report mentions two different grades.
 - 47 graded reports analyse freedom of expression (ICCPR Article 19). This is the core set.
 - The 47 cite 154 distinct UN Human Rights Committee decisions (median 9 per report).

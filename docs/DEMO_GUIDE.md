@@ -6,7 +6,7 @@ Start the app from its **Home** link (not a page link). Free Streamlit apps slee
 
 ## 1. Home (1 min)
 - **Say:** "TrialWatch has graded dozens of trials of journalists and critics. Precedent & Practice turns those reports into arguments, precedents and sourced UN submissions for the next person prosecuted for speech."
-- **Show:** the four numbers (47 trials searchable by argument · 23 countries · 21 of 47 good outcomes that followed · 5 of 13 Indonesian cases likely barred) and "How it works": Evaluation → Advocacy → Accountability.
+- **Show:** the four numbers (47 fairness reports searchable by argument · 23 countries · 21 of 47 good outcomes that followed · 5 of 13 Indonesian cases likely barred) and "How it works": Evaluation → Advocacy → Accountability.
 - **Scroll to the Promise Clock:** days since each official pledge; the police pledge's date is marked "to verify". We don't overstate.
 
 ## 2. Argument Bank (3 min): the core

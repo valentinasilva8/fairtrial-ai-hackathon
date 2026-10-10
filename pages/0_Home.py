@@ -46,8 +46,8 @@ past = results[results["year_reported"].isna() | (results["year_reported"] < 202
 bank = past_cases()
 
 m1, m2, m3, m4 = st.columns(4)
-m1.metric("TrialWatch trials searchable by argument", len(bank),
-          help="Graded TrialWatch fairness reports that analyse freedom of expression")
+m1.metric("TrialWatch fairness reports searchable by argument", len(bank),
+          help="Graded TrialWatch fairness reports that analyse freedom of expression (2,075 PDF pages; some reports cover several trials or defendants)")
 m2.metric("Countries covered", bank["country"].nunique())
 m3.metric("Good outcomes that followed", f"{int(bank['good_outcome'].sum())} of {len(bank)}",
           help="Acquittal, charges dropped, conviction overturned, release, or a UN finding of arbitrary detention; "

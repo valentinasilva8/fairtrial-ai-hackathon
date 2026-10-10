@@ -18,9 +18,9 @@ Reforms make this harder to judge. Indonesia revised its speech law in 2024, its
 ## What the tool does
 The app follows TrialWatch's own process: **Monitoring → Evaluation → Advocacy**.
 
-1. **Argument Bank (the core).** Built from all 96 report pages on cfj.org: 47 graded freedom-of-expression trials in 23 countries and territories. For a current case, or a new one a lawyer describes, it:
+1. **Argument Bank (the core).** Built from all 96 report listings on cfj.org: 47 graded freedom-of-expression fairness reports (2,075 PDF pages) on trials in 23 countries and territories. Some reports cover several trials or defendants (the Belarus report alone covers 15 trials). For a current case, or a new one a lawyer describes, it:
    - finds the most similar trials by charge, kind of speech, defendant and region, and says why each matched;
-   - lists trials with a good outcome first (21 of 47: acquittal, charges dropped, conviction overturned, early release or pardon, or a UN finding of arbitrary detention), each confirmed by a teammate with a source;
+   - lists trials with a good outcome first (21 of the 47 reported cases: acquittal, charges dropped, conviction overturned, early release or pardon, or a UN finding of arbitrary detention), each confirmed by a teammate with a source;
    - **By argument:** groups the arguments from those trials under the five labels the mentor asked for (legality, vagueness, broadness, necessity, proportionality), then legitimate aim, pretrial detention and fair trial. Each argument names the report's author, links the exact PDF page and lists the UN Human Rights Committee decisions cited. A paragraph reused word for word across reports, such as in three Cambodia cases, is shown once;
    - **By case:** shows each similar trial's outcome, the impact on the defendant (conviction and sentence, detention, mistreatment, reputational harm, other restrictions, prolonged proceedings), and its arguments.
 2. **UN Special Rapporteur letter (advocacy).** For a seeded case or a new case in any country, a draft built only from numbered sources: the case record, the Argument Bank, the stress test and official pledges. Code rejects any sentence without a source and any quotation not found word for word; a second check flags sentences the sources don't fully support; a named reviewer approves before it is saved. A plain version can be built without AI.
@@ -37,7 +37,7 @@ The app follows TrialWatch's own process: **Monitoring → Evaluation → Advoca
 - It is built from **TrialWatch's own work**: its fairness reports, its A–F grades, the three-part test its experts apply, the authors on its Experts Panel, and its grading annex's definition of harm (used for the impact categories).
 - It follows **TrialWatch's process** and produces what TrialWatch already sends: submissions to UN mechanisms.
 - It makes TrialWatch's **47 fairness reports searchable by argument for the first time**, linked to the 154 UN Human Rights Committee decisions they cite.
-- It shows **what followed TrialWatch's work**: 21 of 47 trials ended in a good outcome. We say these outcomes *followed*; we never claim an argument *caused* them.
+- It shows **what followed TrialWatch's work**: 21 of the 47 reported cases ended in a good outcome. We say these outcomes *followed*; we never claim an argument *caused* them.
 - It runs on **TrialWatch's existing infrastructure**: CSV files, a small Streamlit app and a free AI tier. Adding a country's reform means writing its rules into one file.
 
 ## Human rights impact
