@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.reports import CATEGORIES
 from src.similarity import match
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -40,6 +41,8 @@ BOILERPLATE = re.compile(
     r"monitors? (?:attended|did not)|TrialWatch Expert",
     re.I,
 )
+# A footnote that slipped into the body text: "87 Conversation with ... Available at https://..."
+FOOTNOTE = re.compile(r"^\d{1,3}\s+\S|Available at\s+https?://", re.I)
 AUTHORITY = re.compile(r"General Comment|Human Rights Committee|Special Rapporteur|Article 19|ICCPR|Working Group", re.I)
 
 
@@ -108,9 +111,18 @@ def _load_arguments() -> tuple[dict, dict]:
     return paras, decisions
 
 
-def _strength(p: dict) -> int:
-    n = len(p["text"])
-    return len(AUTHORITY.findall(p["text"])) * 2 + len(p["categories"]) + (2 if 300 <= n <= 1600 else 0)
+def _strength(p: dict, cat: str) -> int:
+    """How strongly a paragraph argues *this* category for this case.
+
+    Favors paragraphs that use the category's own terms several times and cite a
+    legal standard; penalizes the generic opening that lists every prong of the test.
+    """
+    text = p["text"]
+    own = len(re.findall(CATEGORIES[cat], text, re.I))
+    authority = min(len(AUTHORITY.findall(text)), 3)
+    generic = max(len(p["categories"]) - 2, 0)
+    size = 2 if 300 <= len(text) <= 1600 else 0
+    return 3 * own + authority + size - 3 * generic
 
 
 def best_arguments(report_url: str, per_category: int = 1) -> dict[str, list[dict]]:
@@ -119,8 +131,9 @@ def best_arguments(report_url: str, per_category: int = 1) -> dict[str, list[dic
     out = {}
     for cat in CATEGORY_LABELS:
         cands = [p for p in paras.get(report_url, [])
-                 if cat in p["categories"] and not BOILERPLATE.search(p["text"])]
-        cands.sort(key=_strength, reverse=True)
+                 if cat in p["categories"] and AUTHORITY.search(p["text"])
+                 and not BOILERPLATE.search(p["text"]) and not FOOTNOTE.search(p["text"])]
+        cands.sort(key=lambda p: _strength(p, cat), reverse=True)
         if cands:
             out[cat] = cands[:per_category]
     return out

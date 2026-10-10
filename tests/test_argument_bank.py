@@ -1,6 +1,6 @@
 """Tests for src/argument_bank.py. Uses the committed CSVs; argument text is local-only."""
 
-from src.argument_bank import BOILERPLATE, is_good, outcome_of, page_link, similar_cases
+from src.argument_bank import BOILERPLATE, FOOTNOTE, is_good, outcome_of, page_link, similar_cases
 from src.similarity import features_from_case
 
 
@@ -32,3 +32,8 @@ def test_boilerplate_is_recognised():
 def test_page_link():
     assert page_link("https://cfj.org/r.pdf", 12) == "https://cfj.org/r.pdf#page=12"
     assert page_link("", 3) == ""
+
+
+def test_footnotes_are_recognised():
+    assert FOOTNOTE.search("87 Conversation with staff, November 22, 2022. Available at https://www.reuters.com/x")
+    assert not FOOTNOTE.search("Article 495 is insufficiently precise and fails the legality requirement.")
