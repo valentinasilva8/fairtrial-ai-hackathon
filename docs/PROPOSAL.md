@@ -11,7 +11,7 @@ Indonesia's ITE Law has been used to criminally prosecute journalists, activists
 
 ## Problem
 - TrialWatch documents unfair prosecutions and pushes for legal reform, but has no systematic way to measure whether a reform changed outcomes.
-- TrialWatch has published 90 reports, including 63 graded trials in more than 20 countries, but there is no way to search the arguments its experts made in them: a lawyer facing a new case can't quickly find how TrialWatch argued a similar one.
+- TrialWatch has published 90 reports, including 63 graded fairness reports on trials in more than 20 countries, but there is no way to search the arguments its experts made in them: a lawyer facing a new case can't quickly find how TrialWatch argued a similar one.
 - Case information is scattered across court records, NGO reports and news, in English and Bahasa Indonesia.
 - Advocacy letters are written by hand for each case.
 
@@ -40,9 +40,9 @@ Human rights defenders **Fatia Maulidiyanti and Haris Azhar** were reported by a
 
 ## Data (all public)
 - **CFJ report** *Protecting Online Speech in Indonesia* (hackathon packet): 6 case studies plus further cases, based on a 73-case dataset (we will ask TrialWatch for access). Our Indonesian case table has 16 cases, each with sources; teammates sign off each one in a verification log, and 2 at-risk people are marked sensitive and hidden.
-- **Every TrialWatch report on cfj.org:** 96 report pages = 90 distinct reports, 94 PDFs, downloaded at the rate cfj.org's robots.txt asks for.
-  - 63 trials carry an A–F grade.
-  - 47 graded trials analyse freedom of expression; these form the Argument Bank.
+- **Every TrialWatch report on cfj.org:** 96 report listings = 90 distinct reports, 94 PDFs, downloaded at the rate cfj.org's robots.txt asks for.
+  - 63 reports grade a trial A–F.
+  - 47 graded reports analyse freedom of expression (2,075 PDF pages; some cover several trials or defendants); these form the Argument Bank.
   - Those 47 cite 154 distinct UN Human Rights Committee decisions.
 - **226 CFJ news posts**, for outcomes after each report (acquittals on appeal, releases).
 - Human Rights Watch, Amnesty International, SAFEnet, AJI and news for Indonesian cases.
