@@ -181,3 +181,16 @@ def test_plain_draft_passes_the_citation_check_when_a_case_title_has_straight_qu
     src = build_sources(CASE, EVENTS, STRESS, PROMISES, past)
     assert validate(template_draft(src), src) == []
 
+
+
+def test_shared_paragraph_is_one_source_naming_both_reports():
+    text = "Restrictions must be prescribed by law and be necessary and proportionate to a legitimate aim."
+    past = [
+        {"case": "A v. X", "author": "Ann Lee", "report_url": "https://cfj.org/reports/a-v-x/", "pdf_url": "",
+         "outcome": "acquitted", "outcome_confirmed": True, "arguments": {"legality": [{"page": 4, "text": text}]}},
+        {"case": "B v. Y", "author": "Ben Ode", "report_url": "https://cfj.org/reports/b-v-y/", "pdf_url": "",
+         "outcome": "convicted", "outcome_confirmed": True, "arguments": {"legality": [{"page": 7, "text": text}]}},
+    ]
+    tw = [s for s in build_sources(CASE, [], STRESS, [], past) if s.id.startswith("tw:")]
+    assert len(tw) == 1
+    assert "by Ann Lee" in tw[0].label and "B v. Y by Ben Ode" in tw[0].label
