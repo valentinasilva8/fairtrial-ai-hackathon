@@ -18,7 +18,8 @@ Start the app from its **Home** link (not a page link). Free Streamlit apps slee
 ## 3. UN Letter (2 min)
 - **Same case, "Draft with Gemini".** If the free tier is slow, "Build plain draft (no AI)" uses the same sources.
 - **Show:** "Citation check passed", the numbered citations, the source list naming each report's author, and "Check each sentence against its sources", which flags the sentences a lawyer must look at.
-- **Show the Review box:** a named reviewer must confirm before saving. Sensitive cases can't be used.
+- **Edit the letter:** change a sentence or delete a citation number and show the warning that appears; put it back and it re-checks clean.
+- **Review, approve and download:** enter a reviewer name, tick the box, then **Download Word (.docx)**. The file says who approved it and whether any warnings were left. Sensitive cases can't be used.
 
 ## 4. Stress Test (1–2 min): where a law has just been reformed
 - **Show:** "5 of 13 past cases would likely be barred under the 2025 ruling", then open "How robust is this number?": 3 to 8 of 13 across ten legal readings.
