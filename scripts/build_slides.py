@@ -184,7 +184,7 @@ def build(n: dict):
     set_text(shape(S[3], 617), ["TrialWatch's human rights analysis is buried in PDFs, advocacy starts from a "
                                  "blank page, and reforms go unmeasured."])
     set_text(shape(S[3], 622), size=13, bold=True, lines=[f"{DISTINCT_REPORTS} reports, not searchable"])
-    set_text(shape(S[3], 625), size=12, lines=[f"TrialWatch has graded {n['graded']} trials, but a lawyer can't find how a "
+    set_text(shape(S[3], 625), size=12, lines=[f"TrialWatch has {n['graded']} graded reports, but a lawyer can't find how a "
                                  "similar case was argued, which UN decisions applied, or what followed."])
     set_text(shape(S[3], 623), size=13, bold=True, lines=["Letters written from scratch"])
     set_text(shape(S[3], 620), size=12, lines=["Facts sit in court records, NGO reports and news in several languages; "
@@ -197,7 +197,7 @@ def build(n: dict):
 
     # 4 · Solution
     set_text(shape(S[4], 642), ["ARGUMENT BANK"])
-    set_text(shape(S[4], 641), [f"{n['core']} TrialWatch trials in {n['countries']} countries. For any case: the closest "
+    set_text(shape(S[4], 641), [f"{n['core']} TrialWatch reports on trials in {n['countries']} countries. For any case: the closest "
                                  "trials, good outcomes first, and their arguments on legality, vagueness, broadness, "
                                  "necessity and proportionality, with author and page."])
     set_text(shape(S[4], 644), ["SOURCED UN LETTER"])
@@ -213,7 +213,7 @@ def build(n: dict):
     s5a.top, s5a.height = Inches(1.55), Inches(1.2)
     s5b.top, s5b.height = Inches(2.95), Inches(1.5)
     set_text(s5a, ["One tool that follows TrialWatch's own process: Monitoring → Evaluation → Advocacy."], size=16, bold=True)
-    set_text(s5b, size=12, lines=[f"Built from all {REPORT_PAGES} report pages on cfj.org · a simple web app · "
+    set_text(s5b, size=12, lines=[f"Built from all {REPORT_PAGES} report listings on cfj.org · a simple web app · "
                                  "AI only where it helps, and always checked"])
     notes(S[5], "Built on TrialWatch's own reports and grading, in TrialWatch's own process.")
 
@@ -226,7 +226,7 @@ def build(n: dict):
                                   "for discussing a human rights report."])
     s16 = shape(S[16], 901)
     s16.top, s16.height = Inches(3.3), Inches(1.9)
-    set_text(s16, size=12, lines=[f"{n['good']} of {n['core']} TrialWatch trials had a good outcome after TrialWatch's work: "
+    set_text(s16, size=12, lines=[f"{n['good']} of the {n['core']} reported cases had a good outcome after TrialWatch's work: "
                    "acquittal, dropped charges, overturned conviction, release, or a UN finding of arbitrary "
                    "detention. We show what followed, never what caused it."])
     notes(S[16], "The tool lets TrialWatch spot a case the reform should have stopped on the day the complaint is "
@@ -250,7 +250,7 @@ def build(n: dict):
     # 7 · Pipeline diagram
     set_text(shape(S[7], 701), ["SERVICE PIPELINE"])
     steps = [
-        ("TrialWatch reports", f"{REPORT_PAGES} cfj.org pages, {n['pdfs']} PDFs"),
+        ("TrialWatch reports", f"{REPORT_PAGES} cfj.org listings, {n['pdfs']} PDFs"),
         ("Parse, no AI", f"{n['graded']} grades · {n['authors']} authors · {ARGUMENT_PARAGRAPHS:,} arguments · "
                          f"{n['decisions']} UN decisions"),
         ("People confirm", f"{n['confirmed']}/{n['core']} outcomes · {n['impacts']} impact sentences"),
