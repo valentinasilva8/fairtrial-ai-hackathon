@@ -41,33 +41,42 @@ class Source:
     text: str
     url: str = ""
     verified: bool = True
+    country: str = ""
 
 
 def _yes(v) -> bool:
     return str(v).strip().lower() in {"true", "1", "yes"}
 
 
-def build_sources(case: dict, events: list[dict], stress: dict, promises: list[dict],
+def build_sources(case: dict, events: list[dict], stress: dict | None, promises: list[dict],
                   past: list[dict]) -> list[Source]:
-    """past: [{"case", "report_url", "pdf_url", "outcome", "outcome_confirmed", "arguments": {cat: [para]}}]."""
+    """past: [{"case", "report_url", "pdf_url", "outcome", "outcome_confirmed", "arguments": {cat: [para]}}].
+
+    `case` may be a seeded Indonesian case or a new one a lawyer describes (with "country" and "law");
+    the stress test and pledges are optional because they exist only for a reformed law.
+    """
     if _yes(case.get("sensitive")):
         raise SensitiveCaseError("This case is marked sensitive and can't be used in a brief.")
     cid = case["case_id"]
+    country = case.get("country") or "Indonesia"
+    law = case.get("law") or "the ITE (EIT) Law"
     src = [Source(
         f"case:{cid}", f"Case record: {case['name']}",
-        f"{case['name']} ({case['role']}), prosecuted in Indonesia under the ITE (EIT) Law. Complainant: {case['complainant']} ({case['complainant_type']}). "
-        f"Charged under: {case['article']}. Reported: {case['year_reported']}. "
-        f"Outcome: {case['outcome']} — {case['outcome_detail']}",
-        case.get("source", ""), _yes(case.get("verified")),
+        f"{case['name']} ({case['role']}), prosecuted in {country} under {law}. "
+        f"Complainant: {case.get('complainant', 'not given')} ({case.get('complainant_type', 'unknown')}). "
+        f"Charged under: {case.get('article', 'not given')}. Reported: {case.get('year_reported', 'not given')}. "
+        f"Status: {case.get('outcome', 'not given')} — {case.get('outcome_detail', '')}",
+        case.get("source", ""), _yes(case.get("verified")), country=country,
     )]
     for i, e in enumerate(events, 1):
         src.append(Source(f"event:{cid}:{i}", f"Timeline, {e['date']}", f"{e['date']}: {e['description']}",
                           e.get("source", ""), _yes(e.get("verified"))))
-    src.append(Source(
-        f"stress:{cid}", "Precedent & Practice reform stress test (for lawyer review)",
-        f"Verdict: {stress['verdict']}. " + " ".join(stress["reasons"]),
-        "docs/stress_test_rules.md",
-    ))
+    if stress:
+        src.append(Source(
+            f"stress:{cid}", "Precedent & Practice reform stress test (for lawyer review)",
+            f"Verdict: {stress['verdict']}. " + " ".join(stress["reasons"]),
+            "docs/stress_test_rules.md",
+        ))
     for p in promises:
         src.append(Source(f"promise:{p['promise_id']}", f"Official pledge: {p['made_by']}",
                           f"{p['promise_text']} ({p['made_by']}, {p['date']}). Status: {p['status']}.",
@@ -146,7 +155,8 @@ def validate(draft: dict, sources: list[Source]) -> list[str]:
 def template_draft(sources: list[Source]) -> dict:
     """A plain, fully sourced draft built without an LLM."""
     case = sources[0]
-    stress = next(s for s in sources if s.id.startswith("stress:"))
+    country = case.country or "Indonesia"
+    stress = next((s for s in sources if s.id.startswith("stress:")), None)
     events = [s for s in sources if s.id.startswith("event:")]
     promises = [s for s in sources if s.id.startswith("promise:")]
     tw = [s for s in sources if s.id.startswith("tw:")]
@@ -156,23 +166,31 @@ def template_draft(sources: list[Source]) -> dict:
         # A straight quote in a case title ('Katanyu "Pan"') would be read by validate() as the start of a quotation.
         return s.label.replace('"', "'")
 
-    return {"sections": [
-        {"heading": "Summary", "sentences": [
-            {"text": f"We write regarding the case of {case.label.split(': ', 1)[1]}.", "sources": [case.id]},
-            {"text": f"Our rule check of Indonesia's reformed law gives this result: {stress.text}", "sources": [stress.id]},
-        ]},
+    summary = [{"text": f"We write regarding the case of {case.label.split(': ', 1)[1]}.", "sources": [case.id]}]
+    if stress:
+        summary.append({"text": f"Our rule check of {country}'s reformed law gives this result: {stress.text}",
+                        "sources": [stress.id]})
+    sections = [
+        {"heading": "Summary", "sentences": summary},
         {"heading": "The case", "sentences": [{"text": case.text, "sources": [case.id]}]
             + [{"text": e.text, "sources": [e.id]} for e in events]},
-        {"heading": "The reform and how it applies", "sentences":
-            [{"text": p.text, "sources": [p.id]} for p in promises]},
+    ]
+    if promises:
+        sections.append({"heading": "The reform and how it applies", "sentences":
+                         [{"text": p.text, "sources": [p.id]} for p in promises]})
+    if stress:
+        ask = (f"We ask that you consider raising this case with the Government of {country}, "
+               "including whether the prosecution is consistent with the 2025 Constitutional Court ruling.")
+        ask_sources = [stress.id] + [p.id for p in promises[:2]]
+    else:
+        ask = (f"We ask that you consider raising this case with the Government of {country}, including whether "
+               "the prosecution is consistent with Article 19 of the ICCPR as applied in the reports cited above.")
+        ask_sources = [case.id] + [s.id for s in tw[:2]]
+    return {"sections": sections + [
         {"heading": "International standards and TrialWatch's findings in similar cases", "sentences":
             [{"text": f"{label(s)}: “{s.text[:300].rsplit(' ', 1)[0]}”", "sources": [s.id]} for s in tw]
             + [{"text": f"{label(s)}: “{s.text}”", "sources": [s.id]} for s in impacts]},
-        {"heading": "Requested action", "sentences": [
-            {"text": "We ask that you consider raising this case with the Government of Indonesia, "
-                     "including whether the prosecution is consistent with the 2025 Constitutional Court ruling.",
-             "sources": [stress.id] + [p.id for p in promises[:2]]},
-        ]},
+        {"heading": "Requested action", "sentences": [{"text": ask, "sources": ask_sources}]},
     ]}
 
 
@@ -211,7 +229,8 @@ Rules:
   to that report's defendant (conviction and sentence, detention, mistreatment and so on). Cite them only for that
   past case, never as facts about the current case. Keep any number exactly as written, say it is unconfirmed when
   the source says so, and say the impact "followed" the prosecution; never that an argument caused anything.
-- Describe the stress test as the authors' preliminary analysis for lawyer review, not a legal conclusion.
+- Describe the stress test, if there is one, as the authors' preliminary analysis for lawyer review, not a legal
+  conclusion. If there are no stress-test or pledge sources, leave out "The reform and how it applies".
 - Formal, factual tone. About 350 to 550 words."""
 
 

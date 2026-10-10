@@ -95,3 +95,16 @@ def test_argument_bank_new_case_and_by_argument_tab():
     at.selectbox(key="ab_case").set_value("__new__").run(timeout=30)
     assert not at.exception
     assert any("at least one charge type" in i.value for i in at.info)
+
+
+def test_un_letter_for_a_new_case_in_another_country():
+    at = AppTest.from_file("../pages/4_UN_Letter.py").run(timeout=30)
+    at.selectbox(key="letter_case").set_value("new_case").run(timeout=30)
+    at.text_input(key="lt_name").set_value("R. Example").run(timeout=30)
+    at.text_input(key="lt_country").set_value("Kenya").run(timeout=30)
+    at.text_area(key="lt_facts").set_value("Charged over a news report about police conduct.").run(timeout=30)
+    at.multiselect(key="lt_charges").set_value(["false information"]).run(timeout=30)
+    next(b for b in at.button if b.label == "Build plain draft (no AI)").click().run(timeout=30)
+    assert not at.exception
+    assert any("Citation check passed" in s.value for s in at.success)
+    assert any("Government of Kenya" in m.value for m in at.markdown)
