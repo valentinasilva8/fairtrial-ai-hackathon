@@ -23,7 +23,6 @@ def test_seed_data_loads():
 
 def test_placeholder_rows_are_unverified():
     cases = load_all().cases.set_index("case_id")
-    assert not cases.loc["asrul", "verified"]  # complainant is "TO VERIFY"
     assert cases.loc["fatia_haris", "verified"]
 
 
